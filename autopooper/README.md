@@ -1,4 +1,8 @@
-![AutoPooper 3000](autopooper-logo.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="autopooper-logo-light.png">
+  <source media="(prefers-color-scheme: light)" srcset="autopooper-logo.png">
+  <img alt="AutoPooper 3000" src="autopooper-logo.png">
+</picture>
 
 # AutoPooper 3000
 

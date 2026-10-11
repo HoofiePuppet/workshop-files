@@ -1,4 +1,8 @@
-![Plan B(idet)](planbidet-logo.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="planbidet-logo-light.png">
+  <source media="(prefers-color-scheme: light)" srcset="planbidet-logo.png">
+  <img alt="Plan B(idet)" src="planbidet-logo.png">
+</picture>
 
 # Plan B(idet) — Parts Repository
 
@@ -17,7 +21,7 @@ A battery-powered backup bidet for water outages. The water in the Philippines c
 - **planbidet-logo.png** is the official Plan B(idet) logo (blue water drop, dark navy "Plan B(idet)" lettering, blue swoosh underneath). Transparent background.
 - **planbidet-logo-3x.png** is the same logo enlarged 3x for bigger uses. It's slightly soft because the original is small.
 - It was cut from the first concept photo (2026-10-11). Always use these files; don't redraw or restyle the logo.
-- The navy lettering is meant for light backgrounds.
+- **planbidet-logo-light.png** (+ **planbidet-logo-light-3x.png**) is the same logo with off-white lettering for dark backgrounds. GitHub shows it automatically to visitors using its dark theme.
 
 ## How it works
 

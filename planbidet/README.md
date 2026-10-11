@@ -1,3 +1,5 @@
+![Plan B(idet)](planbidet-logo.png)
+
 # Plan B(idet) — Parts Repository
 
 *For when the water company has other plans.*
@@ -9,6 +11,13 @@
 ## What it is
 
 A battery-powered backup bidet for water outages. The water in the Philippines can be shut off for hours with no warning, and the power can go out too, so Plan B(idet) needs neither. It runs from a 5-gallon or 10-liter water bottle and a rechargeable battery.
+
+## Official logo
+
+- **planbidet-logo.png** is the official Plan B(idet) logo (blue water drop, dark navy "Plan B(idet)" lettering, blue swoosh underneath). Transparent background.
+- **planbidet-logo-3x.png** is the same logo enlarged 3x for bigger uses. It's slightly soft because the original is small.
+- It was cut from the first concept photo (2026-10-11). Always use these files; don't redraw or restyle the logo.
+- The navy lettering is meant for light backgrounds.
 
 ## How it works
 
@@ -103,4 +112,5 @@ Too much water pressure can hurt, so Plan B(idet) limits pressure in several ind
 ## Change log
 
 - 2026-10-11: Repository started. Concept, name, attachment approach, pump type (diaphragm, outside the bottle) and battery power decided.
+- 2026-10-11: Official logo added (planbidet-logo.png).
 - 2026-10-11: Safety section added (relief valve, modest pump, hold-to-spray button, knob max stop, 1.0mm minimum nozzle hole, secured hoses, no hot water, fuse).

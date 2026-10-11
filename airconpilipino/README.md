@@ -1,4 +1,8 @@
-![Aircon Pilipino](airconpilipino-logo.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="airconpilipino-logo-light.png">
+  <source media="(prefers-color-scheme: light)" srcset="airconpilipino-logo.png">
+  <img alt="Aircon Pilipino" src="airconpilipino-logo.png">
+</picture>
 
 # Aircon Pilipino
 

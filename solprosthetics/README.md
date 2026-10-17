@@ -50,7 +50,7 @@ print scale = (child width + child length) ÷ (model width + model length at 100
 
 Round **up** to the next 5% so the child grows into it. Optional: measure around the thickest part of the affected forearm to check the cuff (forearm + 10 mm liner vs. the cuff's inside circumference at that scale).
 
-The Hand Sizer page does all of this and makes a fitting card to keep for refits. **The model sizes in the sizer are placeholders** until each model is designed; update them in the sizer's Sysop setup.
+The Hand Sizer page does all of this and makes a fitting card to keep for refits. **The model sizes in the sizer are placeholders** until each model is designed; update them in the sizer's SysOp setup.
 
 This replaces the Enabling the Future multi-hand spreadsheet, which works out to the same formula.
 

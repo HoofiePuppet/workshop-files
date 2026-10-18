@@ -1,6 +1,6 @@
 # Sol Prosthetics — Bill of Materials
 
-**Status:** In design · **Updated:** 2026-10-17
+**Status:** Model 1 v1 test print · **Updated:** 2026-10-18
 Starting list. Exact sizes are **TBD** until each model is designed.
 Sourcing: Lazada PH / local hardware store unless noted.
 
@@ -11,8 +11,11 @@ Sourcing: Lazada PH / local hardware store unless noted.
 | A1 | PETG filament | ~100–200 g | Any colour. Bright colours for Bukang-liwayway. | To buy |
 | A2 | TPU filament | ~20 g | 95A, for pads and return parts. | To buy |
 | A3 | Braided line | ~2 m | Braided fishing line (not mono), about 50 lb / 20 kg test. | To buy |
-| A4 | Stainless screws + nuts | **TBD** | One common size (likely M3), for hinges and the tensioner. | TBD |
-| A5 | Hook-and-loop straps | 2 | Sew-on or strap type, **not** stick-on. About 25 mm wide. | To buy |
+| A4 | M3 × 12 stainless screws | 13 | Finger joints (12) and thumb (1). They thread into the plastic, no nuts. | To buy |
+| A4b | M3 × 8 stainless screws | 6 | Wrist hinge (2) and tensioner (4). | To buy |
+| A4c | M3 washers | 4 | Under the tensioner screws. | To buy |
+| A7 | 1 mm round elastic cord | ~1.5 m | v1 return cord in each finger's back channel (TPU springs in v2). | To buy |
+| A5 | Hook-and-loop straps | 3 | Sew-on, **not** stick-on: 2 × 25 mm (gauntlet) + 1 × 16 mm (palm). | To buy |
 | A6 | Liner material | 1 piece | Washable foam or mesh for inside the cuff. | TBD |
 
 ## B. Buy — Model 3 (Tanghali, phase 2)
@@ -30,13 +33,14 @@ Sourcing: Lazada PH / local hardware store unless noted.
 
 | ID | Part | Qty | Material | Status |
 |----|------|-----|----------|--------|
-| SP1-01 | Palm | 1 | PETG | Not designed |
-| SP1-02 | Fingers + thumb | 5 | PETG | Not designed |
-| SP1-03 | Gauntlet / forearm cuff | 1 | PETG | Not designed |
-| SP1-04 | Fingertip and palm pads | set | TPU | Not designed |
-| SP1-05 | Joint return parts | set | TPU | Not designed |
+| SP1-01 | Palm | 1 | PETG | v1 test print |
+| SP1-02 | Fingers (3 segments each) | 4 | PETG | v1 test print |
+| SP1-06 | Thumb | 1 | PETG | v1 test print |
+| SP1-03 | Gauntlet / forearm cuff | 1 | PETG | v1 test print |
+| SP1-04 | Fingertip and palm pads | set | TPU | v2 |
+| SP1-05 | Joint return parts | set | TPU | v2 |
 
 ## Notes
 
-- Print at the scale from the Hand Sizer.
+- Bukang-liwayway v1 prints at 100% only (screw holes are sized for M3). Sized STLs from the Hand Sizer number come later.
 - Keep a few spare fingers printed in common sizes; they're the part most likely to break.

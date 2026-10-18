@@ -56,15 +56,18 @@ This replaces the Enabling the Future multi-hand spreadsheet, which works out to
 
 ## Printed parts
 
+![Bukang-liwayway v1](bukang-liwayway/bukang-liwayway-v1.png)
+
 Part IDs: SP1 = Bukang-liwayway, SP2 = Sinag, SP3 = Tanghali.
 
 | ID | Part | Material | Status | Notes |
 |----|------|----------|--------|-------|
-| SP1-01 | Palm | PETG | Not designed | Holds the finger and thumb pins and the cable channels. |
-| SP1-02 | Fingers (×4) and thumb | PETG | Not designed | Modular: a broken finger is a quick reprint, not a new hand. |
-| SP1-03 | Gauntlet / forearm cuff | PETG | Not designed | Ventilated. Hinged to the palm at the wrist. Tensioner for the cables. |
+| SP1-01 | Palm | PETG | **v1 test print** | Open palm side with strap slots; line channels and grooves; wrist ears; angled thumb mount. |
+| SP1-02 | Fingers (×4, 3 segments each) | PETG | **v1 test print** | Modular: a broken segment is a quick reprint, not a new hand. |
+| SP1-03 | Gauntlet / forearm cuff | PETG | **v1 test print** | Diamond vents. Hinged to the palm at the wrist. Screw tensioner for the lines. |
+| SP1-06 | Thumb | PETG | **v1 test print** | Positionable: set the angle, tighten the screw. |
 | SP1-04 | Fingertip and palm pads | TPU | Not designed | Grip. Mechanical fit, no glue. |
-| SP1-05 | Joint return parts | TPU | Not designed | Open the fingers again. Replaces elastic cord, which breaks down in heat and sun. |
+| SP1-05 | Joint return parts | TPU | v2 | Open the fingers again. v1 uses elastic cord for now (easy to swap while testing). |
 | SP2-xx | Sinag parts | PETG / TPU | Not designed | Starts from Model 1 once it's proven; adds stronger grip and an adjustable tensioner. |
 | SP3-xx | Tanghali parts | PETG / TPU | Not designed | Phase 2. Adds a sealed electronics box, motor/servo mount and battery holder. |
 
@@ -91,14 +94,13 @@ Part IDs: SP1 = Bukang-liwayway, SP2 = Sinag, SP3 = Tanghali.
 ## Open decisions
 
 - Elbow-driven version for children without a working wrist.
-- Hinge pin type and size (printed pins vs. screws).
 - Strap and liner material.
 - Tanghali: motor or servo choice, microcontroller, battery.
 - Each model's real 100% size (then update the sizer).
 
 ## Build order
 
-1. Design Bukang-liwayway (Model 1). Print a test hand at 100%, then measure it and put its real sizes into the sizer.
+1. Design Bukang-liwayway (Model 1). Print a test hand at 100%, then measure it and put its real sizes into the sizer. **v1 test print is ready: [bukang-liwayway/](bukang-liwayway/README.md).**
 2. Test fit with a child (with a therapist if possible). Fix what the fitting shows.
 3. Design Sinag from the proven Model 1.
 4. Bench-test the MyoWare sensor and motor before designing Tanghali.
@@ -107,3 +109,4 @@ Part IDs: SP1 = Bukang-liwayway, SP2 = Sinag, SP3 = Tanghali.
 
 - 2026-10-17: Repository started. Name (Sol Prosthetics), the three models, sizing rule and Hand Sizer decided.
 - 2026-10-17: Official logo added (solprosthetics-logo.png).
+- 2026-10-18: Bukang-liwayway v1 test print: STLs, hardware list and assembly steps in [bukang-liwayway/](bukang-liwayway/README.md). Joints use M3 × 12 stainless screws that thread into the plastic (no nuts).

@@ -11,7 +11,7 @@
 
 ## What it is
 
-3D-printed prosthetic hands for children in the Philippines who are missing a hand, from about age 6 to 18 (some adults too). Most families here can't get or afford a prosthesis, so these are designed to be cheap, easy to print, and easy to fix with parts from any hardware store. They are made for a hot, humid climate: no PLA, no glue, a washable liner, and parts that won't warp in a hot jeepney.
+3D-printed prosthetic hands for children in the Philippines who are missing a hand, from about age 6 to 18 (some adults too). Most families here can't get or afford a prosthesis, so these are designed to be cheap, easy to print, and easy to fix with parts from any hardware store. They are made for a hot, humid climate: no PLA, no glued structure, a washable liner, and parts that won't warp in a hot jeepney.
 
 Sol (sun) because it's hot here.
 
@@ -56,6 +56,12 @@ This replaces the Enabling the Future multi-hand spreadsheet, which works out to
 
 ## Printed parts
 
+**Newest: the realistic hand (v3 test print), [realistic-hand/](realistic-hand/README.md).** Shaped from a real child's hand, with a closed palm (rigid PETG back + soft TPU flap), rubber grip pads, hidden lines and the logo on the back. It is the base for all three models.
+
+![Realistic hand v3](realistic-hand/realistic-hand-preview-3.png)
+
+The v2 parts below are the earlier organic design.
+
 ![Bukang-liwayway v2](bukang-liwayway/bukang-liwayway-v2-hero.png)
 
 Part IDs: SP1 = Bukang-liwayway, SP2 = Sinag, SP3 = Tanghali.
@@ -66,7 +72,7 @@ Part IDs: SP1 = Bukang-liwayway, SP2 = Sinag, SP3 = Tanghali.
 | SP1-02 | Fingers (×4, 3 segments each) | PETG | **v2 test print** | Modular: a broken segment is a quick reprint, not a new hand. |
 | SP1-03 | Gauntlet / forearm cuff | PETG | **v2 test print** | Tapered, rounded cuff with teardrop vents. Hinged to the palm at the wrist. Tensioner bump with screw line clamps. |
 | SP1-06 | Thumb | PETG | **v2 test print** | Positionable: set the angle, tighten the screw. |
-| SP1-04 | Fingertip and palm pads | TPU | Not designed | Grip. Mechanical fit, no glue. |
+| SP1-04 | Fingertip and palm pads | Bicycle inner tube | **v3** | Rubber pads in pockets with a holding lip (realistic hand). |
 | SP1-05 | Joint return parts | TPU | v2 | Open the fingers again. v1 uses elastic cord for now (easy to swap while testing). |
 | SP2-xx | Sinag parts | PETG / TPU | Not designed | Starts from Model 1 once it's proven; adds stronger grip and an adjustable tensioner. |
 | SP3-xx | Tanghali parts | PETG / TPU | Not designed | Phase 2. Adds a sealed electronics box, motor/servo mount and battery holder. |
@@ -74,7 +80,7 @@ Part IDs: SP1 = Bukang-liwayway, SP2 = Sinag, SP3 = Tanghali.
 ## Design rules
 
 - **No PLA.** It softens around 55–60 °C. PETG or ASA for rigid parts, TPU for pads and flexible parts.
-- **No stick-on or glued parts.** Screws, pins and mechanical fits only (hot, humid climate).
+- **No stick-on or glued parts.** Screws, pins and mechanical fits only (hot, humid climate). The only glue is an optional dab of contact cement under a rubber grip pad that won't stay in its lip.
 - **Hardware-store parts.** Stainless screws in one common size, braided line, hook-and-loop straps. A parent should be able to fix it with one tool.
 - **Washable, ventilated liner** inside the cuff. Kids sweat into it all day.
 - **Modular and reprintable.** Every part can be swapped on its own.
@@ -100,7 +106,7 @@ Part IDs: SP1 = Bukang-liwayway, SP2 = Sinag, SP3 = Tanghali.
 
 ## Build order
 
-1. Design Bukang-liwayway (Model 1). Print a test hand at 100%, then measure it and put its real sizes into the sizer. **v2 test print is ready: [bukang-liwayway/](bukang-liwayway/README.md).**
+1. Design Bukang-liwayway (Model 1). Print a test hand at 100%, then measure it and put its real sizes into the sizer. **The v3 realistic hand is ready to test print: [realistic-hand/](realistic-hand/README.md)** (v2: [bukang-liwayway/](bukang-liwayway/README.md)).
 2. Test fit with a child (with a therapist if possible). Fix what the fitting shows.
 3. Design Sinag from the proven Model 1.
 4. Bench-test the MyoWare sensor and motor before designing Tanghali.
@@ -111,3 +117,4 @@ Part IDs: SP1 = Bukang-liwayway, SP2 = Sinag, SP3 = Tanghali.
 - 2026-10-17: Official logo added (solprosthetics-logo.png).
 - 2026-10-18: Bukang-liwayway v1 test print: STLs, hardware list and assembly steps in [bukang-liwayway/](bukang-liwayway/README.md). Joints use M3 × 12 stainless screws that thread into the plastic (no nuts).
 - 2026-10-18: Bukang-liwayway v2: organic, human-like shapes, logo pressed into the back of the hand, hidden line tunnels, rounded gauntlet.
+- 2026-10-19: Realistic hand v3 in [realistic-hand/](realistic-hand/README.md): shape from a MakeHuman child hand, barrel joints on the knuckle creases, closed palm (PETG back + TPU flap with tuck tongue and four tabs), inner-tube grip pads, crease vents and drain, hidden lines, logo on the curved back, friction-hinge thumb.

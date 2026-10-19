@@ -1,15 +1,17 @@
 <img alt="Sol Prosthetics" src="../solprosthetics-logo.png" width="160">
 
-# Sol Prosthetics realistic hand (v3, test print)
+# Bukang-liwayway ("Sunrise") v3, realistic — test print
 
 **Status:** v3 test print. It has not been printed or fitted to a child yet. · **Updated:** 2026-10-19
 **Designer:** Hoofie Puppet · **License:** CC BY-NC-SA 4.0 (see the repo's LICENSE)
 
-![Realistic hand v3](realistic-hand-preview-3.png)
+**Model 1, ages about 9 and under.**
+
+![Bukang-liwayway v3](realistic-hand-preview-3.png)
 
 This is a wrist-driven hand shaped from a real child's hand: a MakeHuman child model, smoothed and grown slightly so the shell is strong. Bending the wrist down pulls four braided lines, and the fingers close. Bending it back lets elastic cords open them again. The thumb sits on a friction hinge. You swing it to the grip you want and tighten one screw.
 
-This hand is the base for all three Sol Prosthetics models. Bukang-liwayway (mechanical, ages 9 and under) uses it as it is. Sinag and Tanghali will use the same parts with a stronger tensioner, and with a motor for Tanghali.
+This is Model 1, Bukang-liwayway. The same realistic hand will be the starting point for Sinag (stronger grip and tensioner) and Tanghali (motor).
 
 ## What's new compared with v2
 
@@ -120,4 +122,4 @@ The hand is generated from the MakeHuman model by Python scripts (trimesh, manif
 ## Change log
 
 - 2026-10-18: v1 test print (boxy, kernelCAD) and v2 (organic CadQuery shapes). Both are superseded and removed; they are in the git history.
-- 2026-10-19: v3 realistic hand. Shape from a MakeHuman child hand. Barrel joints follow the knuckle creases. Closed palm with a PETG back and a TPU flap closed by a tuck tongue and four tabs. Rubber grip pockets, crease vents and a drain. Hidden line tunnels and return cords. Logo on the curved back. Thumb on a friction hinge set by one screw. Knife edges trimmed and tunnel mouths rounded.
+- 2026-10-19: v3, realistic hand. Shape from a MakeHuman child hand. Barrel joints follow the knuckle creases. Closed palm with a PETG back and a TPU flap closed by a tuck tongue and four tabs. Rubber grip pockets, crease vents and a drain. Hidden line tunnels and return cords. Logo on the curved back. Thumb on a friction hinge set by one screw. Knife edges trimmed and tunnel mouths rounded.

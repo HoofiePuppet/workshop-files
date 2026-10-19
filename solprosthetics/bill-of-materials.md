@@ -1,14 +1,14 @@
 # Sol Prosthetics — Bill of Materials
 
-**Status:** realistic hand v3 test print · **Updated:** 2026-10-19
-Quantities are for one realistic hand ([realistic-hand/](realistic-hand/README.md)) at 100%.
+**Status:** Bukang-liwayway v3 (realistic) test print · **Updated:** 2026-10-19
+Quantities are for one Bukang-liwayway v3 hand ([bukang-liwayway/](bukang-liwayway/README.md)) at 100%.
 Sourcing: Lazada PH / Shopee PH / local hardware store unless noted.
 
 ## A. Buy — Models 1 and 2 (mechanical)
 
 | # | Item | Qty per hand | Spec / what to look for | Status |
 |---|------|--------------|--------------------------|--------|
-| A1 | PETG filament | ~100 g | Any colour; skin tones look most natural on the realistic hand. Bright colours for Bukang-liwayway if the child wants. | To buy |
+| A1 | PETG filament | ~100 g | Any colour; skin tones look most natural; bright colours if the child wants. | To buy |
 | A2 | TPU filament | ~10 g | **95A.** For the palm flap. | To buy |
 | A3 | Braided line | ~2 m | Braided fishing line (not mono), about 50 lb / 20 kg test. | To buy |
 | A4 | M3 × 12 stainless screws | 5 | Finger joints (4) and thumb hinge (1). They thread into the plastic, no nuts. | To buy |
@@ -32,7 +32,7 @@ Sourcing: Lazada PH / Shopee PH / local hardware store unless noted.
 | B5 | Fuse + holder | 1 | Sized for the motor. | Not yet |
 | B6 | Electrode pads (spare) | pack | Disposable, replace often in the heat. | Not yet |
 
-## C. Print (realistic hand v3)
+## C. Print (Bukang-liwayway v3)
 
 | File | Part | Qty | Material | Status |
 |------|------|-----|----------|--------|

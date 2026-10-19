@@ -56,11 +56,11 @@ This replaces the Enabling the Future multi-hand spreadsheet, which works out to
 
 ## Printed parts
 
-**Newest: the realistic hand (v3 test print), [realistic-hand/](realistic-hand/README.md).** Shaped from a real child's hand, with a closed palm (rigid PETG back + soft TPU flap), rubber grip pads, hidden lines and the logo on the back. It is the base for all three models.
+**Newest: Bukang-liwayway v3 (realistic), test print, [bukang-liwayway/](bukang-liwayway/README.md).** Shaped from a real child's hand, with a closed palm (rigid PETG back + soft TPU flap), rubber grip pads, hidden lines and the logo on the back. The same realistic hand will be the starting point for Sinag and Tanghali.
 
-![Realistic hand v3](realistic-hand/realistic-hand-preview-3.png)
+![Bukang-liwayway v3](bukang-liwayway/realistic-hand-preview-3.png)
 
-All parts are in [realistic-hand/](realistic-hand/README.md). Part IDs: SP1 = Bukang-liwayway, SP2 = Sinag, SP3 = Tanghali.
+All parts are in [bukang-liwayway/](bukang-liwayway/README.md). Part IDs: SP1 = Bukang-liwayway, SP2 = Sinag, SP3 = Tanghali.
 
 | ID | Part | Material | Status | Notes |
 |----|------|----------|--------|-------|
@@ -71,7 +71,7 @@ All parts are in [realistic-hand/](realistic-hand/README.md). Part IDs: SP1 = Bu
 | SP1-03 | Forearm cuff | PETG | **v3 test print** | Open palm side, strap slots, vents, tensioner bump with screw line clamps. |
 | SP1-04 | Fingertip and palm pads | Bicycle inner tube | **v3** | Rubber pads in pockets with a holding lip. |
 | SP1-05 | Return cords | Elastic cord | **v3** | Open the fingers again; run hidden inside the fingers and the back of the hand. |
-| SP2-xx | Sinag parts | PETG / TPU | Not designed | Starts from the proven realistic hand; adds stronger grip and an adjustable tensioner. |
+| SP2-xx | Sinag parts | PETG / TPU | Not designed | Starts from the proven Bukang-liwayway v3 hand; adds stronger grip and an adjustable tensioner. |
 | SP3-xx | Tanghali parts | PETG / TPU | Not designed | Phase 2. Adds a sealed electronics box, motor/servo mount and battery holder. |
 
 ## Design rules
@@ -103,7 +103,7 @@ All parts are in [realistic-hand/](realistic-hand/README.md). Part IDs: SP1 = Bu
 
 ## Build order
 
-1. Design Bukang-liwayway (Model 1). Print a test hand at 100%, then measure it and put its real sizes into the sizer. **The v3 realistic hand is ready to test print: [realistic-hand/](realistic-hand/README.md)**.
+1. Design Bukang-liwayway (Model 1). Print a test hand at 100%, then measure it and put its real sizes into the sizer. **Bukang-liwayway v3 (realistic) is ready to test print: [bukang-liwayway/](bukang-liwayway/README.md)**.
 2. Test fit with a child (with a therapist if possible). Fix what the fitting shows.
 3. Design Sinag from the proven Model 1.
 4. Bench-test the MyoWare sensor and motor before designing Tanghali.
@@ -114,5 +114,5 @@ All parts are in [realistic-hand/](realistic-hand/README.md). Part IDs: SP1 = Bu
 - 2026-10-17: Official logo added (solprosthetics-logo.png).
 - 2026-10-18: Bukang-liwayway v1 test print (boxy, kernelCAD). Joints use M3 stainless screws that thread into the plastic (no nuts).
 - 2026-10-18: Bukang-liwayway v2: organic CadQuery shapes, pressed-in logo, hidden line tunnels.
-- 2026-10-19: Realistic hand v3 in [realistic-hand/](realistic-hand/README.md): shape from a MakeHuman child hand, barrel joints on the knuckle creases, closed palm (PETG back + TPU flap with tuck tongue and four tabs), inner-tube grip pads, crease vents and drain, hidden lines, logo on the curved back, friction-hinge thumb.
-- 2026-10-19: Removed the superseded v1/v2 files (bukang-liwayway/); they remain in the git history.
+- 2026-10-19: Bukang-liwayway v3 (realistic) in [bukang-liwayway/](bukang-liwayway/README.md): shape from a MakeHuman child hand, barrel joints on the knuckle creases, closed palm (PETG back + TPU flap with tuck tongue and four tabs), inner-tube grip pads, crease vents and drain, hidden lines, logo on the curved back, friction-hinge thumb.
+- 2026-10-19: Removed the superseded v1/v2 files; they remain in the git history. v3 now lives in bukang-liwayway/.

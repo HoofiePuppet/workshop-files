@@ -194,7 +194,7 @@ def main():
     yk = knuckle_y(xd)
     shell = shell - FG.capsule_chain([np.array([xd, yk - 17, 2.0]), np.array([xd, yk - 9, -8]), np.array([xd, yk - 6, -22])], 1.3, fit=False)
     # ---- logo pressed 0.8 mm into the back of the hand
-    rects = json.load(open('../logo/logo_rects.json'))
+    rects = json.load(open('src/logo_rects.json'))
     # union the pixel cells in 2D and grow them 0.06 mm so diagonal pixels overlap instead of
     # touching at a corner (corner contacts leave non-manifold edges in the STL)
     polys = [[(LOGO_C[0] + x * LOGO_SCALE, LOGO_C[1] + y * LOGO_SCALE) for x, y in

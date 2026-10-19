@@ -60,21 +60,18 @@ This replaces the Enabling the Future multi-hand spreadsheet, which works out to
 
 ![Realistic hand v3](realistic-hand/realistic-hand-preview-3.png)
 
-The v2 parts below are the earlier organic design.
-
-![Bukang-liwayway v2](bukang-liwayway/bukang-liwayway-v2-hero.png)
-
-Part IDs: SP1 = Bukang-liwayway, SP2 = Sinag, SP3 = Tanghali.
+All parts are in [realistic-hand/](realistic-hand/README.md). Part IDs: SP1 = Bukang-liwayway, SP2 = Sinag, SP3 = Tanghali.
 
 | ID | Part | Material | Status | Notes |
 |----|------|----------|--------|-------|
-| SP1-01 | Palm | PETG | **v2 test print** | Organic, tapered palm with the logo pressed into the back; hidden line tunnels; open palm side with strap slots; angled thumb mount. |
-| SP1-02 | Fingers (×4, 3 segments each) | PETG | **v2 test print** | Modular: a broken segment is a quick reprint, not a new hand. |
-| SP1-03 | Gauntlet / forearm cuff | PETG | **v2 test print** | Tapered, rounded cuff with teardrop vents. Hinged to the palm at the wrist. Tensioner bump with screw line clamps. |
-| SP1-06 | Thumb | PETG | **v2 test print** | Positionable: set the angle, tighten the screw. |
-| SP1-04 | Fingertip and palm pads | Bicycle inner tube | **v3** | Rubber pads in pockets with a holding lip (realistic hand). |
-| SP1-05 | Joint return parts | TPU | v2 | Open the fingers again. v1 uses elastic cord for now (easy to swap while testing). |
-| SP2-xx | Sinag parts | PETG / TPU | Not designed | Starts from Model 1 once it's proven; adds stronger grip and an adjustable tensioner. |
+| SP1-01 | Back of the hand (`palm_back.stl`) | PETG | **v3 test print** | Realistic shape, logo pressed into the back, knuckle block with the finger joints, thumb mount, hidden line tunnels, wrist ears. |
+| SP1-07 | Palm flap (`palm_flap.stl`) | TPU 95A | **v3 test print** | Soft closed palm: tucks under the knuckles and buttons over four knobs. Crease vents, rubber pockets. |
+| SP1-02 | Finger segments (11) | PETG | **v3 test print** | Barrel joints on the knuckle creases. A broken segment is a quick reprint, not a new hand. |
+| SP1-06 | Thumb | PETG | **v3 test print** | Friction hinge: swing to the grip, tighten one screw. |
+| SP1-03 | Forearm cuff | PETG | **v3 test print** | Open palm side, strap slots, vents, tensioner bump with screw line clamps. |
+| SP1-04 | Fingertip and palm pads | Bicycle inner tube | **v3** | Rubber pads in pockets with a holding lip. |
+| SP1-05 | Return cords | Elastic cord | **v3** | Open the fingers again; run hidden inside the fingers and the back of the hand. |
+| SP2-xx | Sinag parts | PETG / TPU | Not designed | Starts from the proven realistic hand; adds stronger grip and an adjustable tensioner. |
 | SP3-xx | Tanghali parts | PETG / TPU | Not designed | Phase 2. Adds a sealed electronics box, motor/servo mount and battery holder. |
 
 ## Design rules
@@ -106,7 +103,7 @@ Part IDs: SP1 = Bukang-liwayway, SP2 = Sinag, SP3 = Tanghali.
 
 ## Build order
 
-1. Design Bukang-liwayway (Model 1). Print a test hand at 100%, then measure it and put its real sizes into the sizer. **The v3 realistic hand is ready to test print: [realistic-hand/](realistic-hand/README.md)** (v2: [bukang-liwayway/](bukang-liwayway/README.md)).
+1. Design Bukang-liwayway (Model 1). Print a test hand at 100%, then measure it and put its real sizes into the sizer. **The v3 realistic hand is ready to test print: [realistic-hand/](realistic-hand/README.md)**.
 2. Test fit with a child (with a therapist if possible). Fix what the fitting shows.
 3. Design Sinag from the proven Model 1.
 4. Bench-test the MyoWare sensor and motor before designing Tanghali.
@@ -115,6 +112,7 @@ Part IDs: SP1 = Bukang-liwayway, SP2 = Sinag, SP3 = Tanghali.
 
 - 2026-10-17: Repository started. Name (Sol Prosthetics), the three models, sizing rule and Hand Sizer decided.
 - 2026-10-17: Official logo added (solprosthetics-logo.png).
-- 2026-10-18: Bukang-liwayway v1 test print: STLs, hardware list and assembly steps in [bukang-liwayway/](bukang-liwayway/README.md). Joints use M3 × 12 stainless screws that thread into the plastic (no nuts).
-- 2026-10-18: Bukang-liwayway v2: organic, human-like shapes, logo pressed into the back of the hand, hidden line tunnels, rounded gauntlet.
+- 2026-10-18: Bukang-liwayway v1 test print (boxy, kernelCAD). Joints use M3 stainless screws that thread into the plastic (no nuts).
+- 2026-10-18: Bukang-liwayway v2: organic CadQuery shapes, pressed-in logo, hidden line tunnels.
 - 2026-10-19: Realistic hand v3 in [realistic-hand/](realistic-hand/README.md): shape from a MakeHuman child hand, barrel joints on the knuckle creases, closed palm (PETG back + TPU flap with tuck tongue and four tabs), inner-tube grip pads, crease vents and drain, hidden lines, logo on the curved back, friction-hinge thumb.
+- 2026-10-19: Removed the superseded v1/v2 files (bukang-liwayway/); they remain in the git history.

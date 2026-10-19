@@ -115,9 +115,9 @@ The hand is generated from the MakeHuman model by Python scripts (trimesh, manif
 | `orient.py`, `clean_stl.py` | Print orientation and clean STLs |
 | `check_*.py` | The checks above |
 
-`src/right-arm-oriented.stl` is the extracted arm, so the build can run without the full MakeHuman body.
+`src/right-arm-oriented.stl` is the extracted arm, so the build can run without the full MakeHuman body. `src/logo_rects.json` is the pressed-in logo pattern.
 
 ## Change log
 
-- 2026-10-18: v1 test print (boxy, kernelCAD) and v2 (organic CadQuery shapes), see `../bukang-liwayway/`.
+- 2026-10-18: v1 test print (boxy, kernelCAD) and v2 (organic CadQuery shapes). Both are superseded and removed; they are in the git history.
 - 2026-10-19: v3 realistic hand. Shape from a MakeHuman child hand. Barrel joints follow the knuckle creases. Closed palm with a PETG back and a TPU flap closed by a tuck tongue and four tabs. Rubber grip pockets, crease vents and a drain. Hidden line tunnels and return cords. Logo on the curved back. Thumb on a friction hinge set by one screw. Knife edges trimmed and tunnel mouths rounded.

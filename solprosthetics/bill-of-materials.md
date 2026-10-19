@@ -46,4 +46,3 @@ Sourcing: Lazada PH / Shopee PH / local hardware store unless noted.
 
 - Print at 100% only for now (screw holes are sized for M3). Sized STLs from the Hand Sizer number come later.
 - Keep a few spare finger segments and a spare palm flap printed; they're the parts most likely to wear.
-- The v2 parts list (Bukang-liwayway v2) is in [bukang-liwayway/README.md](bukang-liwayway/README.md).

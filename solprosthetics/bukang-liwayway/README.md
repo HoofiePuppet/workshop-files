@@ -55,7 +55,7 @@ This is Model 1, Bukang-liwayway. The same realistic hand will be the starting p
 | `finger-<name>-1/2/3.stl` | Finger segments (little finger has 2); the tip segments have a shallow fingernail you can paint | PETG | 1 of each (11) | Few |
 | `cuff.stl` | Forearm cuff: low tensioner swelling with flush line clamps, strap slots, vents | PETG | 1 | Few |
 
-**Print settings:** PETG (never PLA, it softens in the heat), 0.2 mm layers, 5 walls, 40–50% gyroid infill for the fingers, thumb and back, 30% for the cuff. TPU flap: slow (20–30 mm/s), little or no retraction, 3 walls, 30% infill, and **fuzzy skin** on the outside so the palm isn't slippery. A 0.4 mm nozzle is assumed.
+**Print settings:** PETG (never PLA, it softens in the heat), 0.2 mm layers, 5 walls, 40–50% gyroid infill for the fingers, thumb and back, 30% for the cuff. TPU flap: slow (20–30 mm/s), little or no retraction, 4 walls (so the 3 mm snap pegs print solid), 4 top and 4 bottom layers, 30% gyroid infill, and **fuzzy skin on the outer grip face only** so the palm isn't slippery. Keep fuzzy skin off the snap pegs: it adds about 0.3 mm and they jam in their 3.2 mm holes (paint it on, or use a modifier round the pegs; or skip it). A 0.4 mm nozzle is assumed.
 
 ## Hardware
 

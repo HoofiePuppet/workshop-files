@@ -33,7 +33,7 @@ Each model is its own design. The child gets the model for their age; the sizer 
 |---|------|------|------|
 | 1 | **Bukang-liwayway** ("Sunrise") | ~6–9 | Simple mechanical. Light, bright colours. |
 | 2 | **Sinag** ("Ray") | ~10–13 | Mechanical, stronger grip, adjustable tension. |
-| 3 | **Tanghali** ("High Noon") | ~14–18+ | MyoWare muscle-powered. |
+| 3 | **Tanghali** ("High Noon") | ~14–18+ | Motor hand run by a pressure (FSR) muscle sensor in the cuff: no electrodes or gel, cheap and easy to repair. MyoWare as an optional plug-in. |
 
 Models 1 and 2 close the fingers by cable when the child bends the wrist (needs a working wrist and some palm). An elbow-driven version for kids missing more of the forearm is an open decision.
 
@@ -98,7 +98,7 @@ All parts are in [bukang-liwayway/](bukang-liwayway/README.md). Part IDs: SP1 = 
 
 - Elbow-driven version for children without a working wrist.
 - Strap and liner material.
-- Tanghali: motor or servo choice, microcontroller, battery.
+- Tanghali: motor or servo choice, microcontroller, battery. Sensor: FSR (force myography) first, MyoWare optional.
 - Each model's real 100% size (then update the sizer).
 
 ## Build order
@@ -106,7 +106,7 @@ All parts are in [bukang-liwayway/](bukang-liwayway/README.md). Part IDs: SP1 = 
 1. Design Bukang-liwayway (Model 1). Print a test hand at 100%, then measure it and put its real sizes into the sizer. **Bukang-liwayway v3.1g (realistic) is ready to test print: [bukang-liwayway/](bukang-liwayway/README.md)**.
 2. Test fit with a child (with a therapist if possible). Fix what the fitting shows.
 3. Design Sinag from the proven Model 1.
-4. Bench-test the MyoWare sensor and motor before designing Tanghali.
+4. Bench-test an FSR muscle sensor in a cuff (and the motor) before designing Tanghali.
 
 ## Change log
 
@@ -117,3 +117,4 @@ All parts are in [bukang-liwayway/](bukang-liwayway/README.md). Part IDs: SP1 = 
 - 2026-10-19: Bukang-liwayway v3 (realistic) in [bukang-liwayway/](bukang-liwayway/README.md): shape from a MakeHuman child hand, barrel joints on the knuckle creases, closed palm (PETG back + TPU flap with tuck tongue and four tabs), inner-tube grip pads, crease vents and drain, hidden lines, logo on the curved back, friction-hinge thumb.
 - 2026-10-19: Removed the superseded v1/v2 files; they remain in the git history. v3 now lives in bukang-liwayway/.
 - 2026-10-24: Bukang-liwayway v3.1g replaces v3 in [bukang-liwayway/](bukang-liwayway/README.md): every part rebuilt as smooth shapes, thin TPU palm cover (screwed hinge edge + push-through snaps), fingernails, through-holes at every joint, cleaner cuff tensioner and line routing, printing/assembly and illustrated stringing guides (PDF). The v3 files remain in the git history.
+- 2026-10-24: Tanghali's muscle sensor is now a force-sensitive resistor (Interlink FSR 402 Short, 34-00015) instead of MyoWare, to cut e-waste (no disposable electrodes), cost and repair effort; MyoWare stays an optional plug-in. Added to the bill of materials.

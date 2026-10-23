@@ -26,12 +26,14 @@ Sourcing: Lazada PH / Shopee PH / local hardware store unless noted.
 
 | # | Item | Qty | Spec / what to look for | Status |
 |---|------|-----|--------------------------|--------|
-| B1 | MyoWare 2.0 muscle sensor | 1 | With electrode pads. | Not yet |
+| B1 | Force-sensitive resistor (FSR), Interlink **FSR 402 Short**, part no. **34-00015** (solder tabs; 34-00017 = female contacts) | 1–2 (+1 spare) | Main muscle sensor: sits in a TPU pocket in the cuff liner over the forearm muscle and reads the muscle bulging (force myography). No electrodes or gel, cheap, two wires to replace. Standard FSR 402 (30-81794) also works; FSR 406 (30-73258, ~38 mm square) for a larger muscle area. Buy genuine Interlink; test one first. | To test |
+| B1a | 10 kΩ resistor | 1 per FSR | Voltage divider so the board's analog pin can read the FSR. | To test |
+| B1b | MyoWare 2.0 muscle sensor | 1 | **Optional** plug-in, only for a child whose muscle doesn't bulge enough for the FSR. With electrode pads. | Optional |
 | B2 | Microcontroller | 1 | Small board (e.g. Arduino Nano class). **TBD** | Not yet |
 | B3 | Servo or gearmotor | 1–2 | Light, enough torque to close the fingers. **TBD** | Not yet |
 | B4 | Battery + charger | 1 | Rechargeable, with protection. **TBD** | Not yet |
 | B5 | Fuse + holder | 1 | Sized for the motor. | Not yet |
-| B6 | Electrode pads (spare) | pack | Disposable, replace often in the heat. | Not yet |
+| B6 | Electrode pads (spare) | pack | Only with the optional MyoWare (B1b). Disposable, replace often in the heat. | Optional |
 
 ## C. Print (Bukang-liwayway v3.1g)
 

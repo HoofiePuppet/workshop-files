@@ -3,7 +3,7 @@ import sys, numpy as np, trimesh
 from rlib import to_mf
 from pose import load, pose_finger, ORDER
 J, segs = load()
-palm = to_mf(trimesh.load('build/palm_raw.stl'))
+palm = to_mf(trimesh.load('build/palm_back.stl'))
 angles = [float(a) for a in sys.argv[1:]] or [-4, 0, 20, 45, 70]
 for n in ORDER:
     row = []

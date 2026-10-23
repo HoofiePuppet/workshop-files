@@ -52,26 +52,38 @@ def inside(tm, g):
     return (np.cumsum(acc, axis=2) % 2).astype(bool)
 
 
-def sdf(tm, g, band=7.0, spacing=0.12):
-    """EDT gives the coarse field; inside a band around the surface the distance is replaced by an
-    exact-enough nearest-surface-sample distance (dense surface samples + KD-tree)."""
+def sdf(tm, g, band=7.0, spacing=0.12, smooth_sigma=0.0):
+    """EDT gives the coarse field; inside a band around the surface the distance is replaced by the
+    point-to-plane distance to the nearest dense surface sample (sample + its face normal). That is
+    second-order accurate, so the surface rebuilt from the field is smooth instead of grainy."""
     from scipy.spatial import cKDTree
     occ = inside(tm, g)
     d_out = ndimage.distance_transform_edt(~occ).astype(np.float32)
     d_in = ndimage.distance_transform_edt(occ).astype(np.float32)
     f = (np.where(occ, -(d_in - 0.5), d_out - 0.5)) * g.p
+    del d_out, d_in
     n_s = int(tm.area / spacing ** 2)
-    pts, _ = trimesh.sample.sample_surface_even(tm, n_s) if False else trimesh.sample.sample_surface(tm, n_s, seed=1)
+    pts, fi = trimesh.sample.sample_surface(tm, n_s, seed=1)
+    nrm = tm.face_normals[fi]
     tree = cKDTree(pts)
     idx = np.nonzero(np.abs(f) < band)
     P = np.stack([g.o[i] + g.p * idx[i] for i in range(3)], 1)
-    dist, _ = tree.query(P, workers=-1)
-    f[idx] = np.where(occ[idx], -dist, dist)
+    dist, k = tree.query(P, workers=-1)
+    v = P - pts[k]
+    along = np.abs(np.einsum('ij,ij->i', v, nrm[k]))
+    tang2 = np.maximum(dist ** 2 - along ** 2, 0)
+    # point-to-plane near the surface, plain distance once the nearest sample is far off to the side
+    d = np.where(tang2 < (2.5 * spacing) ** 2, along, dist)
+    f[idx] = np.where(occ[idx], -d, d)
+    if smooth_sigma:
+        f = ndimage.gaussian_filter(f, smooth_sigma / g.p)
     return f.astype(np.float32)
 
 
 def to_manifold(field, g, level=0.0, simplify=0.02):
-    f = np.pad(field, 1, constant_values=1e3)
+    f = np.nan_to_num(np.asarray(field, np.float32), nan=1e3, posinf=1e3, neginf=-1e3)
+    f = np.where(f == level, level + 1e-4, f)
+    f = np.pad(f, 1, constant_values=1e3)
     v, faces, _, _ = marching_cubes(f, level=level, spacing=(g.p,) * 3)
     v = v + g.o - g.p
     faces = np.ascontiguousarray(faces)
@@ -84,7 +96,9 @@ def to_manifold(field, g, level=0.0, simplify=0.02):
 
 
 def smin(a, b, k):
-    """Polynomial smooth minimum (smooth union for SDFs)."""
+    """Polynomial smooth minimum (smooth union for SDFs). k <= 0 gives the plain minimum."""
+    if k <= 0:
+        return np.minimum(a, b)
     h = np.clip(0.5 + 0.5 * (b - a) / k, 0, 1)
     return b * (1 - h) + a * h - k * h * (1 - h)
 

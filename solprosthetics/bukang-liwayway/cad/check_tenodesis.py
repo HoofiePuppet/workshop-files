@@ -11,7 +11,7 @@ for n, c, cl in zip(names, flex, C):
     e = np.array(c['pts'][-2]); t = np.array([cl['x'], -8.0, cl['line_z']])
     zf = [j['zf'] for j in J[n]['joints']]
     out = []
-    for a in (0, -20, -30, -40):
+    for a in (0, -20, -30, -40, -45, -50):
         R = trimesh.transformations.rotation_matrix(np.radians(a), [1, 0, 0], W)
         e2 = (R @ np.r_[e, 1])[:3]; pull = np.linalg.norm(e2 - t) - np.linalg.norm(e - t)
         curl = np.degrees(pull / sum(zf))          # equal curl at every joint

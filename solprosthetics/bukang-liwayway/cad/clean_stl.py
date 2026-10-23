@@ -17,8 +17,13 @@ def clean(M, tol=0.03):
     # simplify first: the remeshed parts carry ~1M triangles; 0.03 mm tolerance keeps every feature
     # (max deviation about 0.06 mm, far below a 0.2 mm layer) and cuts file sizes about 6x
     M = M.simplify(tol)
-    parts = [p for p in M.decompose() if abs(p.volume()) > 1.0]
-    M = mf.Manifold.batch_boolean(parts, mf.OpType.Add) if len(parts) > 1 else parts[0]
+    allp = M.decompose()
+    solids = [p for p in allp if p.volume() > 1.0]
+    voids = [p for p in allp if p.volume() < 0]            # sealed internal hollows: keep
+    if voids and len(solids) == 1:
+        pass                                               # one body plus its internal voids: leave as it is
+    else:
+        M = mf.Manifold.batch_boolean(solids, mf.OpType.Add) if len(solids) > 1 else solids[0]
     me = M.to_mesh(); V = np.asarray(me.vert_properties, np.float64)[:, :3].copy(); F = np.asarray(me.tri_verts, np.int64)
     key = np.round(V, 4)
     _, inv, cnt = np.unique(key, axis=0, return_inverse=True, return_counts=True)

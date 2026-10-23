@@ -54,27 +54,46 @@ if __name__ == '__main__':
     arm = smooth(trimesh.load('src/right-arm-oriented.stl'), 1, 6)
     H = to_mf(arm) - box(*CFG['thumb_box'])
     cols = columns(H)
-    palm = H
-    for n, c in cols.items(): palm = palm - c.translate([0, COL_START + PALM_OVER, 0])
     g = Grid([-48, -24, -36], [40, 140, 36], 0.3)
     X, Y, Z = g.points()
     yk = knuckle_y(X)
-    f_palm = sdf(to_tm(palm), g)
+    # whole hand (fingers straight, unsplit): no cut faces, so no crease where palm meets fingers
+    # the thumb is removed with a rounded (smooth) cut instead of a sharp box cut, so the palm skin
+    # round the thumb mount stays smooth
+    fA = sdf(arm, g, smooth_sigma=0.25)
+    bx0, bx1, by0, by1, bz0, bz1 = CFG['thumb_box']
+    q = np.stack([np.abs(X - (bx0 + bx1) / 2) - (bx1 - bx0) / 2, np.abs(Y - (by0 + by1) / 2) - (by1 - by0) / 2,
+                  np.abs(Z - (bz0 + bz1) / 2) - (bz1 - bz0) / 2], -1)
+    sdbox = np.linalg.norm(np.maximum(q, 0), axis=-1) + np.minimum(q.max(-1), 0)
+    del q
+    fH = smax(fA, -sdbox, 3.0).astype(np.float32)
+    del fA, sdbox
     tr = smoothstep(yk - 24, yk + 6, Y)
     off = (PALM_OFF + DORSAL_EXTRA * smoothstep(9, 15, Z)) * (1 - tr) + FING_OFF * tr
-    outer = f_palm - off
-    f_hand = f_palm.copy()
+    fingers = np.full(fH.shape, 1e3, np.float32)
+    f_hand = fH.copy()
     for n in ORDER:
         fin = rot_about(H ^ cols[n], [0, 0, 1], -SPLAY[n], mcp_point(n))
-        ff = sdf(to_tm(fin), g)
+        ff = sdf(to_tm(fin), g, smooth_sigma=0.25)
         A = splay_axes()[n]; d = np.array(A['dir']); xl = np.cross(d, [0, 0, 1]); xl /= np.linalg.norm(xl)
         zl = np.cross(xl, d); zl = zl if zl[2] > 0 else -zl
         zloc = (X - A['mcp'][0]) * zl[0] + (Y - A['mcp'][1]) * zl[1] + (Z - A['mcp'][2]) * zl[2]
         offn = off + FING_DORSAL * smoothstep(0, 5, zloc) * smoothstep(yk - 3, yk + 5, Y)
-        outer = smin(outer, ff - offn, 1.5)
+        # finger fields only count past their own cut (6 mm behind the knuckle line)
+        ff = np.where(Y > A['mcp'][1] - COL_START + 1.0, ff, 1e3)
+        fingers = np.minimum(fingers, ff - offn)
         f_hand = np.minimum(f_hand, ff)
+        del ff, offn, zloc
         print('finger', n, 'done', flush=True)
-    cav = smax(f_palm - LINER, Y - (yk - KB), 4.0)
+    # palm field fades into the splayed finger fields over the knuckles (blend, not a cut)
+    w = smoothstep(yk - 3, yk + 9, Y)
+    outer = (1 - w) * (fH - off) + w * fingers
+    from scipy import ndimage
+    # final polish: takes out grain, keeps the shape. The palm (grown 3.5 mm, no fine detail left) gets
+    # a stronger polish than the fingers, whose nails and knuckles should stay crisp.
+    wf = smoothstep(yk - 8, yk + 4, Y)
+    outer = (1 - wf) * ndimage.gaussian_filter(outer, 1.0 / g.p) + wf * ndimage.gaussian_filter(outer, 0.35 / g.p)
+    cav = smax(fH - LINER, Y - (yk - KB), 4.0)
     np.savez_compressed('src/skin.npz', outer=outer.astype(np.float32), cav=cav.astype(np.float32),
                         hand=f_hand.astype(np.float32), o=g.o, p=g.p, n=g.n)
     json.dump(splay_axes(), open('src/finger_axes_splay.json', 'w'), indent=1)

@@ -56,28 +56,28 @@ This replaces the Enabling the Future multi-hand spreadsheet, which works out to
 
 ## Printed parts
 
-**Newest: Bukang-liwayway v3 (realistic), test print, [bukang-liwayway/](bukang-liwayway/README.md).** Shaped from a real child's hand, with a closed palm (rigid PETG back + soft TPU flap), rubber grip pads, hidden lines and the logo on the back. The same realistic hand will be the starting point for Sinag and Tanghali.
+**Newest: Bukang-liwayway v3.1g (realistic), test print, [bukang-liwayway/](bukang-liwayway/README.md).** Shaped from a real child's hand, with a closed palm (rigid PETG back + thin TPU cover that screws on along one edge and snaps shut), rubber grip pads, fingernails, hidden lines and the logo on the back. Printing, assembly and stringing guides (PDF) are in the same folder. The same realistic hand will be the starting point for Sinag and Tanghali.
 
-![Bukang-liwayway v3](bukang-liwayway/realistic-hand-preview-3.png)
+![Bukang-liwayway v3.1g](bukang-liwayway/hand-hero.png)
 
 All parts are in [bukang-liwayway/](bukang-liwayway/README.md). Part IDs: SP1 = Bukang-liwayway, SP2 = Sinag, SP3 = Tanghali.
 
 | ID | Part | Material | Status | Notes |
 |----|------|----------|--------|-------|
-| SP1-01 | Back of the hand (`palm_back.stl`) | PETG | **v3 test print** | Realistic shape, logo pressed into the back, knuckle block with the finger joints, thumb mount, hidden line tunnels, wrist ears. |
-| SP1-07 | Palm flap (`palm_flap.stl`) | TPU 95A | **v3 test print** | Soft closed palm: tucks under the knuckles and buttons over four knobs. Crease vents, rubber pockets. |
-| SP1-02 | Finger segments (11) | PETG | **v3 test print** | Barrel joints on the knuckle creases. A broken segment is a quick reprint, not a new hand. |
-| SP1-06 | Thumb | PETG | **v3 test print** | Friction hinge: swing to the grip, tighten one screw. |
-| SP1-03 | Forearm cuff | PETG | **v3 test print** | Open palm side, strap slots, vents, tensioner bump with screw line clamps. |
-| SP1-04 | Fingertip and palm pads | Bicycle inner tube | **v3** | Rubber pads in pockets with a holding lip. |
-| SP1-05 | Return cords | Elastic cord | **v3** | Open the fingers again; run hidden inside the fingers and the back of the hand. |
-| SP2-xx | Sinag parts | PETG / TPU | Not designed | Starts from the proven Bukang-liwayway v3 hand; adds stronger grip and an adjustable tensioner. |
+| SP1-01 | Back of the hand (`palm_back.stl`) | PETG | **v3.1g test print** | Realistic shape, logo pressed into the back, knuckle block with the finger joints, thumb mount, hidden line tunnels, wrist ears, flush step for the cover. |
+| SP1-07 | Palm cover (`palm_flap.stl`) | TPU 95A | **v3.1g test print** | Thin closed palm with a raised grip oval. Screwed along the little-finger edge (3 × M3×5 flat-head), 7 push-through snap pegs elsewhere. |
+| SP1-02 | Finger segments (11) | PETG | **v3.1g test print** | Barrel joints on the knuckle creases, fingernails on the tips. A broken segment is a quick reprint, not a new hand. |
+| SP1-06 | Thumb | PETG | **v3.1g test print** | Friction hinge: swing to the grip, tighten one screw. |
+| SP1-03 | Forearm cuff | PETG | **v3.1g test print** | Open palm side, strap slots, vents, low tensioner swelling with 4 flush line clamps. |
+| SP1-04 | Fingertip pads | Bicycle inner tube | **v3.1g** | Rubber pads glued into shallow recesses with contact cement. |
+| SP1-05 | Return cords | Elastic cord | **v3.1g** | Open the fingers again; run hidden inside the fingers and the back of the hand. |
+| SP2-xx | Sinag parts | PETG / TPU | Not designed | Starts from the proven Bukang-liwayway hand; adds stronger grip and an adjustable tensioner. |
 | SP3-xx | Tanghali parts | PETG / TPU | Not designed | Phase 2. Adds a sealed electronics box, motor/servo mount and battery holder. |
 
 ## Design rules
 
 - **No PLA.** It softens around 55–60 °C. PETG or ASA for rigid parts, TPU for pads and flexible parts.
-- **No stick-on or glued parts.** Screws, pins and mechanical fits only (hot, humid climate). The only glue is an optional dab of contact cement under a rubber grip pad that won't stay in its lip.
+- **No stick-on parts.** Screws, pins and mechanical fits (hot, humid climate). The only glue is contact cement for the rubber fingertip pads.
 - **Hardware-store parts.** Stainless screws in one common size, braided line, hook-and-loop straps. A parent should be able to fix it with one tool.
 - **Washable, ventilated liner** inside the cuff. Kids sweat into it all day.
 - **Modular and reprintable.** Every part can be swapped on its own.
@@ -103,7 +103,7 @@ All parts are in [bukang-liwayway/](bukang-liwayway/README.md). Part IDs: SP1 = 
 
 ## Build order
 
-1. Design Bukang-liwayway (Model 1). Print a test hand at 100%, then measure it and put its real sizes into the sizer. **Bukang-liwayway v3 (realistic) is ready to test print: [bukang-liwayway/](bukang-liwayway/README.md)**.
+1. Design Bukang-liwayway (Model 1). Print a test hand at 100%, then measure it and put its real sizes into the sizer. **Bukang-liwayway v3.1g (realistic) is ready to test print: [bukang-liwayway/](bukang-liwayway/README.md)**.
 2. Test fit with a child (with a therapist if possible). Fix what the fitting shows.
 3. Design Sinag from the proven Model 1.
 4. Bench-test the MyoWare sensor and motor before designing Tanghali.
@@ -116,3 +116,4 @@ All parts are in [bukang-liwayway/](bukang-liwayway/README.md). Part IDs: SP1 = 
 - 2026-10-18: Bukang-liwayway v2: organic CadQuery shapes, pressed-in logo, hidden line tunnels.
 - 2026-10-19: Bukang-liwayway v3 (realistic) in [bukang-liwayway/](bukang-liwayway/README.md): shape from a MakeHuman child hand, barrel joints on the knuckle creases, closed palm (PETG back + TPU flap with tuck tongue and four tabs), inner-tube grip pads, crease vents and drain, hidden lines, logo on the curved back, friction-hinge thumb.
 - 2026-10-19: Removed the superseded v1/v2 files; they remain in the git history. v3 now lives in bukang-liwayway/.
+- 2026-10-24: Bukang-liwayway v3.1g replaces v3 in [bukang-liwayway/](bukang-liwayway/README.md): every part rebuilt as smooth shapes, thin TPU palm cover (screwed hinge edge + push-through snaps), fingernails, through-holes at every joint, cleaner cuff tensioner and line routing, printing/assembly and illustrated stringing guides (PDF). The v3 files remain in the git history.

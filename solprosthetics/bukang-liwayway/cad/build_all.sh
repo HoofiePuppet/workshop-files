@@ -1,16 +1,14 @@
 #!/bin/sh
-# Sol Prosthetics realistic hand: full rebuild from the MakeHuman export, in order.
+# Sol Prosthetics Bukang-liwayway v3.1 (realistic): full rebuild from the MakeHuman export, in order.
 # Needs: python3 with numpy scipy trimesh manifold3d scikit-image shapely embreex
 set -e
 cd "$(dirname "$0")"
-python3 extract.py src/makehuman-body-smooth.stl 10   # right arm, oriented hand frame, wrist at y = 0
-python3 skin.py           # outer skin and child cavity distance fields (src/skin.npz)
+# python3 extract.py src/makehuman-body-smooth.stl 10   # needs the full MakeHuman body (not included); src/right-arm-oriented.stl is its output
+python3 skin.py           # smooth outer skin and child cavity distance fields (src/skin.npz)
 python3 thumb_solve.py    # thumb pinch pose and hinge axis (build/thumb_solution.json)
-python3 fingers.py        # finger segments, joints, channels, palm with MCP knuckles (build/)
-python3 palm.py           # PETG back, TPU flap, thumb (build/)
-python3 cuff.py           # forearm cuff with tensioner (build/)
-python3 mouths.py         # round every line-channel mouth
-python3 open_parts.py     # blunt knife edges (opening with a 0.22 mm ball)
+python3 fingers2.py       # finger segments as smooth fields: filleted joints, exact screws and channels
+python3 palm2.py          # back of the hand, TPU flap, thumb (smooth fields)
+python3 cuff2.py          # forearm cuff with the low tensioner swelling and flared line channels
 python3 orient.py         # print orientation -> stl/
 python3 clean_stl.py      # one closed solid per STL
 # checks

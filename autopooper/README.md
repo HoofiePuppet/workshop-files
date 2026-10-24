@@ -9,6 +9,7 @@
 **Status:** In development · **Designer:** Hoofie Puppet
 **License:** (c) 2026 Hoofie Puppet, CC BY-NC-SA 4.0 (see the repo's LICENSE)
 **Shopping list:** [bill-of-materials.md](bill-of-materials.md) · **Logo:** [LOGO.md](LOGO.md)
+**Technical data:** [techdata/](techdata) · **Blueprints:** [blueprints/](blueprints)
 
 A 3d printed, Arduino-controlled cat litter box built round a rotating drum about 600mm across. It works like a toilet: press and hold the button and the drum turns, sifts and drops the clumps into the receptacle. **It never cycles on its own.** A person always starts the flush.
 

@@ -51,6 +51,7 @@ This is Model 1, Bukang-liwayway. The same realistic hand will be the starting p
 |---|---|---|---|---|
 | `palm_back.stl` | Back of the hand: knuckles, thumb mount, wrist ears, line tunnels, logo, step for the cover | PETG | 1 | Yes, from the build plate. It stands on the wrist end; use a brim. Supports never touch the logo. |
 | `palm_flap.stl` | Palm cover: raised grip oval, flush edge lip with 7 push-through snap pegs, screwed hinge edge | **TPU 95A** | 1 | Few |
+| `palm_flap_print.stl` | **Print this one instead of `palm_flap.stl`:** the same cover with two snip-off stabilizer fins that stop the tall, floppy TPU part wobbling. Print standing up as it loads, with a 5 mm brim. Afterwards snip the 14 small tabs at the lip edge with flush cutters and shave any nub flush with a knife | **TPU 95A** | 1 | Under the snap pegs only |
 | `thumb.stl` | Thumb with its hinge tongue and rubber pocket | PETG | 1 | Few |
 | `finger-<name>-1/2/3.stl` | Finger segments (little finger has 2); the tip segments have a shallow fingernail you can paint | PETG | 1 of each (11) | Few |
 | `cuff.stl` | Forearm cuff: low tensioner swelling with flush line clamps, strap slots, vents | PETG | 1 | Few |
@@ -121,6 +122,7 @@ The hand is generated from the MakeHuman model by Python scripts (trimesh, manif
 | `cuff2.py` | Forearm cuff with the tensioner swelling, line channels and clamps |
 | `sdf.py`, `sdfparts.py`, `lib_grid.py`, `rlib.py` | Smooth-shape (distance field) helpers |
 | `orient.py`, `clean_stl.py` | Print orientation and clean STLs |
+| `flap_print.py` | Adds the snip-off stabilizer fins to the palm cover (`palm_flap_print.stl`) |
 | `check_*.py` | The checks above |
 
 `src/right-arm-oriented.stl` is the extracted arm, so the build can run without the full MakeHuman body. `src/logo_rects.json` is the pressed-in logo pattern.

@@ -11,6 +11,7 @@ python3 palm2.py          # back of the hand, TPU flap, thumb (smooth fields)
 python3 cuff2.py          # forearm cuff with the low tensioner swelling and flared line channels
 python3 orient.py         # print orientation -> stl/
 python3 clean_stl.py      # one closed solid per STL
+python3 flap_print.py stl/palm_flap.stl stl/palm_flap_print.stl   # TPU cover + snip-off stabilizer fins
 # checks
 python3 check_fingers.py -4 0 30 60
 python3 check_thumb.py

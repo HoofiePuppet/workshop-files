@@ -116,7 +116,7 @@ def mc(vol, name):
 jig = mc(V, 'jig')
 jig.vertices[:, 2] = np.maximum(jig.vertices[:, 2], 0.0)      # flat on the bed
 to_mf = lambda tm: mf.Manifold(mf.Mesh(vert_properties=np.asarray(tm.vertices, np.float32), tri_verts=np.asarray(tm.faces, np.uint32)))
-J = to_mf(jig); print('jig manifold status', J.status(), 'vol %.0f mm3' % J.volume())
+J = to_mf(jig).simplify(0.03); print('jig manifold status', J.status(), 'vol %.0f mm3' % J.volume())
 out = (J + to_mf(part)).to_mesh()
 res = trimesh.Trimesh(out.vert_properties[:, :3], out.tri_verts)
 bodies = res.split(only_watertight=False)
@@ -124,7 +124,7 @@ print('watertight', res.is_watertight, 'bodies', len(bodies), 'bounds', res.boun
 res.export(dst)
 
 # ---- support blocker: holes / tunnels / narrow slots of the whole part + the rim space
-def hole_blocker(m, R_CLOSE=2.75, GROW=0.4, H=0.2):
+def hole_blocker(m, R_CLOSE=2.75, GROW=0.45, H=0.3):
     from skimage.draw import polygon as rpoly
     lo, hi = m.bounds[0] - 4, m.bounds[1] + 4
     nx, ny, nz = np.ceil((hi - lo) / H).astype(int) + 1
@@ -152,7 +152,11 @@ def hole_blocker(m, R_CLOSE=2.75, GROW=0.4, H=0.2):
     if b.volume < 0: b.invert()
     return b
 
-blk = to_mf(hole_blocker(part)) + to_mf(mc(gapV, 'gap'))
+gq = gapV[::3, ::3, ::3]                                           # 0.3 mm is plenty for a blocker
+gv, gf, _, _ = measure.marching_cubes(np.pad(gq, 1).astype(np.float32), 0.5)
+gm = trimesh.Trimesh((gv - 1) * 3 * G + [xs[0], ys[0], zt[0]], gf)
+if gm.volume < 0: gm.invert()
+blk = to_mf(hole_blocker(part)) + to_mf(gm)
 bm = blk.to_mesh(); bt = trimesh.Trimesh(bm.vert_properties[:, :3], bm.tri_verts)
 if bt.bounds[0, 2] < 0.2: bt = bt.slice_plane([0, 0, 0.2], [0, 0, 1], cap=True)   # never below the bed line
 bt.export(dst.replace('.stl', '_support_blocker.stl'))

@@ -56,7 +56,7 @@ This replaces the Enabling the Future multi-hand spreadsheet, which works out to
 
 ## Printed parts
 
-**Newest: Bukang-liwayway v3.2 (realistic), test print, [bukang-liwayway/](bukang-liwayway/README.md).** Shaped from a real child's hand, with a closed palm (rigid PETG back + thin TPU cover that screws on along one edge and snaps shut, open at the wrist end so the hand goes in), one knuckle axle for three fingers, brass heat-set inserts, rubber grip pads, fingernails, hidden lines and the logo on the back. Printing, assembly and stringing guides (PDF, still v3.1g; the v3.2 hardware card is `stl/HARDWARE.md`) are in the same folder. The same realistic hand will be the starting point for Sinag and Tanghali.
+**Newest: Bukang-liwayway v3.2 (realistic), test print, [bukang-liwayway/](bukang-liwayway/README.md).** Shaped from a real child's hand, with a closed palm (rigid PETG back + thin TPU cover that screws on along one edge and snaps shut, open at the wrist end so the hand goes in), one knuckle axle for three fingers, brass heat-set inserts, rubber grip pads, fingernails, hidden lines and the logo on the back. Printing, assembly and stringing guides (PDF, v3.2) and the hardware card `stl/HARDWARE.md` are in the same folder. The same realistic hand will be the starting point for Sinag and Tanghali.
 
 ![Bukang-liwayway v3.2](bukang-liwayway/hand-hero.jpg)
 

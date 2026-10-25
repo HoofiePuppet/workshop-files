@@ -36,10 +36,10 @@ This is Model 1, Bukang-liwayway. The same realistic hand will be the starting p
 
 ## Guides
 
-The printing and assembly guide describes **v3.2**; the illustrated guide still describes **v3.1g** (its v3.2 update is coming). The line routing is the same, but for v3.2 use the hardware list below, [`stl/HARDWARE.md`](stl/HARDWARE.md) and the two pictures above for screws and inserts. Updated guides come after the test print.
+Both PDF guides describe **v3.2**. For a size other than 100%, use the screw and insert list in that size's [`stl/HARDWARE.md`](stl/HARDWARE.md). The line routing is the same, but for v3.2 use the hardware list below, [`stl/HARDWARE.md`](stl/HARDWARE.md) and the two pictures above for screws and inserts. Updated guides come after the test print.
 
 - [Printing and assembly guide (PDF, v3.2)](printing-and-assembly-guide.pdf)
-- [Illustrated assembly and stringing guide (PDF, v3.1g)](assembly-and-stringing-illustrated.pdf)
+- [Illustrated printing, assembly and stringing guide (PDF, v3.2)](assembly-and-stringing-illustrated.pdf)
 
 ## Size at 100%
 
@@ -162,3 +162,4 @@ The hand is generated from the MakeHuman model by Python scripts (trimesh, manif
 - 2026-10-24 (later): v3.1g. Screw list corrected (9 × M3×12, 3 × M3×10, no M3×8). Cover snaps are now bigger push-through pegs (3 mm shaft, 4 mm mushroom head) that lock in recesses on the inside of the step. Knuckle screw holes fixed: each hole was drilled endlessly and cut a second, off-centre hole through the neighbouring knuckles; now each stops at its own knuckle, with a clean round ring round it.
 - 2026-10-25: v3.2, fixes from the first full print. Shared M3 × 45 knuckle axle for index, middle and ring; open wrist end with rounded edges; much bigger line holes (2–3 mm) with funnel mouths; thumb hinge M3 × 20 deep in solid plastic, new thumb pad and nail; nail dips filled flush; heat-set inserts in the index knuckle and the cover step; cover screws centred on a wider hinge edge and the cover corner fixed; cuff trimmed separately to the hand and the cover; fingers and thumb print at 45°; hardware card per size.
 - 2026-10-25 (later): print version of the back of the hand (`palm_back_print.stl`) with a snip-off rim support that keeps clear of the line tunnel exits, plus a matching support blocker; support notes for every part (screw holes need none; fingers and thumb on the build plate only); clean the 3.4 mm holes with a 3.5 mm drill.
+- 2026-10-26: both PDF guides updated for v3.2 (knuckle axle, heat-set inserts, 45° printing, print versions and support blocker, open wrist end, hardware card, new grip pad sizes); the illustrated guide has new print-layout, insert and stringing pages.

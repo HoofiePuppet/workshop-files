@@ -36,9 +36,9 @@ This is Model 1, Bukang-liwayway. The same realistic hand will be the starting p
 
 ## Guides
 
-The two PDF guides still describe **v3.1g**. The line routing is the same, but for v3.2 use the hardware list below, [`stl/HARDWARE.md`](stl/HARDWARE.md) and the two pictures above for screws and inserts. Updated guides come after the test print.
+The printing and assembly guide describes **v3.2**; the illustrated guide still describes **v3.1g** (its v3.2 update is coming). The line routing is the same, but for v3.2 use the hardware list below, [`stl/HARDWARE.md`](stl/HARDWARE.md) and the two pictures above for screws and inserts. Updated guides come after the test print.
 
-- [Printing and assembly guide (PDF, v3.1g)](printing-and-assembly-guide.pdf)
+- [Printing and assembly guide (PDF, v3.2)](printing-and-assembly-guide.pdf)
 - [Illustrated assembly and stringing guide (PDF, v3.1g)](assembly-and-stringing-illustrated.pdf)
 
 ## Size at 100%

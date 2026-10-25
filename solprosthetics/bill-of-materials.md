@@ -1,7 +1,7 @@
 # Sol Prosthetics — Bill of Materials
 
-**Status:** Bukang-liwayway v3.1g (realistic) test print · **Updated:** 2026-10-24
-Quantities are for one Bukang-liwayway v3.1g hand ([bukang-liwayway/](bukang-liwayway/README.md)) at 100%.
+**Status:** Bukang-liwayway v3.2 (realistic) test print · **Updated:** 2026-10-25
+Quantities are for one Bukang-liwayway v3.2 hand ([bukang-liwayway/](bukang-liwayway/README.md)) at 100%.
 Sourcing: Lazada PH / Shopee PH / local hardware store unless noted.
 
 ## A. Buy — Models 1 and 2 (mechanical)
@@ -10,15 +10,18 @@ Sourcing: Lazada PH / Shopee PH / local hardware store unless noted.
 |---|------|--------------|--------------------------|--------|
 | A1 | PETG filament | ~100–135 g + supports | Any colour; skin tones look most natural; bright colours if the child wants. | To buy |
 | A2 | TPU filament | under 10 g | **95A.** For the palm cover. | To buy |
-| A3 | Braided line | ~2 m | Braided fishing line (not mono), about 50 lb / 20 kg test. | To buy |
-| A4 | M3 × 12 stainless button-head screws | 9 | Index and middle (3 joints each), ring middle and tip joints, thumb hinge. They thread into the plastic, no nuts. | To buy |
-| A4a | M3 × 10 stainless button-head screws | 3 | Ring knuckle, little knuckle and little tip joint. | To buy |
-| A4b | M3 × 6 stainless screws | 2 | Wrist hinge. | To buy |
-| A4c | M3 × 4 stainless countersunk (flat-head) screws | 4 | Line clamps on top of the cuff. | To buy |
-| A4d | M3 × 5 stainless countersunk (flat-head) screws | 3 | Palm cover hinge edge. | To buy |
+| A3 | Braided line | ~2 m | PE braided fishing line (not mono), #4, about 50 lb / 0.32 mm. | To buy |
+| A4 | M3 × 45 stainless button-head screw | 1 | Knuckle axle through the index, middle and ring knuckles. | To buy |
+| A4a | M3 × 12 stainless button-head screws | 6 | Middle and tip joints of the index, middle and ring fingers. | To buy |
+| A4b | M3 × 10 stainless button-head screws | 2 | Little finger knuckle and tip joint. | To buy |
+| A4c | M3 × 20 stainless button-head screw | 1 | Thumb hinge (threads into the plastic, no insert). | To buy |
+| A4d | M3 × 6 stainless screws | 2 | Wrist hinge. | To buy |
+| A4e | M3 × 4 stainless countersunk (flat-head) screws | 4 | Line clamps on top of the cuff. | To buy |
+| A4f | M3 × 5 stainless countersunk (flat-head) screws | 3 | Palm cover hinge edge. | To buy |
+| A4g | M3 brass heat-set inserts, 4.2 mm across × 4 mm, double-knurled | 4 | Index knuckle and the 3 cover screws. Other sizes use other lengths: see each size's `HARDWARE.md`. | To buy |
 | A7 | 1 mm round elastic cord | ~1.5 m | Return cords that open the fingers. | To buy |
 | A8 | Bicycle inner tube | 1 small piece | 5 fingertip grip pads and two thumb-hinge washers. Any vulcanizing shop has old tubes. | To buy |
-| A9 | Contact cement (e.g. Rugby) | a little | Glues the grip pads into their recesses. | To buy |
+| A9 | E6000 or contact cement | a little | Glues the grip pads. Sand both surfaces dull, clean with alcohol, cure 72 h before wearing. | To buy |
 | A5 | Hook-and-loop straps | 2 | Sew-on, **not** stick-on, 25 mm, for the cuff. | To buy |
 | A6 | Liner material | 1 piece | Washable foam or mesh, about 1–1.5 mm, for inside the cuff and the back of the hand. | TBD |
 
@@ -35,17 +38,17 @@ Sourcing: Lazada PH / Shopee PH / local hardware store unless noted.
 | B5 | Fuse + holder | 1 | Sized for the motor. | Not yet |
 | B6 | Electrode pads (spare) | pack | Only with the optional MyoWare (B1b). Disposable, replace often in the heat. | Optional |
 
-## C. Print (Bukang-liwayway v3.1g)
+## C. Print (Bukang-liwayway v3.2)
 
 | File | Part | Qty | Material | Status |
 |------|------|-----|----------|--------|
-| `palm_back.stl` | Back of the hand | 1 | PETG | v3.1g test print |
-| `palm_flap.stl` | Palm cover | 1 | TPU 95A | v3.1g test print |
-| `thumb.stl` | Thumb | 1 | PETG | v3.1g test print |
-| `finger-*.stl` | Finger segments (index, middle, ring 3 each; little 2) | 11 | PETG | v3.1g test print |
-| `cuff.stl` | Forearm cuff | 1 | PETG | v3.1g test print |
+| `palm_back.stl` | Back of the hand | 1 | PETG | v3.2 test print |
+| `palm_flap_print.stl` | Palm cover (with snip-off print supports) | 1 | TPU 95A | v3.2 test print |
+| `thumb.stl` | Thumb | 1 | PETG | v3.2 test print |
+| `finger-*.stl` | Finger segments (index, middle, ring 3 each; little 2) | 11 | PETG | v3.2 test print |
+| `cuff.stl` | Forearm cuff | 1 | PETG | v3.2 test print |
 
 ## Notes
 
-- Print at 100% only for now (screw holes are sized for M3). Sized STLs from the Hand Sizer number come later.
+- Print at 100% only for now; never scale in the slicer (screw holes and insert pockets are sized for M3). Sized STLs from the Hand Sizer number come later.
 - Keep a few spare finger segments and a spare palm cover printed; they're the parts most likely to wear.

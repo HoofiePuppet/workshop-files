@@ -1,4 +1,6 @@
-"""Pick print orientations: least support area (faces pointing more than 45 deg down, not on the bed),
+"""v3.2: finger segments and the thumb print at 45 deg: knuckle end down, tip up, the back (nail side) facing
+up and the hinge axis level, so supports only touch the palm side (user's test print: lying them on their side
+left rough support scars). Other parts: pick print orientations: least support area (faces pointing more than 45 deg down, not on the bed),
 with a stable footprint. Fingers and thumb are laid with the screw axis vertical (round holes, layers
 along the finger for bending strength) and only the up/down choice is searched.
 Writes stl/ (print-ready, already turned) and build/orient.json"""
@@ -44,6 +46,13 @@ def sphere_cands(n=200):
            [Rot.from_euler('y', a, degrees=True).as_matrix() for a in (90, 270)]
 
 
+def tilt45(x, d, z):
+    """Rotation taking the up direction (d + z)/sqrt2 to +z and the hinge axis x to +x."""
+    x = np.asarray(x, float); x /= np.linalg.norm(x)
+    u = np.asarray(d, float) + np.asarray(z, float); u -= x * (u @ x); u /= np.linalg.norm(u)
+    return np.stack([x, np.cross(u, x), u])
+
+
 def save(name, m, R, info):
     t = m.copy(); M = np.eye(4); M[:3, :3] = R; t.apply_transform(M)
     t.apply_translation([-t.bounds[0][0] - (t.bounds[1][0] - t.bounds[0][0]) / 2, -t.bounds[0][1] - (t.bounds[1][1] - t.bounds[0][1]) / 2, -t.bounds[0][2]])
@@ -58,20 +67,23 @@ def save(name, m, R, info):
 def main():
     info = {}
     for n in ('index', 'middle', 'ring', 'little'):
-        x = J[n]['joints'][0]['x']
         for f in sorted(glob.glob(f'build/fingers/{n}-*.stl')):
             m = trimesh.load(f)
-            _, s, b, R = best(m, axis_up(x))
-            save(f'finger-{n}-{os.path.basename(f)[-5]}', m, R, info)
+            k = int(os.path.basename(f)[-5]) - 1
+            jk = J[n]['joints'][k]
+            R = tilt45(jk['x'], jk['d'], jk['z'])
+            save(f'finger-{n}-{k + 1}', m, R, info)
     m = trimesh.load('build/thumb.stl')
-    TS = json.load(open('build/thumb_solution.json'))
-    R_open = Rot.from_quat(TS['open_quat'])
-    _, s, b, R = best(m, axis_up(R_open.inv().apply(PJ['thumb_frame']['x'])))
+    tp = PJ['thumb_print']
+    x = np.array(tp['x']); u = np.array(tp['up'])
+    R = np.stack([x, np.cross(u, x), u])
     save('thumb', m, R, info)
     for part in ('palm_back', 'palm_flap', 'cuff'):
         m = trimesh.load(f'build/{part}.stl')
         _, s, b, R = best(m, sphere_cands())
-        if part == 'palm_back':
+        if part in ('palm_back', 'palm_flap'):
+            # (v3.2b) the TPU cover is locked to the same turn: standing on its wrist-end edge, least support,
+            # and the snip-off stabilizer fins (flap_print.py) are built for that orientation
             # stand it on the wrist end: a real footprint (with a brim) and the logo on a near-vertical
             # face, so no support ever touches the pressed-in logo
             R = Rot.from_euler('x', 90, degrees=True).as_matrix()

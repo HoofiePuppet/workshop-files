@@ -21,7 +21,8 @@ EAR_EXT = 0.0               # arms at the standard spacing (the hand is trimmed 
 STRAPS_Y = (-36.0, -84.0); STRAP_W = 27.0
 FLEX_EXITS = [PJ['line_exits_x'][i] for i in (0, 2, 4, 6)]
 BUMP_H, BUMP_Y, BUMP_LEN, BUMP_WID = 2.8, -29.0, 17.0, 16.0
-SCREW_LEN = 4.0             # M3 x 4 flat head: tip passes 0.5 mm below the line channel
+SCREW_LEN = 4.0             # default clamp screw (M3 x 4 flat head); v3.2c picks 4/5/6 per clamp
+CUFF_R = 1.5                # v3.2c: 3 mm line channels
 
 
 def main():
@@ -82,20 +83,27 @@ def main():
             cut = np.minimum(cut, radial_slot(ys_, th, 3.5, 3.0, along='y'))
     shell = smax(shell, -cut, 0.6)
     # the hand swings about the wrist axis between the arms: trim the arms to its swept volume + 0.4 mm
-    tmP = trimesh.load('build/palm_back.stl')
+    # v3.2d: the palm AND the cover sweep past the arms. Each gets its own distance field (one combined mesh
+    # confused the inside/outside test where the two meet and left ragged spikes), 1-degree steps, and the
+    # swept field is smoothed before it trims, so the trimmed faces come out clean and rounded.
+    tms = [trimesh.load('build/palm_back.stl'), trimesh.load('build/palm_flap.stl')]
     from scipy.interpolate import RegularGridInterpolator as RGI
-    for lo_, hi_ in (([-32.0, -16.0, -6.0], [-15.0, 12.0, 22.0]), ([24.0, -16.0, -6.0], [40.0, 12.0, 22.0])):
+    from scipy import ndimage as _nd
+    for lo_, hi_ in (([-32.0, -16.0, -6.0], [-8.0, 12.0, 22.0]), ([21.0, -16.0, -6.0], [40.0, 12.0, 22.0])):
         gl = Grid(lo_, hi_, 0.3)
-        FP = RGI(gl.axes(), sdf(tmP, gl, band=3.0, spacing=0.15), bounds_error=False, fill_value=10.0)
+        FPs = [RGI(gl.axes(), sdf(m_, gl, band=3.0, spacing=0.15), bounds_error=False, fill_value=10.0) for m_ in tms]
         msk = (X >= lo_[0]) & (X <= hi_[0]) & (Y >= lo_[1]) & (Y <= hi_[1]) & (Z >= lo_[2]) & (Z <= hi_[2])
         Q = np.stack([X[msk], Y[msk], Z[msk]], 1)
         swp = np.full(len(Q), 10.0, np.float32)
-        for a_ in np.arange(-58.0, 31.0, 2.0):
+        for a_ in np.arange(-58.0, 30.6, 1.0):
             Rm = trimesh.transformations.rotation_matrix(np.radians(-a_), [1, 0, 0], W)[:3, :3]
             Qr = (Q - W) @ Rm.T + W                          # point in the hand's own frame at wrist angle a_
-            swp = np.minimum(swp, FP(Qr))
-        shell[msk] = smax(shell[msk], -(swp - 0.4), 0.3)
-        del FP, Q, swp, msk
+            for FP in FPs:
+                swp = np.minimum(swp, FP(Qr))
+        full = np.full(shell.shape, 10.0, np.float32); full[msk] = np.clip(swp, -10, 10)
+        full = _nd.gaussian_filter(full, 0.45 / g.p)
+        shell[msk] = smax(shell[msk], -(full[msk] - 0.4), 0.5)
+        del FPs, Q, swp, msk, full
     shell = opening(shell, g, 0.45)
     # tensioner line channels (1.8 mm), cut in the field with flared mouths where they leave the swelling
     from scipy.interpolate import RegularGridInterpolator
@@ -104,7 +112,8 @@ def main():
     PP = np.stack([X.ravel(), Y.ravel(), Z.ravel()], 1)
     tube = np.full(len(PP), 1e3, np.float32); chans = []
     pc = json.load(open('build/palm_channels.json'))
-    for e_x, x in zip(FLEX_EXITS, [cx_b + 0.9 * (e - np.mean(FLEX_EXITS)) for e in FLEX_EXITS]):
+    sp_ = 4.7 / (FLEX_EXITS[1] - FLEX_EXITS[0])                # lines 4.7 mm apart in the cuff whatever the palm exits
+    for e_x, x in zip(FLEX_EXITS, [cx_b + sp_ * (e - np.mean(FLEX_EXITS)) for e in FLEX_EXITS]):
         zs = np.arange(40, -5, -0.05)
         v = FS0(np.stack([np.full_like(zs, x), np.full_like(zs, BUMP_Y), zs], 1))
         inside = zs[v < 0]
@@ -117,19 +126,31 @@ def main():
             ins = zz[vv_ < 0]; top_ = ins.max(); bot_ = ins[ins > top_ - 12].min(); return top_, bot_
         # the line enters through the cuff's front end face (not the top), runs in the middle of the wall to
         # its clamp, and leaves into the inside of the cuff behind the swelling: only the clamp seats show on top
-        mids = []
-        for y in np.arange(-14.0, -41.1, -2.0):
-            t_, b_ = zs_at(y); mids.append(np.array([x, y, t_ - min(3.0, max(1.9, (t_ - b_) / 2 + 0.2))]))   # deep under the clamp seat
-        z0 = mids[0][2]
+        # v3.2d: 3 mm channel under the clamps (thick swelling, 2.5 mm deep so the floor is where the M3 x 4 tip lands);
+        # toward the front end the wall is only ~3 mm, so the channel narrows (down to 2 mm) and keeps to the middle
+        mids, rads = [], []
+        for y in np.arange(-6.0, -41.1, -2.0):
+            try:
+                t_, b_ = zs_at(y)
+            except ValueError:
+                continue                                   # in front of the cuff's front face
+            wall_ = t_ - b_
+            if abs(y - BUMP_Y) <= 6.5:
+                r_ = CUFF_R; dep_ = CUFF_R + 1.0
+            else:
+                r_ = float(np.clip(wall_ / 2 - 0.6, 1.0, CUFF_R)); dep_ = float(np.clip(wall_ / 2, r_ + 0.6, CUFF_R + 1.0))
+            mids.append(np.array([x, y, t_ - dep_])); rads.append(r_)
         tb_, bb_ = zs_at(-46.0)
-        path = [np.array([x, -4.0, z0])] + mids + [np.array([x, -45.0, bb_ + 0.4]), np.array([x, -47.0, bb_ - 2.0])]
-        from sdfparts import chain_field
-        tube = np.minimum(tube, chain_field(PP, path, 0.9))
-        for e0, e1 in ((path[0], path[1]), (path[-1], path[-2])):
+        path = [np.array([x, -4.0, mids[0][2]])] + mids + [np.array([x, -45.0, bb_ + 0.4]), np.array([x, -47.0, bb_ - 2.0])]
+        prad = [rads[0]] + rads + [rads[-1], rads[-1]]
+        for a0, a1, r0, r1 in zip(path[:-1], path[1:], prad[:-1], prad[1:]):
+            tube = np.minimum(tube, seg_dist(PP, a0, a1) - min(r0, r1))
+        for e0, e1, re_ in ((path[0], path[1], prad[0]), (path[-1], path[-2], prad[-1])):
             dv = (e1 - e0) / np.linalg.norm(e1 - e0)
             tt = np.arange(0, np.linalg.norm(e1 - e0), 0.05); seg = e0[None] + tt[:, None] * dv[None]
             i = int(np.argmax(FS0(seg) < 0)); e = seg[i]
-            tube = np.minimum(tube, seg_dist(PP, e - dv * 0.6, e + dv * 1.0) - 1.15)
+            tube = np.minimum(tube, seg_dist(PP, e - dv * 0.6, e + dv * 1.0) - (re_ + 0.25))
+        print('cuff line', round(float(x), 1), 'radii', [round(r__, 2) for r__ in rads], flush=True)
         zc = float(np.interp(-BUMP_Y, -np.array([m_[1] for m_ in mids]), [m_[2] for m_ in mids]))
         chans.append((x, ztop, zbot, zc, mids))
     shell = smax(shell, -tube.reshape(shell.shape), 0.4); del tube, PP
@@ -163,9 +184,12 @@ def main():
         ux = np.cross(nz, [0, 1.0, 0]); ux /= np.linalg.norm(ux); uy = np.cross(nz, ux)
         Mc = frame_matrix(p0, ux, uy, nz)
         cs = mf.Manifold.cylinder(1.75, 1.5, 2.95, 32).translate([0, 0, -1.7]) + mf.Manifold.cylinder(1.0, 2.95, 2.95, 32)
-        pilot = mf.Manifold.cylinder(SCREW_LEN + 0.3, 1.3, 1.3, 24).translate([0, 0, -SCREW_LEN - 0.3])
+        depth_ = ztop - zc                                  # channel centre below the top
+        need_ = depth_ + CUFF_R - 0.3                       # tip must reach the line lying on the channel floor
+        L_ = next((L0 for L0 in (4, 5, 6) if L0 >= need_ and L0 <= t - 0.8), min(6, int(t - 0.8)))
+        pilot = mf.Manifold.cylinder(L_ + 0.3, 1.3, 1.3, 24).translate([0, 0, -L_ - 0.3])
         cuff = cuff - cs.transform(Mc) - pilot.transform(Mc)
-        clamps.append({'x': float(x), 'y': float(yc), 'top': float(ztop), 'line_z': float(zc), 'wall': float(t), 'floor_below_screw': float(t - SCREW_LEN - 0.3)})
+        clamps.append({'x': float(x), 'y': float(yc), 'top': float(ztop), 'line_z': float(zc), 'wall': float(t), 'screw_len': int(L_), 'channel_floor_depth': float(depth_ + CUFF_R), 'floor_below_screw': float(t - L_ - 0.3)})
     parts = cuff.decompose(); main_p = max(parts, key=lambda p: p.volume())
     to_tm(main_p).export('build/cuff.stl'); print('cuff vol', round(main_p.volume()), 'genus', main_p.genus())
     json.dump({'clamps': clamps, 'bump_y': BUMP_Y, 'bump_height': BUMP_H, 'straps_y': STRAPS_Y}, open('build/cuff.json', 'w'), indent=1)

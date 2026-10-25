@@ -1,17 +1,24 @@
 #!/bin/sh
-# Sol Prosthetics Bukang-liwayway v3.1 (realistic): full rebuild from the MakeHuman export, in order.
-# Needs: python3 with numpy scipy trimesh manifold3d scikit-image shapely embreex
+# Sol Prosthetics Bukang-liwayway v3.2 (realistic): full rebuild, in order.
+# Needs: python3 with numpy scipy trimesh manifold3d scikit-image shapely embreex fast_simplification
 set -e
 cd "$(dirname "$0")"
 # python3 extract.py src/makehuman-body-smooth.stl 10   # needs the full MakeHuman body (not included); src/right-arm-oriented.stl is its output
 python3 skin.py           # smooth outer skin and child cavity distance fields (src/skin.npz)
-python3 thumb_solve.py    # thumb pinch pose and hinge axis (build/thumb_solution.json)
-python3 fingers2.py       # finger segments as smooth fields: filleted joints, exact screws and channels
-python3 palm2.py          # back of the hand, TPU flap, thumb (smooth fields)
-python3 cuff2.py          # forearm cuff with the low tensioner swelling and flared line channels
+# stage 1: v3 joint layout (axes, radii, screws) that the smooth parts are built on
+python3 fingers.py
+python3 thumb_solve.py
+python3 palm.py
+rm -rf build_v3 && cp -r build build_v3
+# stage 2: the smooth v3.2 parts
+python3 fingers2.py       # finger segments: barrel joints, knuckle axle, inserts, line channels, nails
+python3 thumb_solve.py    # thumb pinch pose and hinge axis for the final fingers
+python3 palm2.py          # back of the hand, TPU cover, thumb
+python3 cuff2.py          # forearm cuff, tensioner, line channels and clamps
 python3 orient.py         # print orientation -> stl/
 python3 clean_stl.py      # one closed solid per STL
-python3 flap_print.py stl/palm_flap.stl stl/palm_flap_print.stl   # TPU cover + snip-off stabilizer fins
+python3 flap_print.py stl/palm_flap.stl stl/palm_flap_print.stl   # TPU cover + snip-off support fins
+python3 hardware_card.py  # stl/HARDWARE.md
 # checks
 python3 check_fingers.py -4 0 30 60
 python3 check_thumb.py

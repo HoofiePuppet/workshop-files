@@ -1,39 +1,45 @@
 <img alt="Sol Prosthetics" src="../solprosthetics-logo.png" width="160">
 
-# Bukang-liwayway ("Sunrise") v3.1, realistic — test print
+# Bukang-liwayway ("Sunrise") v3.2, realistic — test print
 
-**Status:** v3.1g test print. It has not been printed or fitted to a child yet. · **Updated:** 2026-10-24
+**Status:** v3.2 test print. It has not been fitted to a child yet. · **Updated:** 2026-10-25
 **Designer:** Hoofie Puppet · **License:** CC BY-NC-SA 4.0 (see the repo's LICENSE)
 
 **Model 1, ages about 9 and under.**
 
-![Bukang-liwayway v3.1g](hand-hero.png)
+![Bukang-liwayway v3.2](hand-hero.jpg)
 
 This is a wrist-driven hand shaped from a real child's hand: a MakeHuman child model, smoothed and grown slightly so the shell is strong. Bending the wrist down pulls four braided lines, and the fingers close. Bending it back lets elastic cords open them again. The thumb sits on a friction hinge. You swing it to the grip you want and tighten one screw.
 
 This is Model 1, Bukang-liwayway. The same realistic hand will be the starting point for Sinag (stronger grip and tensioner) and Tanghali (motor).
 
-## What's new compared with v2
+## What changed in v3.2 (after the first full print, v3.1g)
 
-- **Realistic shape.** The fingers, nails, knuckles and palm come from a real child hand model. Every joint follows a real knuckle crease. On the back of the hand, the joints look like knuckles.
-- **Closed, safer palm.** The back of the hand is rigid PETG. The palm side is a thin (about 2 mm) TPU cover with a clean surface and a gently raised oval grip area in the middle. Its edge is one even 6 mm lip that lies flush in a matching step all the way round the opening, so there are no gaps and nothing sticks out. Three flush M3 × 5 countersunk screws hold the little-finger edge (the TPU bends there like a hinge); everywhere else 7 TPU snap pegs under the lip push through holes in the step and their mushroom heads pop out into small recesses on the inside (flush, nothing to feel). The child's hand goes in from the palm side, then the cover is pressed shut.
-- **Grip.** The five fingertips have shallow 1 mm recesses for bicycle inner-tube rubber, glued in with contact cement. The palm grips with the raised oval of the TPU cover (print it with fuzzy skin).
-- **Drain.** A drain hole at the front of the hand cavity lets sweat and water out.
-- **Hidden lines.** The flexor lines run through tunnels inside the back of the hand, and the return cords run inside the fingers. Nothing is strung on the outside. Channels are 1.5 mm (flexor line) and 1.6 mm (return cord in the fingers), 1.5 mm in the back of the hand and 1.8 mm in the cuff tensioner, and every channel exit is a smooth rounded flare.
-- **Logo.** The **Sol Prosthetics** logo and name are pressed 0.8 mm into the back of the hand, following its curve.
-- **Not fragile.** Every part is a single solid. The thin knife edges where joint cuts met the skin have been trimmed back to at least about 0.45 mm (one nozzle line), and edges are rounded. Every line tunnel has a rounded mouth so it can't fray the line.
+| Fix | What it does |
+|---|---|
+| Knuckles | One long **M3 × 45 axle** goes in from the index side through the index, middle and ring knuckles. Separate screws there were impossible to put in between the fingers. The little finger keeps its own screw. |
+| Open wrist end | The palm side now opens right out through the wrist end (a U, like the cuff), so the hand can actually go in. The soft cover closes it down to the wrist. Every opened edge is rounded so nothing pokes. |
+| Line holes | Much bigger: 2.5 mm along the fingers, 2 mm at the joints with 3 mm funnel mouths, 2 mm tunnels in the back of the hand, 3 mm in the cuff (2 mm at its thin front end). The old 1.5 mm holes printed too small to thread. |
+| Thumb | The hinge screw is now an **M3 × 20** that threads about 10 mm deep into solid plastic (it had only 2–3 mm and came loose). Natural thumbnail and pad, flush at the nail's free edge. |
+| Heat-set inserts | Brass M3 inserts where the plastic is thick enough: the index knuckle and the 3 cover screws. |
+| Cover | Screw holes centred on a wider (9.4 mm) hinge edge, 7 snap pegs, the corner near the wrist ears fixed, and a print version with snip-off supports and a sole bar built in. |
+| Cuff | Trimmed separately to the back of the hand and to the cover so nothing rubs from 55° down to 30° up; smooth edges, round line entry holes. |
+| Printing | Fingers and thumb print standing at 45° (nail side up), so no support scars on the visible faces. Every STL is already turned to its print direction. |
 
 | | |
 |---|---|
-| ![Back of the hand](hand-back.png) | ![Palm side with the TPU cover](hand-palm.png) |
-| ![Side, with the cuff](hand-side.png) | ![Exploded view](hand-exploded.png) |
+| ![Back of the hand](hand-back.jpg) | ![Palm side with the TPU cover](hand-palm.jpg) |
+| ![Side, with the cuff](hand-side.jpg) | ![Open wrist end, cover off](hand-open-wrist.jpg) |
+| ![Which screw goes where](hand-hardware.jpg) | ![Where the heat-set inserts go](hand-inserts.jpg) |
 
-> **Print at 100% only for now.** The screw holes are sized for M3 and come out wrong if you scale the STLs in the slicer. Sized sets from the Hand Sizer number come later.
+> **Print at 100% only for now.** Never scale the STLs in the slicer: the screw holes, insert pockets and joint gaps would change size. Ready-made size sets, each with its own hardware card, come after the test fit.
 
 ## Guides
 
-- [Printing and assembly guide (PDF)](printing-and-assembly-guide.pdf): parts, print settings, hardware, tools, step-by-step assembly, tuning and care.
-- [Illustrated assembly and stringing guide (PDF)](assembly-and-stringing-illustrated.pdf): exploded view, which screw goes where, the stringing map and a cut-through of one finger.
+The two PDF guides still describe **v3.1g**. The line routing is the same, but for v3.2 use the hardware list below, [`stl/HARDWARE.md`](stl/HARDWARE.md) and the two pictures above for screws and inserts. Updated guides come after the test print.
+
+- [Printing and assembly guide (PDF, v3.1g)](printing-and-assembly-guide.pdf)
+- [Illustrated assembly and stringing guide (PDF, v3.1g)](assembly-and-stringing-illustrated.pdf)
 
 ## Size at 100%
 
@@ -49,46 +55,51 @@ This is Model 1, Bukang-liwayway. The same realistic hand will be the starting p
 
 | File | Part | Material | Qty | Supports |
 |---|---|---|---|---|
-| `palm_back.stl` | Back of the hand: knuckles, thumb mount, wrist ears, line tunnels, logo, step for the cover | PETG | 1 | Yes, from the build plate. It stands on the wrist end; use a brim. Supports never touch the logo. |
-| `palm_flap.stl` | Palm cover: raised grip oval, flush edge lip with 7 push-through snap pegs, screwed hinge edge | **TPU 95A** | 1 | Few |
-| `palm_flap_print.stl` | **Print this one instead of `palm_flap.stl`:** the same cover with two snip-off stabilizer fins that stop the tall, floppy TPU part wobbling. Print standing up as it loads, with a 5 mm brim. Afterwards snip the 14 small tabs at the lip edge with flush cutters and shave any nub flush with a knife | **TPU 95A** | 1 | Under the snap pegs only |
-| `thumb.stl` | Thumb with its hinge tongue and rubber pocket | PETG | 1 | Few |
-| `finger-<name>-1/2/3.stl` | Finger segments (little finger has 2); the tip segments have a shallow fingernail you can paint | PETG | 1 of each (11) | Few |
+| `palm_back.stl` | Back of the hand: knuckles, thumb mount, wrist ears, line tunnels, logo, step for the cover | PETG | 1 | Yes, from the build plate; use a brim. Supports never touch the logo. |
+| `palm_flap_print.stl` | **Print this one:** the TPU palm cover with snip-off support fins and a 0.6 mm sole bar built in. Snip the small tabs afterwards with flush cutters and shave any nub flush | **TPU 95A** | 1 | Normal supports on the build plate only (under the snap pegs) |
+| `palm_flap.stl` | The same cover without the print aids (for reference) | TPU 95A | — | — |
+| `thumb.stl` | Thumb with its hinge tongue, pad and nail | PETG | 1 | Yes; stands at 45° |
+| `finger-<name>-1/2/3.stl` | Finger segments (little finger has 2); tip segments have a nail you can paint | PETG | 1 of each (11) | Yes; stand at 45°, nail side up, with a brim |
 | `cuff.stl` | Forearm cuff: low tensioner swelling with flush line clamps, strap slots, vents | PETG | 1 | Few |
+| `HARDWARE.md` | Hardware card for this size: every screw and insert | — | — | — |
 
-**Print settings:** PETG (never PLA, it softens in the heat), 0.2 mm layers, 5 walls, 40–50% gyroid infill for the fingers, thumb and back, 30% for the cuff. TPU flap: slow (20–30 mm/s), little or no retraction, 4 walls (so the 3 mm snap pegs print solid), 4 top and 4 bottom layers, 30% gyroid infill, and **fuzzy skin on the outer grip face only** so the palm isn't slippery. Keep fuzzy skin off the snap pegs: it adds about 0.3 mm and they jam in their 3.2 mm holes (paint it on, or use a modifier round the pegs; or skip it). A 0.4 mm nozzle is assumed.
+**Print settings:** PETG (never PLA, it softens in the heat), 0.4 mm nozzle, 0.2 mm layers, 5 walls, 40–50% gyroid infill for the fingers, thumb and back, 30% for the cuff. TPU cover: slow (20–30 mm/s), little or no retraction, 4 walls (so the 3 mm snap pegs print solid), 4 top and 4 bottom layers, 30% gyroid, 5 mm brim, and **fuzzy skin on the outer grip face only**. Keep fuzzy skin off the snap pegs: it adds about 0.3 mm and they jam in their holes.
 
 ## Hardware
 
 | Item | Qty | Use |
 |---|---|---|
-| M3 × 12 stainless **button-head** screw (ISO 7380) | 9 | Index, middle: knuckle, middle and tip joints; ring: middle and tip joints; thumb hinge |
-| M3 × 10 stainless button-head screw | 3 | Ring knuckle; little finger knuckle and tip joint |
+| M3 × 45 stainless **button-head** screw | 1 | Knuckle axle: in from the index side through the index, middle and ring knuckles |
+| M3 × 12 stainless button-head screw | 6 | Middle and tip joints of the index, middle and ring fingers |
+| M3 × 10 stainless button-head screw | 2 | Little finger knuckle and tip joint |
+| M3 × 20 stainless button-head screw | 1 | Thumb hinge (threads straight into the plastic, no insert) |
 | M3 × 6 stainless screw | 2 | Wrist hinge (one through each cuff arm into the hand's ear pad) |
 | M3 × 4 stainless **countersunk (flat-head)** screw | 4 | Line clamps in the tensioner swelling; they sit flush |
-| M3 × 5 stainless **countersunk (flat-head)** screw | 3 | The palm cover's hinge edge; they sit flush |
-| Braided fishing line, about 50 lb / 20 kg | about 2 m | 4 flexor lines |
+| M3 × 5 stainless countersunk (flat-head) screw | 3 | The palm cover's hinge edge; they sit flush |
+| M3 brass **heat-set insert**, 4.2 mm across × 4 mm long (double-knurled) | 4 | Index knuckle inner arm (faces the middle finger); 3 in the cover step |
+| PE braided fishing line #4, 50 lb (about 0.32 mm) | about 2 m | 4 flexor lines |
 | 1 mm round elastic cord | about 1.5 m | 4 return cords |
-| Bicycle inner tube | 1 small piece | Grip pads and the two thumb-hinge washers |
-| Contact cement (e.g. Rugby) | a little | Gluing the grip pads into their recesses |
+| Bicycle inner tube, about 1 mm | 1 small piece | Grip pads and the two thumb-hinge washers |
+| E6000 or contact cement | a little | Gluing the grip pads |
 | Hook-and-loop strap, sew-on, 25 mm | 2 | Cuff |
 | Washable foam or mesh liner, about 1–1.5 mm | 1 piece | Inside the cuff and the back of the hand |
 
+One 2 mm hex key fits every button-head screw.
+
 ## How it goes together
 
-1. **Clean the holes.** Run an M3 screw through every joint hole once to cut the threads. Every joint hole goes all the way through. The far side is a 2.6 mm pilot hole, so the screw threads into the plastic and no nuts are needed.
-2. **Fingers.** Every joint is a rounded barrel in a cup, held by one button-head screw from the side. The head sits flush in a round recess (that side is the head side); the far side has a through pilot hole (the screw is shorter than the joint, so nothing pokes out). Tighten until the joint moves freely without wobble. A flat stop on the back of each joint keeps the finger from bending backwards.
-3. **Fit the fingers to the palm in this order: middle, index, ring, little.** Each screw goes in from the side with the round recess. Doing the middle finger first means every screw is still reachable.
-4. **Thumb.** Put a small inner-tube washer on each side of the thumb tongue, fit it into the slotted barrel on the thumb mount, and screw in the M3 × 12. Swing the thumb to the grip position, then tighten until it holds there.
-5. **Return cords (open the fingers).** Knot the elastic in the knot pocket under the fingertip rubber pad. Thread it through the upper channel of each segment and through the tunnel in the back of the hand. Knot it in the small counterbore on the wrist end of the back, just snug enough to open the finger.
-6. **Flexor lines (close the fingers).** Knot each line in the same fingertip pocket. Thread it through the lower channel of each segment, into the knuckle block and through its tunnel to the wrist end. A thin wire or long needle helps.
-7. **Wrist.** Join the back of the hand to the cuff with the two M3 × 6 screws through the cuff's ear plates.
-8. **Tensioner.** Feed each line into its hole in the front end of the cuff. It runs inside the wall, under its clamp, and comes out on the inside of the cuff behind the swelling; trim the tail there. With the wrist straight and the fingers open, pull it snug and screw in its M3 × 4 flat-head clamp screw from the top until it sits flush; the screw pins the line. Bend the wrist down and check that the fingers close. Adjust each line until all four close together.
-9. **Grip pads.** Cut inner-tube rubber to the recess sizes below. Wipe the recess and the rubber with alcohol, put a thin film of contact cement on both, let it go tacky (about 10 minutes), then press the pad in firmly.
-10. **Palm cover.** Lay the cover's little-finger edge in its step on the back and fit the three M3 × 5 flat-head screws from outside until they sit flush. Don't overtighten; the TPU only needs to be held. Fold the cover shut and press firmly over each snap peg until its head pops through the hole in the step (you'll feel it click). To open it again, peel the edge back firmly; the TPU heads squeeze back through.
-11. **Straps and liner.** Sew the straps on, fit the liner, and sand any edge that touches skin.
-
-**Grip pad sizes (cut the rubber to this):** fingertips 7 mm wide ovals: index 7 × 6.5, middle 7 × 7, ring 7 × 6.5, little 7 × 9 mm, thumb tip 11 × 8 mm.
+1. **Set the inserts.** Soldering iron at about 240 °C for PETG. Let the iron's weight push each insert in, then press it flush with something flat and cool. One goes in the index knuckle segment's inner arm (the side that faces the middle finger), three go in the cover step on the little-finger edge of the back. The thumb has **no** insert.
+2. **Clean the holes.** Run an M3 screw through every joint hole once. Every joint hole goes all the way through.
+3. **Fingers.** Every middle and tip joint is a rounded barrel in a cup, held by one button-head screw from the side; the head sits flush in its round recess and the screw threads into the far side. Tighten until the joint moves freely without wobble.
+4. **Knuckle axle.** Line up the index, middle and ring knuckles on the back of the hand and push the M3 × 45 in from the index side, through all three, and screw it into the index insert until its head sits in the recess. The little finger's knuckle has its own M3 × 10.
+5. **Thumb.** Put a small inner-tube washer on each side of the thumb tongue, fit it into the thumb mount, and screw in the M3 × 20. Swing the thumb to the grip position, then tighten until it holds there.
+6. **Return cords (open the fingers).** Knot the elastic in the knot pocket under the fingertip pad. Thread it through the upper channel of each segment and through its tunnel in the back of the hand. Knot it at the wrist end, just snug enough to open the finger.
+7. **Flexor lines (close the fingers).** Knot each line in the same fingertip pocket. Thread it through the lower channel of each segment, into the knuckle block and through its tunnel to the wrist end. A thin wire or long needle helps.
+8. **Wrist.** Join the back of the hand to the cuff with the two M3 × 6 screws through the cuff's ear plates into the ear pads (the ear holes go right through).
+9. **Tensioner.** Feed each line into its hole in the front end of the cuff. It runs inside the wall, under its clamp, and comes out inside the cuff behind the swelling. With the wrist straight and the fingers open, pull it snug and screw in its M3 × 4 flat-head clamp screw from the top until it sits flush; the screw pins the line. Bend the wrist down and check that the fingers close together.
+10. **Grip pads.** Sand the inner-tube rubber and the PETG dull, wipe both with alcohol, put a thin film of glue on both, wait until tacky, then press together and clamp for 24 hours. Let it cure 72 hours before a child wears it.
+11. **Palm cover.** Lay the cover's little-finger edge in its step and fit the three M3 × 5 flat-head screws into the inserts until they sit flush. Don't overtighten. Fold the cover shut and press over each snap peg until it clicks through.
+12. **Straps and liner.** Sew the straps on, fit the liner, and sand any edge that touches skin.
 
 ## Putting it on and caring for it
 
@@ -99,18 +110,18 @@ This is Model 1, Bukang-liwayway. The same realistic hand will be the starting p
 
 ## Tested in CAD
 
-- **Fingers:** no collisions between any parts with the fingers straight, at 30° per joint and at 60° per joint. The stop catches the finger just past straight.
-- **Wrist:** the hand swings from 55° down to 25° up with no collisions.
-- **Closing:** with the wrist bent down 40°, the fingers close about 43–48° per joint (little finger about 67°). At 50° down they close about 54–60° per joint.
-- **Pinch:** the thumb meets the index fingertip at about 52° per finger joint, with the wrist bent down about 48°. The middle finger closes alongside it, about 2.5 mm short. Swing the thumb a little further on its hinge for an earlier, tighter pinch.
-- **Thumb hinge:** clear of the palm along its whole 72° swing.
-- **Print checks:** every STL is one closed, watertight solid with no non-manifold edges. Line tunnels have about 0.9 mm of wall or more over 95% of their length. Under 1% of any part's surface is thinner than 0.45 mm.
+- **Fingers:** no collisions with the fingers straight, at 30° and at 60° per joint.
+- **Wrist:** the hand swings from 55° down to 30° up with nothing rubbing, cover included.
+- **Pinch:** the thumb meets the index fingertip at about 50–55° of finger curl.
+- **Thumb hinge:** clear of the palm along its whole swing.
+- **Knuckle axle:** the path is clear through all three knuckles.
+- **Print checks:** every STL is one closed, watertight solid. Line tunnels keep about 1 mm of plastic round them; the clamp screws land right on the line.
 
-**On the test print, check:** joint friction, how far the fingers close as the wrist bends, the pinch, how the lines slide, how the cover snaps feel after many openings, and the fit inside the cavity.
+**On the v3.2 print, check:** how the knuckle axle turns, the thumb hinge grip, threading the lines and elastic, how far the fingers close, the pinch, the cover snaps, and putting the hand in and out through the open wrist end.
 
 ## Source (`cad/`)
 
-The hand is generated from the MakeHuman model by Python scripts (trimesh, manifold3d, scikit-image, scipy, shapely, embreex). Run `build_all.sh` to rebuild everything and run the checks.
+The hand is generated from the MakeHuman model by Python scripts (trimesh, manifold3d, scikit-image, scipy, shapely, embreex). Run `build_all.sh` to rebuild everything and run the checks (also needs fast_simplification).
 
 | Script | Step |
 |---|---|
@@ -122,7 +133,8 @@ The hand is generated from the MakeHuman model by Python scripts (trimesh, manif
 | `cuff2.py` | Forearm cuff with the tensioner swelling, line channels and clamps |
 | `sdf.py`, `sdfparts.py`, `lib_grid.py`, `rlib.py` | Smooth-shape (distance field) helpers |
 | `orient.py`, `clean_stl.py` | Print orientation and clean STLs |
-| `flap_print.py` | Adds the snip-off stabilizer fins to the palm cover (`palm_flap_print.stl`) |
+| `flap_print.py` | Adds the snip-off support fins and sole bar to the palm cover (`palm_flap_print.stl`) |
+| `hardware_card.py` | Writes `stl/HARDWARE.md` (screw lengths and inserts for this size) |
 | `check_*.py` | The checks above |
 
 `src/right-arm-oriented.stl` is the extracted arm, so the build can run without the full MakeHuman body. `src/logo_rects.json` is the pressed-in logo pattern.
@@ -136,3 +148,4 @@ The hand is generated from the MakeHuman model by Python scripts (trimesh, manif
 - 2026-10-23 (evening): v3.1e. Palm side redone: thin TPU cover with one even flush lip all round, 3 hinge screws on the little-finger side and snap bumps elsewhere (no hook-and-loop, no vents or pad pockets on the cover; raised oval grip instead); no seam swelling. Fixed: MCP tongue screw bores (were missing), wrist ear pilot holes (were 4.75 mm off the axis), cuff thumb-side hinge arm (was cut away), cuff vents (single slots), jagged fingertip recess rims. Logo smaller and nearer the knuckles.
 - 2026-10-24: v3.1f. Cover opening made symmetric with an even step all round; cover is one clean piece (stray loops at its edge removed) with its 3 hinge screws, now M3 × 5. Knuckle tongue bores round and clean. Thumb-mount hole on the back closed. Cuff arms trimmed to the hand's swing so nothing sticks out; cuff lines enter at the front end and leave inside the cuff, so only the four clamp seats show on top (now staggered, each a separate round seat). Every finger joint hole goes all the way through. Shallow fingernails on every fingertip and the thumb.
 - 2026-10-24 (later): v3.1g. Screw list corrected (9 × M3×12, 3 × M3×10, no M3×8). Cover snaps are now bigger push-through pegs (3 mm shaft, 4 mm mushroom head) that lock in recesses on the inside of the step. Knuckle screw holes fixed: each hole was drilled endlessly and cut a second, off-centre hole through the neighbouring knuckles; now each stops at its own knuckle, with a clean round ring round it.
+- 2026-10-25: v3.2, fixes from the first full print. Shared M3 × 45 knuckle axle for index, middle and ring; open wrist end with rounded edges; much bigger line holes (2–3 mm) with funnel mouths; thumb hinge M3 × 20 deep in solid plastic, new thumb pad and nail; nail dips filled flush; heat-set inserts in the index knuckle and the cover step; cover screws centred on a wider hinge edge and the cover corner fixed; cuff trimmed separately to the hand and the cover; fingers and thumb print at 45°; hardware card per size.

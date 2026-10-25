@@ -27,12 +27,13 @@ OUT = 'build'
 Z_SEAM, RAY_X, WRIST, EAR_R, TUNNEL_DEPTH = P3.Z_SEAM, P3.RAY_X, P3.WRIST, P3.EAR_R, P3.TUNNEL_DEPTH
 LOGO_C, LOGO_SCALE = P3.LOGO_C, P3.LOGO_SCALE
 PITCH = 0.3
-R_FLEX, R_RET = 0.75, 0.75  # line tunnel radii: 1.5 mm flexor and return cord
+R_FLEX, R_RET = 1.0, 1.0    # v3.2c line tunnels 2.0 mm (flexor and return cord)
+RIDGE_WALL = 3.9            # v3.2c: back of the hand at least this thick along each tunnel (low 'tendon' ridges)
 WALL_MIN = 3.2              # shell wall round the hand cavity before smoothing (about 2.5 mm finished)
 # flap closure (v3.1b): flush lap joints. The TPU flap's edge laps into a recessed step of the back.
 # Little-finger side: 3 flush M3 x 4 countersunk screws (the TPU there acts as the hinge).
 # Under the knuckles and on the thumb side: thin adhesive hook-and-loop between the lap and a recessed land.
-SCREWS_Y = (16.0, 26.0, 36.0)
+SCREWS_Y = (18.5, 25.5, 32.5)          # v3.2: on the straight part of the hinge edge (clear of the corners)
 # v3.1e palm cover: TPU cover = the palm face; its edge (COV_T thick, COV_L wide) lies flush in one even
 # recessed step round the opening; 3 flush M3 x 4 screws on the little-finger side, TPU snap bumps elsewhere
 COV_T, COV_L = 1.6, 6.0
@@ -40,8 +41,17 @@ WALL_COVER = 2.7                    # cover thickness before smoothing (about 2 
 WALL_RIM, WALL_BOSS = 4.6, 6.2      # shell before smoothing in the band round the opening / at the screws
 SNAP_R, SNAP_GAP = 0.7, 11.0        # snap bump radius and spacing
 EAR_EXT = 0.0                       # (v3.1e had 2.1; v3.1f trims the hand flat at the ears instead)
-OPEN_X, OPEN_Y, OPEN_R = (-10.0, 17.0), (4.0, 42.0), 9.0   # palm opening: symmetric rounded rectangle (x, y, corner r)
-SCREW_X = 20.0                      # cover screws on the palm face, along the little-finger edge
+OPEN_X, OPEN_Y, OPEN_R = (-10.0, 17.0), (-14.0, 42.0), 9.0   # v3.2d: palm opening runs out through the wrist end
+# (the old band across the wrist end closed it into a ring the hand could not get into; the back is now a U like the
+# cuff, the TPU cover closes the palm face right down to the wrist end; every cut edge there is rounded)
+WRIST_BAND_EXTRA = 1.0             # v3.2: band below the cover at the wrist end 1 mm thicker
+THUMB_EXT = 2.8                    # v3.2: thumb barrel grown on the threaded side for a heat-set insert
+INS_R, INS_D = 2.0, 5.5            # M3 heat-set insert pocket (4.2 mm OD, 4-5 mm long): 4.0 mm hole
+THUMB_SCREW = 20                   # v3.2b: M3 x 20; the barrel's threaded end is buried in the solid thumb mount, so the
+THUMB_PILOT = 15.0                 # pilot runs on into it (no insert possible there): ~9.5 mm of thread
+from fingers2 import AXLE
+HINGE_EXTRA = 3.4                   # v3.2: lip + step 9.4 mm wide along the little-finger hinge edge (flat-head screws fit)
+SCREW_X = OPEN_X[1] + (0.15 + COV_L + HINGE_EXTRA + 0.25) / 2   # cover screws centred on that wider step
 
 
 class Sampler:
@@ -133,6 +143,7 @@ def main():
     from skin import smoothstep
     xs = np.linspace(-60, 60, 241); yk_x = knuckle_y(xs)
     top = [(x, min(yt, 22.0) if x < RAY_X else yt) for x, yt in zip(xs, yk_x - 15.0)]
+    CL = (COV_L + HINGE_EXTRA * smoothstep(12.0, 16.0, P[:, 0])).astype(np.float32)   # lip/step width per point
     poly = shapely.Polygon([(-60, -1.0)] + top + [(60, -1.0)])
     gx = g.o[0] + g.p * np.arange(g.n[0]); gy = g.o[1] + g.p * np.arange(g.n[1])
     GX, GY = np.meshgrid(gx, gy, indexing='ij')
@@ -144,6 +155,10 @@ def main():
     region = smax(D2, P[:, 2] - Z_SEAM, 0.8)
     rw = np.sqrt((P[:, 1] - WRIST[1]) ** 2 + (P[:, 2] - WRIST[2]) ** 2)
     earz = rw - (EAR_R + 1.85)
+    # v3.2d: the cuff-arm clearance only matters near the ear pads (the arms sit outside them); measured from the
+    # wrist axis alone it also switched off the cover step across the palm face near the (now open) wrist end
+    d_in = np.minimum(P[:, 0] - (min(ears) - 2.0), (max(ears) + 2.0) - P[:, 0])
+    earz = (earz + 30.0 * smoothstep(2.0, 5.0, d_in)).astype(np.float32); del d_in
     def rrect(x0, x1, y0, y1, r):
         cx_, cy_, hx, hy = (x0 + x1) / 2, (y0 + y1) / 2, (x1 - x0) / 2 - r, (y1 - y0) / 2 - r
         dx = np.abs(P[:, 0] - cx_) - hx; dy = np.abs(P[:, 1] - cy_) - hy
@@ -154,13 +169,63 @@ def main():
     # v3.1e: no seam swelling. Wall minimum all round the cavity, thicker in a band round the opening (cover
     # lip + ledge; wide enough for wherever the final edge lands) and locally round the three hinge screws
     cvP = Cv(P)
-    rim = (1 - smoothstep(COV_L + 2.0, COV_L + 12.0, np.abs(s0 - COV_L / 2))).astype(np.float32)
+    rim = (1 - smoothstep(CL + 2.0, CL + 12.0, np.abs(s0 - CL / 2))).astype(np.float32)
     boss = np.zeros(len(P), np.float32)
     for yy in SCREWS_Y:
         boss = np.maximum(boss, np.clip(1 - (np.linalg.norm(P - screw_pts[SCREWS_Y.index(yy)], axis=1) - 5.0) / 3.0, 0, 1))
     base = WALL_MIN + (WALL_COVER - WALL_MIN) * smoothstep(-2.0, -10.0, s0)   # thinner inside the opening (the cover)
     wall = base + (WALL_RIM - base) * rim; del base
     wall = wall + (WALL_BOSS - wall) * boss
+    wb = (smoothstep(14.0, 4.0, P[:, 1]) * smoothstep(Z_SEAM - 2.0, Z_SEAM - 6.0, P[:, 2])).astype(np.float32)   # side walls 1 mm thicker near the open wrist end
+    wall = wall + WRIST_BAND_EXTRA * wb; del wb
+    # v3.2c: route the line tunnels first, then thicken the back along them (low tendon-like ridges) so a
+    # 2.0 mm tunnel keeps about 1 mm of plastic outside and 0.8 mm toward the hand
+    exits = np.linspace(WRIST[0] - 12.25, WRIST[0] + 12.25, 8)      # 3.5 mm apart at the wrist end
+
+    # logo footprint (same centre as the pressed-in logo below): tunnels run 0.8 mm deeper under it so the
+    # 0.8 mm logo still leaves ~1 mm over them, and the ridge there is 0.8 mm thicker to match
+    rects0 = json.load(open('src/logo_rects.json'))
+    _zt = P3.dorsal_point(FO, -3.0, 35.0, 0.0)[2]; _xs = np.arange(-45, 45, 0.1)
+    _vv = FO(np.stack([_xs, np.full_like(_xs, 35.0), np.full_like(_xs, _zt - 4.0)], 1)); _xin = _xs[_vv < 0]
+    LC0 = ((_xin.min() + _xin.max()) / 2, 35.0)
+    LB0 = (LC0[0] + 0.72 * min(r_[0] for r_ in rects0), LC0[0] + 0.72 * max(r_[1] for r_ in rects0),
+           LC0[1] + 0.72 * min(r_[2] for r_ in rects0), LC0[1] + 0.72 * max(r_[3] for r_ in rects0))
+
+    def logo_mask(x, y):
+        dx = np.maximum(np.maximum(LB0[0] - x, x - LB0[1]), 0); dy = np.maximum(np.maximum(LB0[2] - y, y - LB0[3]), 0)
+        return (1 - smoothstep(0.0, 3.0, np.sqrt(dx * dx + dy * dy))).astype(np.float32)
+
+    class _LogoAware:
+        def __init__(self, F): self.F = F
+        def __call__(self, Q):
+            Q = np.atleast_2d(Q); return self.F(Q) + 0.8 * logo_mask(Q[:, 0], Q[:, 1])
+
+    def route_tunnels(FOs):
+        FOs = _LogoAware(FOs)
+        out = []; k = 0
+        for n in ORDER:
+            info = J[n]['joints'][0]; O0 = np.array(info['O']); xf, df = np.array(info['x']), np.array(info['d'])
+            R0 = info['R']; F0 = np.array(J[n]['flexor'][0]); Rr0 = np.array(J[n]['return'][0])
+            for kind, start, lat in (('flex', F0, -1.3), ('ret', Rr0, 1.3)):
+                r = R_FLEX if kind == 'flex' else R_RET
+                q = O0 - df * 16 + xf * lat
+                D = P3.dorsal_point(FOs, q[0], q[1], TUNNEL_DEPTH)
+                if kind == 'flex':
+                    A = start - df * (R0 + 1.0); B = A - df * 3.5
+                    climb = FG.spline([A, B, D + df * 3.0, D], 14)            # starts behind the tongue
+                else:
+                    climb = FG.spline([start - df * (R0 + 1.0), start - df * (R0 + 4.0), D + df * 3.0, D], 12)
+                run = [P3.dorsal_point(FOs, D[0] + (exits[k] - D[0]) * t, D[1] + (-2.0 - D[1]) * t, TUNNEL_DEPTH) for t in np.linspace(0, 1, 26)[1:]]
+                path = chan_pts(climb + run[:-1] + [run[-1] - np.array([0, 3.0, 0])], r, (FOs, Cv))
+                out.append((kind, r, path, run[-1])); k += 1
+        return out
+
+    dmin = np.full(len(P), 1e3, np.float32)
+    for _, _, path_, _ in route_tunnels(FO):
+        dmin = np.minimum(dmin, chain_field(P, path_, 0.0, pad=5.0))
+    P3.CHANNELS.clear()
+    ridge = (1 - smoothstep(1.8, 4.2, dmin)).astype(np.float32); del dmin
+    wall = np.maximum(wall, (RIDGE_WALL + 0.8 * logo_mask(P[:, 0], P[:, 1])) * ridge); del ridge
     wall_ok = smoothstep(3.0, 7.0, earz)                    # not at the wrist ears (cuff clearance)
     O2s = (wall_ok * smin(O2, cvP - wall, 1.5) + (1 - wall_ok) * O2).astype(np.float32)
     del wall_ok, rim, boss, wall, s0
@@ -230,8 +295,13 @@ def main():
     tsw = np.full(len(P), 15.0, np.float32); tsw[m] = np.clip(sw, -15, 15)
     tsw = ndimage.gaussian_filter(tsw.reshape(shape), 0.45 / g.p).ravel()   # smooth swing carve
     shell = smax(shell, -tsw, 0.8)
+    ends0 = [pivot + xj * LB / 2, pivot - xj * LB / 2]
+    hs0 = 1 if Cv(np.array(ends0))[0] > Cv(np.array(ends0))[1] else -1      # screw head side (farther from the cavity)
+    uc_ = -hs0 * THUMB_EXT / 2                                              # barrel grown on the threaded side
     u, v, w = TJw.loc(P)
-    barrel = smax(np.sqrt(v * v + w * w) - TJw.R, np.abs(u) - LB / 2, 1.2)
+    barrel = smax(np.sqrt(v * v + w * w) - TJw.R, np.abs(u - uc_) - (LB + THUMB_EXT) / 2, 1.2)
+    ce_ = pivot - hs0 * xj * (LB / 2 + THUMB_EXT)
+    print('thumb barrel threaded end: cavity clearance', round(float(Cv(ce_[None])[0]), 2), 'mm (centre of end face)', flush=True)
     shell = smin(shell, barrel, 1.5)
     shell = smax(shell, -tsw, 0.4)          # re-carve: the barrel fillet must not bridge into the thumb's path
     # webs left standing between the thumb's path and the index finger's path: material within 2 mm of
@@ -253,7 +323,7 @@ def main():
     rw = np.sqrt((P[:, 1] - WRIST[1]) ** 2 + (P[:, 2] - WRIST[2]) ** 2)
     disc = np.maximum(rw - EAR_R, np.maximum(-14 - P[:, 1], P[:, 1] - 0.0))
     keep = smin(-1.0 - P[:, 1], disc, 1.5)
-    shell = smax(shell, keep, 0.9)
+    shell = smax(shell, keep, 1.5)          # v3.2d: soft, well-rounded wrist end (the open U edge must not poke)
     del disc, barrel, u, v, w, mb, slot, m, Pm, sw
     import gc; gc.collect()
 
@@ -269,7 +339,7 @@ def main():
     # COV_L + 2 mm away from the finger and thumb swing carves, so its edge (and the step under it) only
     # ever runs over smooth skin
     flap_reg = s_open; del s_open
-    band = (flap_reg > -1.0) & (flap_reg < COV_L + 1.0)
+    band = (flap_reg > -1.0) & (flap_reg < CL + 1.0)
     print('opening band clearance: min thumb-swing', round(float(tsw[band].min()), 2), 'min finger-swing', round(float(kc[band].min()), 2), flush=True)
     flap = smax(shell, flap_reg + 0.15, 0.7)
     back = smax(shell, -(flap_reg - 0.15), 0.7)
@@ -287,7 +357,7 @@ def main():
         back[near] = smin(b, J0.tongue(Pn), 1.0)
     back = smax(back, -slot_full, 0.4)
     back = smax(back, -drain_f, 0.5)
-    back = smax(back, keep, 0.9)
+    back = smax(back, keep, 1.5)
     back = smax(back, -(flap_reg - 0.15), 0.7)
     del slot_full
     wz = (smoothstep(-2.0, -8.0, P[:, 0]) * smoothstep(36.0, 42.0, P[:, 1]) * smoothstep(66.0, 60.0, P[:, 1])
@@ -308,7 +378,7 @@ def main():
             d0 = np.maximum(np.sqrt(v0 * v0 + w0 * w0) - (J0.R + 1.5), np.abs(u0) - 9.0)
             w = np.maximum(w, np.clip(1 - d0 / 2.0, 0, 1))
         ut, vt, wt_ = TJw.loc(P)
-        dt = np.maximum(np.sqrt(vt * vt + wt_ * wt_) - (TJw.R + 2.0), np.abs(ut) - (LB / 2 + 2.0))
+        dt = np.maximum(np.sqrt(vt * vt + wt_ * wt_) - (TJw.R + 2.0), np.abs(ut - uc_) - ((LB + THUMB_EXT) / 2 + 2.0))
         w = np.maximum(w, np.clip(1 - dt / 2.0, 0, 1))
         de = np.sqrt((P[:, 1] - WRIST[1]) ** 2 + (P[:, 2] - WRIST[2]) ** 2) - (EAR_R + 1.0)
         w = np.maximum(w, np.clip(1 - de / 2.0, 0, 1) * (np.minimum(np.abs(P[:, 0] - ears[0]), np.abs(P[:, 0] - ears[1])) < 6))
@@ -321,16 +391,16 @@ def main():
     # ---------------- cover edge: one even lip (COV_T thick) all round, lying flush in a matching step of the
     # back (the ledge under it is what the snaps and screws hold on to)
     s = flap_reg
-    band_out = np.maximum(s - COV_L, -s - 3.0)                          # 3 mm overlap into the cover: one piece
+    band_out = np.maximum(s - CL, -s - 3.0)                          # 3 mm overlap into the cover: one piece
     band_out = np.maximum(np.maximum(band_out, 5.0 - earz), P[:, 2] - (Z_SEAM - 7.0))   # lip only on the palm face
     lip = smax(smax(O2s, -(O2s + COV_T), 0.3), band_out, 0.5)
-    lip = smax(lip, keep, 0.5)
+    lip = smax(lip, keep, 1.0)
     flap = smin(flap, lip, 0.6)
-    step = np.maximum(-(O2s + COV_T + 0.15), np.maximum(s - (COV_L + 0.25), -s - 1.0))
+    step = np.maximum(-(O2s + COV_T + 0.15), np.maximum(s - (CL + 0.25), -s - 1.0))
     step = np.maximum(np.maximum(step, 4.7 - earz), P[:, 2] - (Z_SEAM - 7.3))
     back = smax(back, -step, 0.4)
     # snap points along the middle of the lip (not on the screwed little-finger side)
-    near_mid = (np.abs(s - COV_L / 2) < 0.25) & (np.abs(O2s + COV_T) < 0.25) & (earz > 7.0) & (np.min([np.linalg.norm(P - sp_, axis=1) for sp_ in screw_pts], axis=0) > 7.0)
+    near_mid = (np.abs(s - (CL + 0.4) / 2) < 0.25) & (np.abs(O2s + COV_T) < 0.25) & (earz > 7.0) & (np.min([np.linalg.norm(P - sp_, axis=1) for sp_ in screw_pts], axis=0) > 7.0)
     cand = P[near_mid]
     snaps = []
     for c_ in cand[np.argsort(cand[:, 1])]:
@@ -349,37 +419,22 @@ def main():
     hgt = (0.8 * (1 - smoothstep(-0.35, 0.0, egg)) * smoothstep(Z_SEAM - 3.0, Z_SEAM - 7.0, P[:, 2])
            * smoothstep(-2.0, -6.0, flap_reg)).astype(np.float32)          # every factor smooth: no seam
     raised = np.maximum(np.maximum(O2s - hgt, -(O2s + 1.2)), flap_reg + 2.0)
+    raised = smax(raised, keep, 1.0)          # v3.2d: stop at the wrist end (the skin carries on along the forearm)
     flap = np.minimum(flap, raised)
     del ex, ey, eb, egg, hgt, raised
     print('cover done', flush=True)
 
     # ---------------- line tunnels, cut in the field so every mouth is a rounded flare (no hard cut edges)
     P3.CHANNELS.clear()
-    exits = np.linspace(WRIST[0] - 9.1, WRIST[0] + 9.1, 8)
     tun = np.full(len(P), 1e3, np.float32)
-    k = 0
-    for n in ORDER:
-        info = J[n]['joints'][0]; O0 = np.array(info['O']); xf, df = np.array(info['x']), np.array(info['d'])
-        R0 = info['R']; F0 = np.array(J[n]['flexor'][0]); Rr0 = np.array(J[n]['return'][0])
-        for kind, start, lat in (('flex', F0, -1.3), ('ret', Rr0, 1.3)):
-            r = R_FLEX if kind == 'flex' else R_RET
-            q = O0 - df * 16 + xf * lat
-            D = P3.dorsal_point(FO, q[0], q[1], TUNNEL_DEPTH)
-            if kind == 'flex':
-                A = start - df * (R0 + 1.0); B = A - df * 3.5
-                climb = FG.spline([A, B, D + df * 3.0, D], 14)            # starts behind the tongue
-            else:
-                climb = FG.spline([start - df * (R0 + 1.0), start - df * (R0 + 4.0), D + df * 3.0, D], 12)
-            run = [P3.dorsal_point(FO, D[0] + (exits[k] - D[0]) * t, D[1] + (-2.0 - D[1]) * t, TUNNEL_DEPTH) for t in np.linspace(0, 1, 26)[1:]]
-            path = chan_pts(climb + run[:-1] + [run[-1] - np.array([0, 3.0, 0])], r, (FO, Cv))
-            tun = np.minimum(tun, chain_field(P, path, r))
-            for e0, e1 in ((path[0], path[1]), (path[-1], path[-2])):      # flared mouths
-                dv = e1 - e0; dv /= np.linalg.norm(dv) + 1e-9
-                tun = np.minimum(tun, seg_dist(P, e0 - dv * 1.0, e0 + dv * 1.8) - (r + 0.45))
-            if kind == 'ret':                                    # knot counterbore at the wrist end
-                e = run[-1]
-                tun = np.minimum(tun, seg_dist(P, np.array([e[0], 0.8, e[2]]), np.array([e[0], -3.0, e[2]])) - 1.6)
-            k += 1
+    for kind, r, path, rend in route_tunnels(FS2):                   # routed again on the thickened back
+        tun = np.minimum(tun, chain_field(P, path, r))
+        for e0, e1 in ((path[0], path[1]), (path[-1], path[-2])):      # flared mouths
+            dv = e1 - e0; dv /= np.linalg.norm(dv) + 1e-9
+            tun = np.minimum(tun, seg_dist(P, e0 - dv * 1.0, e0 + dv * 1.8) - max(r + 0.45, 1.5))   # 3 mm funnel
+        if kind == 'ret':                                    # knot counterbore at the wrist end
+            e = rend
+            tun = np.minimum(tun, seg_dist(P, np.array([e[0], 0.8, e[2]]), np.array([e[0], -3.0, e[2]])) - 1.75)
     print('tunnels routed', flush=True)
     cvl = Cv(P)
     inner = np.maximum(np.maximum(cvl - 2.0, -cvl), np.maximum(np.maximum(0.8 - tsw, 0.8 - kc), np.maximum(0.8 - drain_f, keep)))
@@ -395,6 +450,7 @@ def main():
         beyond = sx_ * (P[:, 0] - (xw + sx_ * 2.0))
         back = np.where(fade > 0, smax(back, beyond - 10.0 * (1 - fade), 0.6), back)
     del rwe, fade, beyond
+    O2s_logo = O2s                                       # the logo is pressed into the real (ridged) surface
     del O2s, kc, tsw, s, flap_reg, keep, drain_f, drain, rw, earz
     gc.collect()
 
@@ -435,10 +491,14 @@ def main():
         csk = mf.Manifold.cylinder(1.5, 1.55, 2.95, 32).translate([0, 0, -1.45]) + mf.Manifold.cylinder(0.6, 2.95, 2.95, 32).translate([0, 0, 0.0])
         thru = mf.Manifold.cylinder(COV_T + 0.6, 1.7, 1.7, 24).translate([0, 0, -COV_T - 0.4])
         pilot = mf.Manifold.cylinder(L_s - COV_T + 0.4, 1.3, 1.3, 24).translate([0, 0, -(L_s + 0.3)])
+        dpt = min(INS_D, petg - 0.4)
+        if dpt >= 4.0:                                          # v3.2: heat-set insert in the step (4 mm insert)
+            pilot = mf.Manifold.cylinder(dpt + 0.2, INS_R, INS_R, 32).translate([0, 0, -COV_T - dpt])
+            L_s = 5
         Mflap = Mflap - (csk + thru).transform(Ms)
         Mback = Mback - csk.transform(Ms)                     # the head may sit a little into the ledge
         Mback = Mback - pilot.transform(Ms)
-        flap_screws.append({'p': p.round(2).tolist(), 'n': n_.round(3).tolist(), 'petg_under_step': round(petg, 2), 'screw_len': L_s})
+        flap_screws.append({'p': p.round(2).tolist(), 'n': n_.round(3).tolist(), 'petg_under_step': round(petg, 2), 'screw_len': L_s, 'insert': bool(dpt >= 4.0)})
         print('flap screw', flap_screws[-1], flush=True)
     # through-snaps (v3.1f): a TPU peg under the cover's lip pushes through a hole in the PETG step; its
     # cone head pops out into a counterbore on the inside and holds. Flush on the inside, nothing to see outside.
@@ -480,20 +540,31 @@ def main():
     ends = [pivot + xj * LB / 2, pivot - xj * LB / 2]
     headside = 1 if Cv(np.array(ends))[0] > Cv(np.array(ends))[1] else -1
     w = 7.5 / 2
+    assert headside == hs0
+    far = LB / 2 + THUMB_EXT                                  # threaded end face (local |u|)
+    seat = LB / 2 - 1.5
     if headside > 0:
-        sc = cyl_x_span(3.1, LB / 2 - 1.5, BIG) + cyl_x_span(1.7, -w, BIG) + cyl_x_span(1.3, -LB / 2 + 0.8, -w + 0.01)
+        sc = cyl_x_span(3.1, seat, BIG) + cyl_x_span(1.7, -w, BIG) + cyl_x_span(1.3, -THUMB_PILOT, -w + 0.01)
     else:
-        sc = cyl_x_span(3.1, -BIG, -LB / 2 + 1.5) + cyl_x_span(1.7, -BIG, w) + cyl_x_span(1.3, w - 0.01, LB / 2 - 0.8)
+        sc = cyl_x_span(3.1, -BIG, -seat) + cyl_x_span(1.7, -BIG, w) + cyl_x_span(1.3, w - 0.01, THUMB_PILOT)
+    tip = seat + 1.65 * 0 - THUMB_SCREW                       # head seat to tip (local, head side positive)
+    print(f'thumb screw M3x{THUMB_SCREW}: tip at {tip:.2f}, pilot to {-THUMB_PILOT:.1f} ({THUMB_PILOT + tip:.2f} mm spare), '
+          f'thread ~{-tip - w:.1f} mm in the far arm and the solid mount', flush=True)
     Mback = Mback - sc.transform(Mw)
     # MCP joints: the palm owns the tongues; each needs its 3.4 mm bore for the knuckle screw
     for n in ORDER:
+        if n in AXLE: continue
         inf = J[n]['joints'][0]
         hb = F2.joint_params(n, 0)['wt'] / 2 + 2.5          # only through this tongue (an endless bore cut into the neighbours)
         Mback = Mback - cyl_x_span(1.7, -hb, hb).transform(frame_matrix(np.array(inf['O']), np.array(inf['x']), np.array(inf['d']), np.array(inf['z'])))
+    # v3.2 shared knuckle axle: one straight 3.4 mm bore through the index, middle and ring tongues
+    ax_ = J['axle']; c_, a_ = np.array(ax_['c']), np.array(ax_['a'])
+    zz_ = np.cross(a_, [0, 1.0, 0]); zz_ /= np.linalg.norm(zz_); yy_ = np.cross(zz_, a_)
+    Mback = Mback - cyl_x_span(1.7, ax_['t_index_min'] - 1.0, ax_['t_far'] + 1.0).transform(frame_matrix(c_, a_, yy_, zz_))
     for sx, xw in zip((-1, 1), ears):
         x_out = xw + sx * (2.0 + (EAR_EXT if sx < 0 else 0.0))
         xl = x_out - WRIST[0]                                 # the frame below is centred on the wrist axis
-        hole = cyl_x_span(1.3, xl - 1, xl + 4.0) if sx < 0 else cyl_x_span(1.3, xl - 4.0, xl + 1)
+        hole = cyl_x_span(1.3, xl - 1, xl + 9.0) if sx < 0 else cyl_x_span(1.3, xl - 9.0, xl + 1)   # v3.2: through the ear wall (M3 x 6 stops 0.7-1.3 mm short of the cavity)
         Mback = Mback - hole.transform(Wm)
     # logo, pressed 0.8 mm into the curved back
     rects = json.load(open('src/logo_rects.json'))
@@ -507,7 +578,7 @@ def main():
     polys = [[(LOGO_C[0] + x * LOGO_SCALE, LOGO_C[1] + y * LOGO_SCALE) for x, y in ((x0, y0), (x1, y0), (x1, y1), (x0, y1))] for x0, x1, y0, y1 in rects]
     cs = mf.CrossSection.batch_boolean([mf.CrossSection([p]) for p in polys], mf.OpType.Add)
     logo = cs.offset(0.06, mf.JoinType.Miter).extrude(40).translate([0, 0, 5])
-    ins08 = to_manifold((O2 + 0.8).reshape(shape), g, 0.0, simplify=0.01)
+    ins08 = to_manifold((O2s_logo + 0.8).reshape(shape), g, 0.0, simplify=0.01); del O2s_logo
     Mback = Mback - (logo - ins08)
     del ins08, O2, FS2
     gc.collect()
@@ -536,37 +607,61 @@ def main():
     tip_w = Rp.apply(pad_r - pivot) + pivot
     tgt = pad_target(TS['pinch_curl_deg'])
     n_rest = Rp.inv().apply((tgt - tip_w) / np.linalg.norm(tgt - tip_w))
-    c0 = pad_r + (pivot - pad_r) / np.linalg.norm(pivot - pad_r) * 6.0
-    c_s = P3.surface_point(TF, c0, n_rest, lo=-12, hi=12)
+    # v3.2 fix: that push direction runs along the thumb (it put the pad on the END of the thumb and left the
+    # nail at a random angle). The pad faces the palmar side: the thumb's thin direction across its section
+    # (it is flatter front-to-back than side-to-side), on the side facing the index finger.
+    t_ax0 = (pad_r - pivot) / np.linalg.norm(pad_r - pivot)
+    sec_ = t_scaled.section(t_ax0, pad_r - t_ax0 * 8.0)
+    Vs_ = sec_.vertices - sec_.vertices.mean(0)
+    thin_ = np.linalg.svd(Vs_, full_matrices=False)[2][1]
+    thin_ -= t_ax0 * (thin_ @ t_ax0); thin_ /= np.linalg.norm(thin_)
+    to_idx = np.array(J['index']['joints'][1]['O']) - (pad_r - t_ax0 * 8.0)
+    n_rest = thin_ if thin_ @ to_idx > 0 else -thin_
+    print('thumb pad normal: angle to thumb axis', round(float(np.degrees(np.arccos(abs(n_rest @ t_ax0)))), 1), flush=True)
+    # the thumb meets the finger pads with its tip end, so the pad sits on the palmar side but wraps 35 deg
+    # round toward the tip (like a real thumb pad) and the rubber covers the contact
     t_ax = (pad_r - pivot) / np.linalg.norm(pad_r - pivot)
-    nn = -n_rest; uu_ = t_ax - nn * (t_ax @ nn); uu_ /= np.linalg.norm(uu_); vv_ = np.cross(nn, uu_)
+    p_dir = np.cos(np.radians(35)) * n_rest + np.sin(np.radians(35)) * t_ax; p_dir /= np.linalg.norm(p_dir)
+    c0 = pad_r - t_ax * 7.0
+    c_s = P3.surface_point(TF, c0, p_dir, lo=-12, hi=12)
+    nn = -p_dir; uu_ = t_ax - nn * (t_ax @ nn); uu_ /= np.linalg.norm(uu_); vv_ = np.cross(nn, uu_)
     Q = T - c_s; a1 = Q @ uu_; b1 = Q @ vv_; w1 = Q @ nn
-    eb = (np.sqrt((a1 / 5.4) ** 2 + (b1 / 4.0) ** 2) - 1) * 4.0
+    eb = (np.sqrt((a1 / 4.8) ** 2 + (b1 / 4.0) ** 2) - 1) * 4.0
     rem = np.maximum(eb, -(TFv + 1.0))                      # 1.0 mm recess, pad glued in
-    ft = smax(ft, -np.maximum(rem, np.abs(w1) - 6.0), 0.4)
+    ft = smax(ft, -np.maximum(rem, np.maximum(w1 - 4.5, -w1 - 1.5)), 0.4)   # v3.2b: pad side only (the tilted cut came out the back near the tip)
     del Q, a1, b1, w1, eb, rem
     gc.collect()
     # fingernail: a shallow nail bed (0.45 mm) on the back of the thumb tip, for looks or to paint
-    cn0 = pad_r + (pivot - pad_r) / np.linalg.norm(pad_r - pivot) * 5.5
+    # v3.2: rounded-square nail plate set back 2.6 mm from the tip, sunk 0.55 mm at the cuticle fading to
+    # 0.15 mm at the free edge, so a full rounded thumb tip stays in front of it (no ridge at the end)
+    NL_T, NW_T, NFREE_T = 8.4, 3.5, 2.6
+    cn0 = pad_r + (pivot - pad_r) / np.linalg.norm(pad_r - pivot) * (NFREE_T + NL_T / 2)
     cn = P3.surface_point(TF, cn0, -n_rest, lo=-12, hi=12)
-    Qn = T - cn; an = Qn @ uu_; bn = Qn @ vv_; wn = Qn @ nn
-    nail = (np.sqrt((an / 4.2) ** 2 + (bn / 3.3) ** 2) - 1.0) * 3.3
-    ft = smax(ft, -np.maximum(np.maximum(nail, -(TFv + 0.45)), np.abs(wn) - 4.0), 0.5)
-    del Qn, an, bn, wn, nail
+    nnn = n_rest; uun = t_ax - nnn * (t_ax @ nnn); uun /= np.linalg.norm(uun); vvn = np.cross(nnn, uun)
+    Qn = T - cn; an = Qn @ uun; bn = Qn @ vvn; wn = Qn @ nnn
+    nail = (((np.abs(an) / (NL_T / 2)) ** 2.6 + (np.abs(bn) / NW_T) ** 2.6) ** (1 / 2.6) - 1.0) * NW_T
+    dep = 0.275 * (1 - np.clip(an / (NL_T / 2), -1, 1))      # 0.55 at the cuticle, flush at the free edge (no dip)
+    ft = smax(ft, -np.maximum(np.maximum(nail, -(TFv + dep)), np.abs(wn) - 4.0), 0.5)
+    del Qn, an, bn, wn, nail, dep
+    # print direction (v3.2): thumb printed at 45 deg, base down, tip up, back (nail) facing up
+    al_ = t_ax
+    do_ = -n_rest - al_ * (-n_rest @ al_); do_ /= np.linalg.norm(do_)
+    up_t = (al_ + do_) / np.linalg.norm(al_ + do_)
+    xp_ = xr - up_t * (xr @ up_t); xp_ /= np.linalg.norm(xp_)             # level side-to-side direction on the bed
     ft = opening(ft.reshape(tshape), tgf, 0.6).ravel()      # final rounding, as the other parts
     Mth = max(to_manifold(ft.reshape(tshape), tgf, 0.0, simplify=0.01).decompose(), key=lambda p: p.volume())
     Mr = frame_matrix(pivot, xr, yr, zr)
     Mth = Mth - cyl_x(1.7).transform(Mr)
     # optional private finishing step
     if finish_thumb is not None:
-        Mth = finish_thumb(Mth, xr)
+        Mth = finish_thumb(Mth, up_t)
 
     for name, m in (('palm_back', Mback), ('palm_flap', Mflap), ('thumb', Mth)):
         parts = m.decompose(); mp = max(parts, key=lambda p: p.volume())
         if m.volume() < mp.volume() - 0.1 and len([q_ for q_ in parts if q_.volume() > 1.0]) == 1: mp = m   # keep sealed internal voids
         to_tm(mp).export(f'{OUT}/{name}.stl'); print(name, 'vol', round(mp.volume()), 'genus', mp.genus(), flush=True)
     json.dump({'wrist': WRIST.tolist(), 'ears_x': ears, 'thumb_frame': {'pivot': pivot.tolist(), 'x': xj.tolist(), 'y': yj.tolist(), 'z': zj.tolist()},
-               'thumb_head': headside, 'line_exits_x': exits.tolist(), 'flap_screws': flap_screws}, open(f'{OUT}/palm.json', 'w'), indent=1)
+               'thumb_head': headside, 'thumb_print': {'x': xp_.tolist(), 'up': up_t.tolist()}, 'thumb_screw': THUMB_SCREW, 'line_exits_x': exits.tolist(), 'flap_screws': flap_screws, 'snaps': snap_info}, open(f'{OUT}/palm.json', 'w'), indent=1)
     json.dump(P3.CHANNELS, open(f'{OUT}/palm_channels.json', 'w'))
 
 

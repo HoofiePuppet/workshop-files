@@ -21,9 +21,41 @@ PITCH = 0.15
 ARM_MIN = 2.6        # PETG left under a screw head or around a pilot (mm)
 HEAD_H = 1.65        # M3 button head (ISO 7380) height
 FG.MIN_SKIN = 1.1
-R_FLEX, R_RET = 0.75, 0.8   # line channel radii: 1.5 mm flexor, 1.6 mm return cord
+R_FLEX, R_RET = 1.0, 1.0    # v3.2c line channels: 2.0 mm where they cross a joint (slim there) ...
+R_MID = 1.25                 # ... 2.5 mm along the rest of each segment
+R_MOUTH = 1.5                # 3 mm funnel at every mouth
 HOOD_MIN = 0.9       # cup hood thinner than 2 x this is trimmed away (local opening radius)
 OUT = 'build'; os.makedirs(f'{OUT}/fingers', exist_ok=True)
+
+# v3.2: the index, middle and ring knuckles share ONE straight axle (a long M3 screw put in from the index
+# side), because a separate screw can't be put in between two knuckles. Their MCP axes were already within
+# 0.35 mm / 3 deg of a common line: they are moved onto it. The little finger keeps its own screw (outside).
+AXLE = ('index', 'middle', 'ring')
+INS_R, INS_D = 2.0, 5.5          # heat-set insert pocket (M3 x 4-5 mm long, 4.2 mm OD): 4.0 mm hole, 5.5 deep
+INS_MIN = 4.3                    # arm needed for an insert (else a plain 2.6 mm pilot)
+AXLE_LENGTHS = (30, 35, 40, 45, 50)
+TIP_KEEP = 3.0                   # v3.2: full rounded fingertip kept beyond the grip pad
+NAIL_FREE, NAIL_LEN = 2.4, 7.0   # nail ends 2.4 mm short of the tip, 7 mm long
+
+
+def _axle_line():
+    O = np.array([J3[n]['joints'][0]['O'] for n in AXLE]); X = np.array([J3[n]['joints'][0]['x'] for n in AXLE])
+    c = O.mean(0); a = np.linalg.svd(O - c)[2][0]
+    a = a if a @ X.mean(0) > 0 else -a
+    return c, a / np.linalg.norm(a)
+
+
+AX_C, AX_A = _axle_line()
+for _n in AXLE:
+    _inf = J3[_n]['joints'][0]; _O = np.array(_inf['O'])
+    _Op = AX_C + AX_A * ((_O - AX_C) @ AX_A)
+    _d = np.array(_inf['d']); _d = _d - AX_A * (_d @ AX_A); _d /= np.linalg.norm(_d)
+    _z = np.cross(AX_A, _d); _z = _z if _z @ np.array(_inf['z']) > 0 else -_z
+    print(f'axle: {_n} MCP moved {np.linalg.norm(_Op - _O):.2f} mm, axis turned '
+          f'{np.degrees(np.arccos(np.clip(AX_A @ np.array(_inf["x"]), -1, 1))):.1f} deg', flush=True)
+    _inf.update(O=_Op.tolist(), x=AX_A.tolist(), d=_d.tolist(), z=_z.tolist())
+AXLE_RECESS = float(os.environ.get('AXLE_RECESS', '2.25'))   # head recess on the index side (default: full)
+AXLE_HEAD_EXTRA = 2.4            # index knuckle thicker on the outside (about 1.2 mm after smoothing) so a stock M3 x 45 ends inside the ring
 
 
 def joint_params(n, j):
@@ -81,7 +113,12 @@ def main(only=None):
             # barrel ends grown sideways (rounded) so each arm can keep ARM_MIN under a flush screw head
             for jj in ([0] if k == 0 else []) + ([k + 1] if k < nj - 1 else []):
                 Jt = JS[jj]; u, v, w = Jt.loc(P)
-                boss = smax(np.sqrt(v * v + w * w) - (Jt.R - 0.2), np.abs(u) - (Jt.ws / 2 + ARM_MIN + HEAD_H), 1.2)
+                hw_ = Jt.ws / 2 + ARM_MIN + HEAD_H
+                if jj == 0 and n == AXLE[0]:       # axle head side (outside of the hand) grown a little
+                    side_ = np.maximum(u - hw_, -u - (hw_ + AXLE_HEAD_EXTRA))
+                else:
+                    side_ = np.abs(u) - hw_
+                boss = smax(np.sqrt(v * v + w * w) - (Jt.R - 0.2), side_, 1.2)
                 sk = smin(sk, boss, 1.5)
             f = smax(sk, column(P, i), 2.0)
             f = smax(f, JS[k].side(P, 'D'), 0.8)
@@ -94,8 +131,8 @@ def main(only=None):
         # fingertip: knot pocket and grip pocket position (pad on the palm side, 7 mm back from the tip)
         # grip pocket must stay clear of the last joint's cup: fit it between the cup rim and the tip
         last = info[-1]; s_rim = last['s'] + last['R'] + GAP + 1.8
-        PB = float(np.clip(((L - 2.0) - s_rim) / 2, 3.2, 4.6))          # pocket half length (outer, lip edge)
-        s_pad = (L - 2.0) - PB
+        PB = float(np.clip(((L - TIP_KEEP) - s_rim) / 2, 3.2, 4.6))     # pocket half length (outer, lip edge)
+        s_pad = (L - TIP_KEEP) - PB
         ctip = O + d * s_pad
         zmin_t, zmax_t = surface_extent(S, ctip, z)
         tip_pad = ctip + z * zmin_t
@@ -127,19 +164,30 @@ def main(only=None):
             # line channels, cut in the field: every exit gets a rounded mouth (smooth subtraction) instead
             # of a hard cut edge; the paths are relaxed to keep >= 0.9 mm of skin over them
             if k < nj - 1:
-                paths = [(FG.relax([F[k], F[k + 1]], R_FLEX), R_FLEX), (FG.relax([Rr[k], Rr[k + 1]], R_RET), R_RET)]
+                paths = [(FG.relax([F[k], F[k + 1]], R_MID), R_FLEX), (FG.relax([Rr[k], Rr[k + 1]], R_MID), R_RET)]
             else:
                 zmid = (zmin_t + zmax_t) / 2
-                paths = [(FG.relax(FG.spline([F[-1], O + d * (L - 11) + z * (zmin_t + 2.6), tip_pad + z * 1.2, tip_pad - z * 2], 14), R_FLEX), R_FLEX),
+                paths = [(FG.relax(FG.spline([F[-1], O + d * (L - 11) + z * (zmin_t + 2.6), tip_pad + z * 1.2, tip_pad - z * 2], 14), R_MID), R_FLEX),
                          (FG.relax(FG.spline([Rr[-1], O + d * (L - 7) + z * (zmax_t - 2.4), O + d * (L - 2.5) + z * zmid,
-                                              O + d * (L - 5.5) + z * (zmin_t + 1.6), tip_pad - z * 2], 18), R_RET), R_RET)]
+                                              O + d * (L - 5.5) + z * (zmin_t + 1.6), tip_pad - z * 2], 18), R_MID), R_RET)]
             ch = np.full(len(P), 1e3, np.float32)
             for pts, r in paths:
                 FG.CHANNELS.append({'r': r, 'pts': [list(map(float, p)) for p in pts]})
                 ch = np.minimum(ch, chain_field(P, pts, r))
-                for e0, e1 in ((pts[0], pts[1]), (pts[-1], pts[-2])):      # flared mouth at each end
+                # wider (2.5 mm) along the middle of the segment, 3 mm or more from either end
+                A_ = np.asarray(pts, float); sl = np.r_[0, np.cumsum(np.linalg.norm(np.diff(A_, axis=0), axis=1))]
+                if sl[-1] > 7.0:
+                    mid_ = A_[(sl >= 3.0) & (sl <= sl[-1] - 3.0)]
+                    if len(mid_) >= 2:
+                        # biggest that fits: up to 2.5 mm, keeping >= 0.9 mm of skin over the channel
+                        rr_ = np.clip(-S(mid_) - 0.9, R_FLEX, R_MID)
+                        for a_, b_, ra_, rb_ in zip(mid_[:-1], mid_[1:], rr_[:-1], rr_[1:]):
+                            ch = np.minimum(ch, seg_dist(P, a_, b_) - min(ra_, rb_))
+                        FG.CHANNELS[-1]['r_mid'] = [float(v_) for v_ in rr_]
+                for e0, e1 in ((pts[0], pts[1]), (pts[-1], pts[-2])):      # 3 mm funnel at each end
                     e0 = np.asarray(e0, float); dv = np.asarray(e1, float) - e0; dv /= np.linalg.norm(dv) + 1e-9
-                    ch = np.minimum(ch, seg_dist(P, e0 - dv * 0.6, e0 + dv * 1.0) - (r + 0.25))
+                    ch = np.minimum(ch, seg_dist(P, e0 - dv * 0.6, e0 + dv * 0.6) - R_MOUTH)
+                    ch = np.minimum(ch, seg_dist(P, e0, e0 + dv * 1.6) - (r + 0.25))
             if k == nj - 1:
                 # knot pocket under the pad, and the grip recess: 1.0 mm deep, following the skin, rounded rim;
                 # the inner-tube pad is glued in with contact cement
@@ -149,13 +197,18 @@ def main(only=None):
                 ell_b = (np.sqrt((u / 3.6) ** 2 + (v / PB) ** 2) - 1.0) * 3.6
                 rec = np.maximum(np.maximum(ell_b, -(sk + 1.0)), np.abs(w) - 6.0)   # smooth limit (a hard cut-off left a jagged rim)
                 ch = np.minimum(ch, rec); del rec, ell_b
-                # fingernail: shallow nail bed (0.45 mm) on the back of the fingertip, for looks or to paint
-                zt_n = surface_extent(S, O + d * (L - 4.0), z)[1]
-                nail_c = O + d * (L - 4.0) + z * zt_n
+                # fingernail (v3.2): a rounded-square nail plate set back from the tip (a full fingertip stays
+                # in front of it), sunk 0.55 mm at the cuticle and fading to 0.15 mm at the free edge
+                s_n = L - NAIL_FREE - NAIL_LEN / 2; hl_n = NAIL_LEN / 2
+                zt_n = surface_extent(S, O + d * s_n, z)[1]
+                nail_c = O + d * s_n + z * zt_n
                 un, vn, wn = local(P, nail_c, x, d, z)
-                ex_n = surface_extent(S, O + d * (L - 4.0) + z * (zt_n - 1.5), x); hw_n = 0.36 * (ex_n[1] - ex_n[0])
-                nail = (np.sqrt((un / hw_n) ** 2 + (vn / 3.5) ** 2) - 1.0) * min(hw_n, 3.5)
-                ch = np.minimum(ch, np.maximum(np.maximum(nail, -(sk + 0.45)), np.abs(wn) - 4.0)); del sk, un, vn, wn, nail
+                ex_n = surface_extent(S, O + d * s_n + z * (zt_n - 1.5), x); hw_n = 0.33 * (ex_n[1] - ex_n[0])
+                pe = 2.6
+                nail = ((np.abs(un) / hw_n) ** pe + (np.abs(vn) / hl_n) ** pe) ** (1 / pe) - 1.0
+                nail = nail * min(hw_n, hl_n)
+                dep = 0.275 * (1 - np.clip(vn / hl_n, -1, 1))      # 0.55 at the cuticle, flush at the free edge
+                ch = np.minimum(ch, np.maximum(np.maximum(nail, -(sk + dep)), np.abs(wn) - 4.0)); del sk, un, vn, wn, nail, dep
             f = f.reshape(shape)
             if k >= 1 and JS[k].barrel == 'P':       # this segment holds the cup at joint k: trim thin hood
                 Jc = JS[k]
@@ -195,6 +248,31 @@ def main(only=None):
                 proud = max(0.0, HEAD_H - recess)
                 print(f'  {n} joint {jj}: width {xmax - xmin:.1f} arms {arm_h:.2f}/{arm_f:.2f} recess {recess:.2f} head proud {proud:.2f} screw {screw}', flush=True)
                 inf.update(xmin=xmin, xmax=xmax, recess=recess, screw_len=screw, arm=float(min(arm_h, arm_f)), width=float(xmax - xmin), head_side=hs, head_proud=proud)
+                if jj == 0 and n in AXLE:
+                    # shared axle: 3.4 mm clearance right through; head recess on the index's outer side;
+                    # heat-set insert (or a pilot) in the ring finger's far arm, where the axle ends
+                    hole = cyl_x_span(1.7, -BIG, BIG)
+                    role = {'index': 'head', 'middle': 'pass', 'ring': 'end'}[n]
+                    if role == 'head':
+                        # head recess on the outside of the hand; the axle threads into a heat-set insert in
+                        # the index's own inner arm, so it turns with the index and is a plain pin for the others
+                        rc = AXLE_RECESS if np.isfinite(AXLE_RECESS) else min(HEAD_H + 0.1, max(0.0, -xmin - w2 - ARM_MIN))
+                        hole = hole + cyl_x_span(3.1, -BIG, xmin + rc)
+                        arm_in = xmax - w2; dpt = min(INS_D, arm_in - 0.4)
+                        if dpt >= 4.0:
+                            hole = hole + cyl_x_span(INS_R, xmax - dpt, BIG)
+                        else:
+                            hole = cyl_x_span(1.7, -BIG, w2) + cyl_x_span(1.3, -BIG, BIG) + cyl_x_span(3.1, -BIG, xmin + rc)
+                        inf.update(axle_role=role, recess=float(rc), seat=float(xmin + rc), screw_len=0,
+                                   insert=bool(dpt >= 4.0), insert_depth=float(dpt))
+                        print(f'  axle head: recess {rc:.2f} (arm left {-xmin - w2 - rc:.2f}); inner arm {arm_in:.2f} -> insert {dpt >= 4.0} ({dpt:.2f} deep)', flush=True)
+                    elif role == 'end':
+                        inf.update(axle_role=role, screw_len=0, far_arm=float(xmax - w2))
+                        print(f'  axle end: far arm {xmax - w2:.2f} (the axle tip rests in it)', flush=True)
+                    else:
+                        inf.update(axle_role=role, screw_len=0)
+                    M = M - hole.transform(Mj)
+                    continue
                 if hs < 0:
                     hole = cyl_x_span(3.1, -BIG, seat) + cyl_x_span(1.7, -BIG, w2) + cyl_x_span(1.3, -BIG, BIG)     # pilot goes right through
                 else:
@@ -207,6 +285,18 @@ def main(only=None):
             to_tm(M).export(f'{OUT}/fingers/{n}-{k+1}.stl')
             print(n, k + 1, 'vol', round(M.volume()), 'grid', g.n.tolist(), flush=True)
         joints_out[n] = dict(J3[n]); joints_out[n]['tip_pad'] = tip_pad.tolist(); joints_out[n]['pad_half_len'] = PB
+    # axle length: from the head seat on the index side to inside the ring finger's insert (or pilot)
+    try:
+        t = {n: float((np.array(joints_out[n]['joints'][0]['O']) - AX_C) @ AX_A) for n in AXLE}
+        hi_ = joints_out['index']['joints'][0]; ri_ = joints_out['ring']['joints'][0]
+        t_seat = t['index'] + hi_['seat']; t_far = t['ring'] + ri_['xmax'] - 0.3; t_min = t['ring'] + ri_['xmax'] - ri_['far_arm'] + 0.8
+        fits = [L_ for L_ in AXLE_LENGTHS if t_min <= t_seat + L_ <= t_far]
+        need = [(L_, round(t_seat + L_ - t_min, 2), round(t_far - t_seat - L_, 2)) for L_ in AXLE_LENGTHS]
+        print(f'axle span seat->far {t_far - t_seat:.2f} mm, min {t_min - t_seat:.2f}; fits {fits}; (len, grip-margin, tip-room) {need}', flush=True)
+        joints_out['axle'] = {'c': AX_C.tolist(), 'a': AX_A.tolist(), 'fits': fits, 'screw_len': max(fits) if fits else 0,
+                              't_seat': t_seat, 't_far': t_far + 0.3, 't_index_min': t['index'] + hi_['xmin'] - 1.0}
+    except KeyError as e:
+        print('axle length not computed (partial build)', e, flush=True)
     json.dump(joints_out, open(f'{OUT}/joints.json', 'w'), indent=1)
     json.dump(FG.CHANNELS, open(f'{OUT}/finger_channels.json', 'w'))
 

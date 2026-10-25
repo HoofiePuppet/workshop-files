@@ -18,6 +18,7 @@ python3 cuff2.py          # forearm cuff, tensioner, line channels and clamps
 python3 orient.py         # print orientation -> stl/
 python3 clean_stl.py      # one closed solid per STL
 python3 flap_print.py stl/palm_flap.stl stl/palm_flap_print.stl   # TPU cover + snip-off support fins
+python3 back_print.py stl/palm_back.stl stl/palm_back_print.stl  # palm back + snip-off rim support (tabs between tunnel exits)
 python3 hardware_card.py  # stl/HARDWARE.md
 # checks
 python3 check_fingers.py -4 0 30 60

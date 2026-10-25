@@ -55,15 +55,26 @@ The two PDF guides still describe **v3.1g**. The line routing is the same, but f
 
 | File | Part | Material | Qty | Supports |
 |---|---|---|---|---|
-| `palm_back.stl` | Back of the hand: knuckles, thumb mount, wrist ears, line tunnels, logo, step for the cover | PETG | 1 | Yes, from the build plate; use a brim. Supports never touch the logo. |
+| `palm_back_print.stl` | **Print this one:** the back of the hand (knuckles, thumb mount, wrist ears, line tunnels, logo, step for the cover) with a snip-off support under the wrist-end rim built in | PETG | 1 | Yes, normal supports, **with the blocker below**; 5 mm brim |
+| `palm_back_print_support_blocker.stl` | Support blocker for `palm_back_print.stl`: keeps the slicer's supports out of every hole, line tunnel and the rim. Same coordinates as the part, load the two together | — | — | — |
+| `palm_back.stl` | The same back of the hand without the print aids (for reference) | PETG | — | — |
 | `palm_flap_print.stl` | **Print this one:** the TPU palm cover with snip-off support fins and a 0.6 mm sole bar built in. Snip the small tabs afterwards with flush cutters and shave any nub flush | **TPU 95A** | 1 | Normal supports on the build plate only (under the snap pegs) |
 | `palm_flap.stl` | The same cover without the print aids (for reference) | TPU 95A | — | — |
-| `thumb.stl` | Thumb with its hinge tongue, pad and nail | PETG | 1 | Yes; stands at 45° |
-| `finger-<name>-1/2/3.stl` | Finger segments (little finger has 2); tip segments have a nail you can paint | PETG | 1 of each (11) | Yes; stand at 45°, nail side up, with a brim |
+| `thumb.stl` | Thumb with its hinge tongue, pad and nail | PETG | 1 | Yes, **on the build plate only**; stands at 45°, with a brim |
+| `finger-<name>-1/2/3.stl` | Finger segments (little finger has 2); tip segments have a nail you can paint | PETG | 1 of each (11) | Yes, **on the build plate only**; stand at 45°, nail side up, with a brim |
 | `cuff.stl` | Forearm cuff: low tensioner swelling with flush line clamps, strap slots, vents | PETG | 1 | Few |
 | `HARDWARE.md` | Hardware card for this size: every screw and insert | — | — | — |
 
 **Print settings:** PETG (never PLA, it softens in the heat), 0.4 mm nozzle, 0.2 mm layers, 5 walls, 40–50% gyroid infill for the fingers, thumb and back, 30% for the cuff. TPU cover: slow (20–30 mm/s), little or no retraction, 4 walls (so the 3 mm snap pegs print solid), 4 top and 4 bottom layers, 30% gyroid, 5 mm brim, and **fuzzy skin on the outer grip face only**. Keep fuzzy skin off the snap pegs: it adds about 0.3 mm and they jam in their holes.
+
+### Supports
+
+- **Screw holes never need support.** Every screw hole prints lying sideways and is small (2.6–3.4 mm, with 6.2 mm head recesses), so each layer only bridges a few millimetres over the top of the hole.
+- **Fingers and thumb:** supports **on the build plate only**. All the support the slicer wants inside the screw holes would stand on the part itself, so this removes it; the supports that start on the bed under the low knuckle end stay.
+- **Back of the hand:** it stands on its wrist end, so the line tunnels run almost straight up and need no support, but it touches the bed only under the two wrist ears, and the rim across the back of the hand floats about 8 mm up, right where the line tunnels come out. Print `palm_back_print.stl`: 14 small posts on a thin sole hold that rim, each joined by a 0.8 mm neck on solid plastic between the tunnel exits (never in a hole), and the sole gives the part about 450 mm² on the bed instead of about 6. Keep normal supports on (the inside of the knuckles and the underside of the thumb mount still need them) and load `palm_back_print_support_blocker.stl` with it:
+  - **Creality Print / OrcaSlicer / PrusaSlicer:** drag both files in together and answer **Yes** to loading them as one object with multiple parts. Right-click the blocker part → **Change type → Support blocker**.
+  - **Cura:** turn off "Automatically drop models to the build plate" and "Ensure models are kept apart" before loading, so both keep their positions. Select the blocker → **Per Model Settings** → **Don't support overlaps**.
+- **After printing the back:** snip each neck flush at the rim with flush cutters, lift the support off and sand the 14 marks smooth. Check that every tunnel exit on the rim is clear before threading.
 
 ## Hardware
 
@@ -89,7 +100,7 @@ One 2 mm hex key fits every button-head screw.
 ## How it goes together
 
 1. **Set the inserts.** Soldering iron at about 240 °C for PETG. Let the iron's weight push each insert in, then press it flush with something flat and cool. One goes in the index knuckle segment's inner arm (the side that faces the middle finger), three go in the cover step on the little-finger edge of the back. The thumb has **no** insert.
-2. **Clean the holes.** Run an M3 screw through every joint hole once. Every joint hole goes all the way through.
+2. **Clean the holes.** The tops of holes printed without support can sag 0.1–0.2 mm. By hand, run a 3.5 mm drill bit through the 3.4 mm holes the screws slide through (finger joints, knuckle axle, thumb). **Don't drill the 2.6 mm pilot holes** the screws thread into: that would loosen the grip. Then run an M3 screw through every joint hole once. Every joint hole goes all the way through.
 3. **Fingers.** Every middle and tip joint is a rounded barrel in a cup, held by one button-head screw from the side; the head sits flush in its round recess and the screw threads into the far side. Tighten until the joint moves freely without wobble.
 4. **Knuckle axle.** Line up the index, middle and ring knuckles on the back of the hand and push the M3 × 45 in from the index side, through all three, and screw it into the index insert until its head sits in the recess. The little finger's knuckle has its own M3 × 10.
 5. **Thumb.** Put a small inner-tube washer on each side of the thumb tongue, fit it into the thumb mount, and screw in the M3 × 20. Swing the thumb to the grip position, then tighten until it holds there.
@@ -134,6 +145,7 @@ The hand is generated from the MakeHuman model by Python scripts (trimesh, manif
 | `sdf.py`, `sdfparts.py`, `lib_grid.py`, `rlib.py` | Smooth-shape (distance field) helpers |
 | `orient.py`, `clean_stl.py` | Print orientation and clean STLs |
 | `flap_print.py` | Adds the snip-off support fins and sole bar to the palm cover (`palm_flap_print.stl`) |
+| `back_print.py` | Adds the snip-off rim support to the back of the hand (`palm_back_print.stl`) and makes its support blocker |
 | `hardware_card.py` | Writes `stl/HARDWARE.md` (screw lengths and inserts for this size) |
 | `check_*.py` | The checks above |
 
@@ -149,3 +161,4 @@ The hand is generated from the MakeHuman model by Python scripts (trimesh, manif
 - 2026-10-24: v3.1f. Cover opening made symmetric with an even step all round; cover is one clean piece (stray loops at its edge removed) with its 3 hinge screws, now M3 × 5. Knuckle tongue bores round and clean. Thumb-mount hole on the back closed. Cuff arms trimmed to the hand's swing so nothing sticks out; cuff lines enter at the front end and leave inside the cuff, so only the four clamp seats show on top (now staggered, each a separate round seat). Every finger joint hole goes all the way through. Shallow fingernails on every fingertip and the thumb.
 - 2026-10-24 (later): v3.1g. Screw list corrected (9 × M3×12, 3 × M3×10, no M3×8). Cover snaps are now bigger push-through pegs (3 mm shaft, 4 mm mushroom head) that lock in recesses on the inside of the step. Knuckle screw holes fixed: each hole was drilled endlessly and cut a second, off-centre hole through the neighbouring knuckles; now each stops at its own knuckle, with a clean round ring round it.
 - 2026-10-25: v3.2, fixes from the first full print. Shared M3 × 45 knuckle axle for index, middle and ring; open wrist end with rounded edges; much bigger line holes (2–3 mm) with funnel mouths; thumb hinge M3 × 20 deep in solid plastic, new thumb pad and nail; nail dips filled flush; heat-set inserts in the index knuckle and the cover step; cover screws centred on a wider hinge edge and the cover corner fixed; cuff trimmed separately to the hand and the cover; fingers and thumb print at 45°; hardware card per size.
+- 2026-10-25 (later): print version of the back of the hand (`palm_back_print.stl`) with a snip-off rim support that keeps clear of the line tunnel exits, plus a matching support blocker; support notes for every part (screw holes need none; fingers and thumb on the build plate only); clean the 3.4 mm holes with a 3.5 mm drill.

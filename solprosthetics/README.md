@@ -64,7 +64,7 @@ All parts are in [bukang-liwayway/](bukang-liwayway/README.md). Part IDs: SP1 = 
 
 | ID | Part | Material | Status | Notes |
 |----|------|----------|--------|-------|
-| SP1-01 | Back of the hand (`palm_back.stl`) | PETG | **v3.2 test print** | Realistic shape, logo pressed into the back, knuckle block with the finger joints and the knuckle axle, thumb mount, hidden line tunnels, wrist ears, flush step for the cover. |
+| SP1-01 | Back of the hand (`palm_back_print.stl`, with snip-off print supports) | PETG | **v3.2 test print** | Realistic shape, logo pressed into the back, knuckle block with the finger joints and the knuckle axle, thumb mount, hidden line tunnels, wrist ears, flush step for the cover. |
 | SP1-07 | Palm cover (`palm_flap.stl`) | TPU 95A | **v3.2 test print** | Thin closed palm with a raised grip oval. Screwed along the little-finger edge (3 × M3×5 flat-head into heat-set inserts), 7 push-through snap pegs elsewhere. |
 | SP1-02 | Finger segments (11) | PETG | **v3.2 test print** | Barrel joints on the knuckle creases, fingernails on the tips. A broken segment is a quick reprint, not a new hand. |
 | SP1-06 | Thumb | PETG | **v3.2 test print** | Friction hinge on one M3×20: swing to the grip, tighten one screw. |

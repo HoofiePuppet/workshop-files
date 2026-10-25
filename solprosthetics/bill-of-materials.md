@@ -42,7 +42,7 @@ Sourcing: Lazada PH / Shopee PH / local hardware store unless noted.
 
 | File | Part | Qty | Material | Status |
 |------|------|-----|----------|--------|
-| `palm_back.stl` | Back of the hand | 1 | PETG | v3.2 test print |
+| `palm_back_print.stl` | Back of the hand (with snip-off print supports; load `palm_back_print_support_blocker.stl` with it) | 1 | PETG | v3.2 test print |
 | `palm_flap_print.stl` | Palm cover (with snip-off print supports) | 1 | TPU 95A | v3.2 test print |
 | `thumb.stl` | Thumb | 1 | PETG | v3.2 test print |
 | `finger-*.stl` | Finger segments (index, middle, ring 3 each; little 2) | 11 | PETG | v3.2 test print |

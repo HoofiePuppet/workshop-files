@@ -51,6 +51,8 @@ Both PDF guides describe **v3.2**. For a size other than 100%, use the screw and
 | Child's palm length that fits | up to about **49 mm** from the wrist crease. The knuckle block in front of that holds the finger joints. |
 | Finished hand | about 7 mm wider and 7–8 mm thicker than the child's hand (shell walls and liner) |
 
+> **Small parts, fiddly steps.** Many parts are small and need careful finishing: snipping supports, hand-drilling holes, setting hot brass inserts, threading thin line and tightening small screws. If you're building the hand for yourself (a teenager printing their own, say) and your grip or fine finger control is limited, ask someone to help with those steps. Children should always have an adult for the soldering iron and the cutters.
+
 ## Files (`stl/`, already turned to print direction)
 
 | File | Part | Material | Qty | Supports |

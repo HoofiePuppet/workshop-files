@@ -140,12 +140,42 @@ def hole_blocker(m, R_CLOSE=2.75, GROW=0.45, H=0.3):
             rr, cc = rast(Pg.exterior.coords); solid[rr, cc, k] = True
             for I in Pg.interiors:
                 rr, cc = rast(I.coords); solid[rr, cc, k] = False
-    dil = ndi.distance_transform_edt(~solid, sampling=H) <= R_CLOSE
+    air = ndi.distance_transform_edt(~solid, sampling=H).astype(np.float32)   # distance to the nearest plastic
+    dil = air <= R_CLOSE
     holes_ = (ndi.distance_transform_edt(dil, sampling=H) > R_CLOSE) & ~solid
     del dil, solid
     lab, n = ndi.label(holes_); sizes = ndi.sum(holes_, lab, range(1, n + 1))
     keep = np.isin(lab, 1 + np.where(sizes * H ** 3 > 0.3)[0])
     blk = ndi.binary_opening(ndi.distance_transform_edt(~keep, sampling=H) <= GROW, iterations=1)
+    # v3.2g fix (test print): the closing also filled the opening under the thumb mount, so the slicer
+    # gave its roof no support and it printed loose (the thumb screw had nothing to bite). Keep blocking
+    # only small holes and the line tunnels; clear a column under every overhang that really needs
+    # support: its roof is ROOF_MAX or more above the plastic below (or open to the bed) AND the widest
+    # air under it (down to the first plastic) is at least AIR_MIN. Inside a 2 mm tunnel the air is
+    # under ~1.6 mm even though the tunnel runs a long way down, so tunnels stay blocked. The rim the
+    # snip-off posts hold is blocked again afterwards (gap volume).
+    ROOF_MAX, AIR_MIN, CLEAR_R = 6.0, 1.8, 0.5   # 0.5: wider columns cut into tunnels 0.8 mm inside the wall
+    nrm, cen = m.face_normals, m.triangles_center
+    ov = np.where((nrm[:, 2] < -0.5) & (cen[:, 2] > 0.3))[0]
+    org = cen[ov] - [0, 0, 0.02]
+    loc, ri, _ = m.ray.intersects_location(org, np.tile([0, 0, -1.0], (len(ov), 1)), multiple_hits=False)
+    floor = np.zeros(len(ov)); floor[ri] = loc[:, 2]; hit = np.zeros(len(ov), bool); hit[ri] = True
+    shp = np.array(air.shape) - 1
+    widest = np.zeros(len(ov)); alive = np.ones(len(ov), bool)
+    for dz in np.arange(0.4, 12.01, H):
+        ii = np.clip(np.round((org - [0, 0, dz] - lo) / H).astype(int), 0, shp)
+        a_ = air[ii[:, 0], ii[:, 1], ii[:, 2]]
+        alive &= a_ > 0
+        widest = np.where(alive, np.maximum(widest, a_), widest)
+    need = (~hit | (org[:, 2] - floor >= ROOF_MAX)) & (widest >= AIR_MIN)
+    rc = int(np.ceil(CLEAR_R / H)); carved = 0
+    for p, z0 in zip(org[need], floor[need]):
+        i, j = int(round((p[0] - lo[0]) / H)), int(round((p[1] - lo[1]) / H))
+        k0, k1 = max(int((z0 - lo[2]) / H) - 1, 0), int((p[2] + 0.3 - lo[2]) / H) + 1
+        sub = blk[max(i - rc, 0):i + rc + 1, max(j - rc, 0):j + rc + 1, k0:k1]
+        carved += int(sub.sum()); sub[:] = False
+    del air
+    print('blocker: cleared %.0f mm3 under %d overhang faces that need support' % (carved * H ** 3, int(need.sum())), flush=True)
     v, f, _, _ = measure.marching_cubes(np.pad(blk, 1).astype(np.float32), 0.5)
     b = trimesh.Trimesh((v - 1) * H + lo, f)
     b = trimesh.smoothing.filter_taubin(b, iterations=10)

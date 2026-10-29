@@ -1,3 +1,5 @@
+<img alt="Toy Box" src="toybox-logo.png" width="240">
+
 # Toy Box
 
 Toys from Hoofie Puppet's Workshop, inspired by the wind-up and crank-driven mechanical toys of the late 1800s.

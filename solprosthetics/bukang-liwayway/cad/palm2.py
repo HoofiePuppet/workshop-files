@@ -40,8 +40,13 @@ COV_T, COV_L = 1.6, 6.0
 WALL_COVER = 2.7                    # cover thickness before smoothing (about 2 mm finished)
 WALL_RIM, WALL_BOSS = 4.6, 6.2      # shell before smoothing in the band round the opening / at the screws
 SNAP_R, SNAP_GAP = 0.7, 11.0        # snap bump radius and spacing
-EAR_EXT = 0.0                       # (v3.1e had 2.1; v3.1f trims the hand flat at the ears instead)
-OPEN_X, OPEN_Y, OPEN_R = (-10.0, 17.0), (-14.0, 42.0), 9.0   # v3.2d: palm opening runs out through the wrist end
+EAR_EXT = 2.2                       # v3.3: thumb-side ear pad 2.2 mm thicker outward (room for a 4 mm insert; was 0.0)
+EAR_EXT_R = 1.0                     # v3.3: little-finger-side ear pad 1.0 mm thicker outward
+WRIST_INS_D = 4.3                   # v3.3: wrist hinge M3 x 6 into a 4 mm brass insert (hole 4.0 x 4.3 deep from outside)
+ears_ext = lambda xw: EAR_EXT if xw < WRIST[0] else EAR_EXT_R
+OPEN_X, OPEN_Y, OPEN_R = (-6.6, 17.0), (-14.0, 38.6), 5.6   # v3.2d: palm opening runs out through the wrist end
+# v3.3: the opening's inner edge moved in 3.4 mm on the thumb side and under the knuckles (was x0 -10, y1 42, R 9) so the
+# cover lip is 9.4 mm wide all round (its outer edge stays where it was): room for flush countersunk screws everywhere
 # (the old band across the wrist end closed it into a ring the hand could not get into; the back is now a U like the
 # cuff, the TPU cover closes the palm face right down to the wrist end; every cut edge there is rounded)
 WRIST_BAND_EXTRA = 1.0             # v3.2: band below the cover at the wrist end 1 mm thicker
@@ -52,6 +57,36 @@ THUMB_PILOT = 15.0                 # pilot runs on into it (no insert possible t
 from fingers2 import AXLE
 HINGE_EXTRA = 3.4                   # v3.2: lip + step 9.4 mm wide along the little-finger hinge edge (flat-head screws fit)
 SCREW_X = OPEN_X[1] + (0.15 + COV_L + HINGE_EXTRA + 0.25) / 2   # cover screws centred on that wider step
+# v3.3: the TPU cover is held only by flush M3 countersunk screws into 4 mm brass inserts, all round the lip (no snaps:
+# TPU pegs did not hold), so a cover can be changed. Sites on the lip centre line, about 10.7 mm apart from the thumb
+# side of the wrist mouth round to the little-finger edge, plus two below the hinge screws at the mouth
+SITE_D = SCREW_X - OPEN_X[1]                                     # lip centre line, 4.9 mm out from the opening edge
+MOUTH_COVER = 0.8                  # v3.3: plastic kept over each tunnel mouth at the knuckles (after the finger swing cut)
+SLEEVE = 1.0                       # v3.3: plastic kept round every line tunnel after the final rounding
+MOUTH_FLARE = 2.0                  # v3.3: glove-like mouth: the cavity opens out up to 2 mm on the palm side at the wrist end
+
+
+def cover_sites():
+    x0, x1, y1, R, d = OPEN_X[0], OPEN_X[1], OPEN_Y[1], OPEN_R, SITE_D
+    cl, cr, rr = np.array([x0 + R, y1 - R]), np.array([x1 - R, y1 - R]), R + d
+    y_start = 4.0
+    segs = [('l', np.array([x0 - d, y_start]), np.array([x0 - d, y1 - R])), ('a', cl, np.pi, np.pi / 2),
+            ('l', np.array([x0 + R, y1 + d]), np.array([x1 - R, y1 + d])), ('a', cr, np.pi / 2, 0.0),
+            ('l', np.array([x1 + d, y1 - R]), np.array([x1 + d, SCREWS_Y[-1]]))]
+    lens = [np.linalg.norm(sg[2] - sg[1]) if sg[0] == 'l' else rr * abs(sg[3] - sg[2]) for sg in segs]
+    tot = sum(lens); n = int(round(tot / 10.7)); out = []
+    for k in range(n):                                             # the last interval ends at the top hinge screw
+        t = k * tot / n
+        for sg, L in zip(segs, lens):
+            if t <= L + 1e-9:
+                f = t / L if L else 0.0
+                if sg[0] == 'l': q = sg[1] + (sg[2] - sg[1]) * f
+                else:
+                    a = sg[2] + (sg[3] - sg[2]) * f; q = sg[1] + rr * np.array([np.cos(a), np.sin(a)])
+                out.append((float(q[0]), float(q[1]))); break
+            t -= L
+    out += [(SCREW_X, y_start), (SCREW_X, (y_start + SCREWS_Y[0]) / 2)] + [(SCREW_X, yy) for yy in SCREWS_Y]
+    return out
 
 
 class Sampler:
@@ -106,6 +141,9 @@ def main():
     d, g0 = load_skin()
     Sk = Skin()
     cav0 = cavity_field(d, g0)
+    from skin import smoothstep as _ss
+    _X, _Y, _Z = g0.points()
+    cav0 = (cav0 - MOUTH_FLARE * _ss(9.0, -1.0, _Y) * _ss(-1.0, -6.0, _Z)).astype(np.float32); del _X, _Y, _Z
     Cv = Sampler(cav0, g0)
     FO0 = RegularGridInterpolator(g0.axes(), d['outer'], bounds_error=False, fill_value=20)
     pivot = np.array(TS['pivot'])
@@ -123,7 +161,7 @@ def main():
         f = Sk(P)
         f = smin(f, np.linalg.norm(P - pivot, axis=1) - 10.0, 5.0)
         for xw in ears:
-            ext = EAR_EXT if xw < WRIST[0] else 0.0                # thumb-side pad reaches 2.1 mm further out to meet the cuff arm
+            ext = ears_ext(xw)                                     # v3.3: both pads reach further out (insert depth)
             xc_, hw_ = xw - np.sign(WRIST[0] - xw) * ext / 2, 2.0 + ext / 2
             pad = smax(np.sqrt((P[:, 1] - WRIST[1]) ** 2 + (P[:, 2] - WRIST[2]) ** 2) - EAR_R, np.abs(P[:, 0] - xc_) - hw_, 1.0)
             f = smin(f, pad, 3.5)
@@ -143,7 +181,7 @@ def main():
     from skin import smoothstep
     xs = np.linspace(-60, 60, 241); yk_x = knuckle_y(xs)
     top = [(x, min(yt, 22.0) if x < RAY_X else yt) for x, yt in zip(xs, yk_x - 15.0)]
-    CL = (COV_L + HINGE_EXTRA * smoothstep(12.0, 16.0, P[:, 0])).astype(np.float32)   # lip/step width per point
+    CL = np.full(len(P), COV_L + HINGE_EXTRA, np.float32)   # v3.3: lip/step 9.4 mm wide all round (was 6.0 except the hinge edge)
     poly = shapely.Polygon([(-60, -1.0)] + top + [(60, -1.0)])
     gx = g.o[0] + g.p * np.arange(g.n[0]); gy = g.o[1] + g.p * np.arange(g.n[1])
     GX, GY = np.meshgrid(gx, gy, indexing='ij')
@@ -157,7 +195,7 @@ def main():
     earz = rw - (EAR_R + 1.85)
     # v3.2d: the cuff-arm clearance only matters near the ear pads (the arms sit outside them); measured from the
     # wrist axis alone it also switched off the cover step across the palm face near the (now open) wrist end
-    d_in = np.minimum(P[:, 0] - (min(ears) - 2.0), (max(ears) + 2.0) - P[:, 0])
+    d_in = np.minimum(P[:, 0] - (min(ears) - 2.0 - EAR_EXT), (max(ears) + 2.0 + EAR_EXT_R) - P[:, 0])
     earz = (earz + 30.0 * smoothstep(2.0, 5.0, d_in)).astype(np.float32); del d_in
     def rrect(x0, x1, y0, y1, r):
         cx_, cy_, hx, hy = (x0 + x1) / 2, (y0 + y1) / 2, (x1 - x0) / 2 - r, (y1 - y0) / 2 - r
@@ -165,14 +203,16 @@ def main():
         return (np.sqrt(np.maximum(dx, 0) ** 2 + np.maximum(dy, 0) ** 2) + np.minimum(np.maximum(dx, dy), 0) - r).astype(np.float32)
     s0 = smax(rrect(OPEN_X[0], OPEN_X[1], OPEN_Y[0], OPEN_Y[1], OPEN_R), P[:, 2] - (Z_SEAM - 4.0), 1.0)   # < 0 inside the opening
     s_open = s0.copy()
-    screw_pts = [P3.surface_point(FO, np.array([SCREW_X, yy, -40.0]), np.array([0, 0, -1.0]), lo=-45, hi=0) for yy in SCREWS_Y]
+    SITES = cover_sites()
+    print('cover screw sites', len(SITES), [tuple(round(v, 1) for v in q) for q in SITES], flush=True)
+    screw_pts = [P3.surface_point(FO, np.array([xx, yy, -40.0]), np.array([0, 0, -1.0]), lo=-45, hi=0) for xx, yy in SITES]
     # v3.1e: no seam swelling. Wall minimum all round the cavity, thicker in a band round the opening (cover
     # lip + ledge; wide enough for wherever the final edge lands) and locally round the three hinge screws
     cvP = Cv(P)
     rim = (1 - smoothstep(CL + 2.0, CL + 12.0, np.abs(s0 - CL / 2))).astype(np.float32)
     boss = np.zeros(len(P), np.float32)
-    for yy in SCREWS_Y:
-        boss = np.maximum(boss, np.clip(1 - (np.linalg.norm(P - screw_pts[SCREWS_Y.index(yy)], axis=1) - 5.0) / 3.0, 0, 1))
+    for sp_ in screw_pts:
+        boss = np.maximum(boss, np.clip(1 - (np.linalg.norm(P - sp_, axis=1) - 5.0) / 3.0, 0, 1))
     base = WALL_MIN + (WALL_COVER - WALL_MIN) * smoothstep(-2.0, -10.0, s0)   # thinner inside the opening (the cover)
     wall = base + (WALL_RIM - base) * rim; del base
     wall = wall + (WALL_BOSS - wall) * boss
@@ -399,16 +439,8 @@ def main():
     step = np.maximum(-(O2s + COV_T + 0.15), np.maximum(s - (CL + 0.25), -s - 1.0))
     step = np.maximum(np.maximum(step, 4.7 - earz), P[:, 2] - (Z_SEAM - 7.3))
     back = smax(back, -step, 0.4)
-    # snap points along the middle of the lip (not on the screwed little-finger side)
-    near_mid = (np.abs(s - (CL + 0.4) / 2) < 0.25) & (np.abs(O2s + COV_T) < 0.25) & (earz > 7.0) & (np.min([np.linalg.norm(P - sp_, axis=1) for sp_ in screw_pts], axis=0) > 7.0)
-    cand = P[near_mid]
-    snaps = []
-    for c_ in cand[np.argsort(cand[:, 1])]:
-        if all(np.linalg.norm(c_ - q_) > SNAP_GAP for q_ in snaps):
-            snaps.append(c_)
-    print('snaps', len(snaps), flush=True)
     lip_keep = lip.astype(np.float32)       # the lip is only 1.5 mm: the cover's 0.6 opening would erase it
-    del lip, step, band_out, near_mid, cand
+    del lip, step, band_out
     gc.collect()
 
     # ---------------- raised oval grip on the cover: an egg shape, wider toward the fingers, raised 0.8 mm
@@ -427,8 +459,40 @@ def main():
     # ---------------- line tunnels, cut in the field so every mouth is a rounded flare (no hard cut edges)
     P3.CHANNELS.clear()
     tun = np.full(len(P), 1e3, np.float32)
-    for kind, r, path, rend in route_tunnels(FS2):                   # routed again on the thickened back
+    slv = np.full(len(P), 1e3, np.float32)
+    # v3.3: the finger swing carve (kc) cuts the back down near the knuckles after the tunnels are placed; the little
+    # finger's return-cord mouth then broke the surface (a 0.3 mm slit beside the knuckle, seen in the slicer). Each
+    # knuckle-end mouth is lowered (fading out over 6 mm) until its funnel keeps MOUTH_COVER under the carved surface.
+    kc_g = kc.reshape(shape)
+    def kc_at(Q):
+        return ndimage.map_coordinates(kc_g, ((np.atleast_2d(Q) - g.o) / g.p).T, order=1, mode='nearest')
+    def depth(Q):
+        Q = np.atleast_2d(Q); return -np.maximum(FS2(Q), -kc_at(Q))
+    def lower_mouth(path, r, name):
+        rf = max(r + 0.45, 1.5)
+        L = np.r_[0, np.cumsum(np.linalg.norm(np.diff(path, axis=0), axis=1))]
+        w = np.clip(1 - L / 6.0, 0, 1)[:, None]
+        for sh in np.arange(0.0, 3.01, 0.25):
+            q = path - w * np.array([0, 0, sh])
+            dv = q[1] - q[0]; dv /= np.linalg.norm(dv)
+            fun = q[0] + dv[None] * np.linspace(-1.0, 1.8, 8)[:, None]
+            tube = q[(L > 1.8) & (L < 6.0)]
+            ok = depth(fun).min() - rf >= MOUTH_COVER and (len(tube) == 0 or depth(tube).min() - r >= MOUTH_COVER)
+            if ok: break
+        cav = float(Cv(np.vstack([fun, tube]) if len(tube) else fun).min())
+        if sh > 0 or not ok:
+            print('tunnel mouth %s lowered %.2f mm: cover %.2f mm, cavity clearance %.2f%s' % (name, sh, depth(fun).min() - rf, cav, '' if ok else '  NOT ENOUGH'), flush=True)
+        return q
+    TN = ['index flexor', 'index return', 'middle flexor', 'middle return', 'ring flexor', 'ring return', 'little flexor', 'little return']
+    for ti, (kind, r, path, rend) in enumerate(route_tunnels(FS2)):  # routed again on the thickened back
+        if kind == 'ret':                     # flexor mouths open into the knuckle gap on purpose: only the return cords
+            path = lower_mouth(np.asarray(path), r, TN[ti]); P3.CHANNELS[ti]['pts'] = path.tolist()   # run under the back
         tun = np.minimum(tun, chain_field(P, path, r))
+        # v3.3: a 1 mm skin round the tunnel, put back after the final rounding (that pass shaved the low ridge over the
+        # little finger's lines to 0.05 mm: a pinhole in the slicer). Not the last 4 mm at either end (the mouths).
+        L_ = np.r_[0, np.cumsum(np.linalg.norm(np.diff(path, axis=0), axis=1))]
+        inner_ = path[(L_ > 4.0) & (L_ < L_[-1] - 4.0)]
+        if len(inner_) > 1: slv = np.minimum(slv, chain_field(P, inner_, r + SLEEVE))
         for e0, e1 in ((path[0], path[1]), (path[-1], path[-2])):      # flared mouths
             dv = e1 - e0; dv /= np.linalg.norm(dv) + 1e-9
             tun = np.minimum(tun, seg_dist(P, e0 - dv * 1.0, e0 + dv * 1.8) - max(r + 0.45, 1.5))   # 3 mm funnel
@@ -436,6 +500,10 @@ def main():
             e = rend
             tun = np.minimum(tun, seg_dist(P, np.array([e[0], 0.8, e[2]]), np.array([e[0], -3.0, e[2]])) - 1.75)
     print('tunnels routed', flush=True)
+    # the skin stays out of the finger and thumb swings, the hand cavity, the cover and beyond the wrist end
+    _cv = Cv(P)
+    slv = np.maximum(np.maximum(slv, np.maximum(0.6 - kc, 0.6 - tsw)), np.maximum(1.0 - _cv, np.maximum(-(flap_reg - 1.0), keep)))
+    slv = np.maximum(slv, 6.0 - P[:, 1]); del _cv              # not over the wrist end (the cuff swings close there)
     cvl = Cv(P)
     inner = np.maximum(np.maximum(cvl - 2.0, -cvl), np.maximum(np.maximum(0.8 - tsw, 0.8 - kc), np.maximum(0.8 - drain_f, keep)))
     inner = np.maximum(inner, -(flap_reg - 1.0))                                  # not under the cover
@@ -447,7 +515,7 @@ def main():
     fade = (1 - smoothstep(EAR_R + 3.0, EAR_R + 7.0, rwe)).astype(np.float32)
     for xw in ears:
         sx_ = -1 if xw < WRIST[0] else 1
-        beyond = sx_ * (P[:, 0] - (xw + sx_ * 2.0))
+        beyond = sx_ * (P[:, 0] - (xw + sx_ * (2.0 + ears_ext(xw))))
         back = np.where(fade > 0, smax(back, beyond - 10.0 * (1 - fade), 0.6), back)
     del rwe, fade, beyond
     O2s_logo = O2s                                       # the logo is pressed into the real (ridged) surface
@@ -463,6 +531,7 @@ def main():
     flap = opening_true(flap.reshape(shape), g, 0.6).ravel()      # nothing under 1.2 mm on the TPU cover
     flap = smin(flap, lip_keep, 0.3); del lip_keep                 # ...except the even edge lip, put back
     # tunnels after the rounding (it would eat the thin roof over a tunnel); smooth subtraction rounds the mouths
+    back = smin(back, slv, 0.4); del slv                         # v3.3: tunnel skin back (see above)
     back = smax(back, -tun, 0.4); del tun
     # snaps: a 0.7 mm TPU bump under the cover's lip clicks into a matching dimple in the ledge
     print('final rounding done', flush=True)
@@ -478,8 +547,8 @@ def main():
     # screw length is picked from the PETG measured under each screw so the tip stays clear of the cavity
     flap_screws = []
     tmB = to_tm(Mback)
-    for yy in SCREWS_Y:
-        p = P3.surface_point(FS2, np.array([SCREW_X, yy, -40.0]), np.array([0, 0, -1.0]), lo=-45, hi=0)
+    for xx, yy in SITES:
+        p = P3.surface_point(FS2, np.array([xx, yy, -40.0]), np.array([0, 0, -1.0]), lo=-45, hi=0)
         e = 0.2; gr = np.array([(FS2((p + dv)[None])[0] - FS2((p - dv)[None])[0]) / (2 * e) for dv in np.eye(3) * e])
         n_ = gr / np.linalg.norm(gr)
         loc, _, _ = tmB.ray.intersects_location([p - n_ * (COV_T + 0.3)], [-n_], multiple_hits=True)
@@ -500,29 +569,7 @@ def main():
         Mback = Mback - pilot.transform(Ms)
         flap_screws.append({'p': p.round(2).tolist(), 'n': n_.round(3).tolist(), 'petg_under_step': round(petg, 2), 'screw_len': L_s, 'insert': bool(dpt >= 4.0)})
         print('flap screw', flap_screws[-1], flush=True)
-    # through-snaps (v3.1f): a TPU peg under the cover's lip pushes through a hole in the PETG step; its
-    # cone head pops out into a counterbore on the inside and holds. Flush on the inside, nothing to see outside.
-    snap_info = []
-    for c_ in snaps:
-        e = 0.2; gr = np.array([(FS2((c_ + dv)[None])[0] - FS2((c_ - dv)[None])[0]) / (2 * e) for dv in np.eye(3) * e])
-        n_ = gr / np.linalg.norm(gr)
-        p0 = c_ - n_ * 0.3
-        loc, _, _ = tmB.ray.intersects_location([p0], [-n_], multiple_hits=True)
-        dd = np.sort((p0 - loc) @ n_) if len(loc) else np.array([])
-        t = float(dd[0] + 0.3) if len(dd) else 0.0        # PETG thickness from the step floor to the cavity
-        if t < 2.6:
-            print('snap skipped (PETG', round(t, 2), ')', flush=True); continue
-        cb = min(1.2, t - 1.4)                              # counterbore depth on the cavity side
-        u_ = np.cross(n_, [0, 1, 0]); u_ /= np.linalg.norm(u_); w_ = np.cross(n_, u_)
-        Ms = frame_matrix(c_, u_, w_, -n_)                  # local +z points into the part, 0 = step floor
-        shaft = mf.Manifold.cylinder(t - cb + 0.5, 1.4, 1.4, 32).translate([0, 0, -0.5])
-        head = mf.Manifold.cylinder(cb - 0.15, 2.0, 1.15, 32).translate([0, 0, t - cb])
-        hole = mf.Manifold.cylinder(t + 1.0, 1.6, 1.6, 32).translate([0, 0, -0.5])
-        cbore = mf.Manifold.cylinder(cb + 1.0, 2.45, 2.45, 32).translate([0, 0, t - cb])
-        Mflap = Mflap + (shaft + head).transform(Ms)
-        Mback = Mback - (hole + cbore).transform(Ms)
-        snap_info.append({'p': np.round(c_, 2).tolist(), 'petg': round(t, 2), 'counterbore': round(cb, 2)})
-    print('through-snaps', len(snap_info), [s_['petg'] for s_ in snap_info], flush=True)
+    snap_info = []                                          # v3.3: no snaps, screws all round
     del tmB
     # knuckle tongues: an exact round ring round each bore (the field tongue had bites taken out of it,
     # which made the bores look off-centre); inset so it never grows past the tongue the finger was fitted to
@@ -562,9 +609,10 @@ def main():
     zz_ = np.cross(a_, [0, 1.0, 0]); zz_ /= np.linalg.norm(zz_); yy_ = np.cross(zz_, a_)
     Mback = Mback - cyl_x_span(1.7, ax_['t_index_min'] - 1.0, ax_['t_far'] + 1.0).transform(frame_matrix(c_, a_, yy_, zz_))
     for sx, xw in zip((-1, 1), ears):
-        x_out = xw + sx * (2.0 + (EAR_EXT if sx < 0 else 0.0))
+        x_out = xw + sx * (2.0 + ears_ext(xw))
         xl = x_out - WRIST[0]                                 # the frame below is centred on the wrist axis
-        hole = cyl_x_span(1.3, xl - 1, xl + 9.0) if sx < 0 else cyl_x_span(1.3, xl - 9.0, xl + 1)   # v3.2: through the ear wall (M3 x 6 stops 0.7-1.3 mm short of the cavity)
+        # v3.3: 4.0 mm hole for a 4 mm brass insert, pushed in from outside, flush (the M3 x 6 tip stays inside it)
+        hole = cyl_x_span(INS_R, xl - 1, xl + WRIST_INS_D) if sx < 0 else cyl_x_span(INS_R, xl - WRIST_INS_D, xl + 1)
         Mback = Mback - hole.transform(Wm)
     # logo, pressed 0.8 mm into the curved back
     rects = json.load(open('src/logo_rects.json'))

@@ -17,7 +17,8 @@ LINER, WALL = 1.5, 3.0
 Y_END = -102.0
 OPEN_HALF = 62.0
 PSI_DORSAL, PSI_PALMAR = 122.0, -150.0
-EAR_EXT = 0.0               # arms at the standard spacing (the hand is trimmed flat at its ears)
+EAR_EXT = 2.2               # v3.3: thumb-side arm 2.2 mm further out (the hand's ear pad is thicker for an insert)
+EAR_EXT_R = 1.0             # v3.3: little-finger-side arm 1.0 mm further out
 STRAPS_Y = (-36.0, -84.0); STRAP_W = 27.0
 FLEX_EXITS = [PJ['line_exits_x'][i] for i in (0, 2, 4, 6)]
 BUMP_H, BUMP_Y, BUMP_LEN, BUMP_WID = 2.8, -29.0, 17.0, 16.0
@@ -53,7 +54,7 @@ def main():
     shell = smax(shell, wedge, 1.5)
     for xw in EARS:
         sx = 1 if xw > W[0] else -1
-        ext = EAR_EXT if sx < 0 else 0.0
+        ext = EAR_EXT if sx < 0 else EAR_EXT_R
         x_out = xw + sx * (2.3 + ext + 3.4)
         hw = np.interp(Y, ys, np.array([49.3, 45.6, 44.2, 41.2, 38.4, 36.2, 34.3, 35.0]) / 2)
         sb = np.clip((-5.0 - Y) / 6.0, 0, 1); sb = sb * sb * (3 - 2 * sb)      # arm joins the cuff wall from y = -5 back (wrist clearance)
@@ -63,7 +64,7 @@ def main():
         shell = smin(shell, plate, 4.0)
     # clearance for the hand's hinge pads: only between the two arms' inner faces (one bounded cut; a cut per
     # ear ran across the whole cuff and took the front of the thumb-side arm away)
-    between = np.minimum((EARS[1] + 2.3) - X, X - (EARS[0] - 2.3 - EAR_EXT))
+    between = np.minimum((EARS[1] + 2.3 + EAR_EXT_R) - X, X - (EARS[0] - 2.3 - EAR_EXT))
     shell = smax(shell, np.minimum(9.6 - rw, between), 0.4); del between
     # rounded strap slots and vents (cut in the field so their edges are rounded)
     def radial_slot(y0, th, half_len, r, along='y'):
@@ -161,7 +162,7 @@ def main():
     # hinge holes (clearance + head recess in the ear plates)
     for xw in EARS:
         sx = 1 if xw > W[0] else -1
-        ext = EAR_EXT if sx < 0 else 0.0
+        ext = EAR_EXT if sx < 0 else EAR_EXT_R
         x_out = xw + sx * (2.3 + ext + 3.4)
         if sx > 0:
             h = cyl_x_span(1.7, x_out - 4.5, x_out + 2) + cyl_x_span(3.1, x_out - 1.5, x_out + 5)

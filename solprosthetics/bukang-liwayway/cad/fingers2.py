@@ -55,6 +55,7 @@ for _n in AXLE:
           f'{np.degrees(np.arccos(np.clip(AX_A @ np.array(_inf["x"]), -1, 1))):.1f} deg', flush=True)
     _inf.update(O=_Op.tolist(), x=AX_A.tolist(), d=_d.tolist(), z=_z.tolist())
 AXLE_RECESS = float(os.environ.get('AXLE_RECESS', '2.25'))   # head recess on the index side (default: full)
+LITTLE_HEAD_EXTRA = {0: 2.4, 1: 1.2}   # v3.3: little finger joints thicker on the outside (nearly all of it stays after smoothing) so both take M3 x 12, like the other fingers
 AXLE_HEAD_EXTRA = 2.4            # index knuckle thicker on the outside (about 1.2 mm after smoothing) so a stock M3 x 45 ends inside the ring
 
 
@@ -116,6 +117,8 @@ def main(only=None):
                 hw_ = Jt.ws / 2 + ARM_MIN + HEAD_H
                 if jj == 0 and n == AXLE[0]:       # axle head side (outside of the hand) grown a little
                     side_ = np.maximum(u - hw_, -u - (hw_ + AXLE_HEAD_EXTRA))
+                elif n == 'little' and jj in LITTLE_HEAD_EXTRA:   # screw-head side (outside of the hand, +u) grown
+                    side_ = np.maximum(u - (hw_ + LITTLE_HEAD_EXTRA[jj]), -u - hw_)
                 else:
                     side_ = np.abs(u) - hw_
                 boss = smax(np.sqrt(v * v + w * w) - (Jt.R - 0.2), side_, 1.2)
@@ -258,14 +261,19 @@ def main(only=None):
                         # the index's own inner arm, so it turns with the index and is a plain pin for the others
                         rc = AXLE_RECESS if np.isfinite(AXLE_RECESS) else min(HEAD_H + 0.1, max(0.0, -xmin - w2 - ARM_MIN))
                         hole = hole + cyl_x_span(3.1, -BIG, xmin + rc)
-                        arm_in = xmax - w2; dpt = min(INS_D, arm_in - 0.4)
+                        # v3.3 (test print: tightening the axle squeezed the two index arms onto the palm tongue
+                        # and the finger seized): the insert moves to the OUTER arm, right under the head. Head and
+                        # thread now grip the same arm, nothing pulls the arms together, and the inner arm turns
+                        # freely on the screw (plain 3.4 mm hole). The insert goes in from outside, flush in the
+                        # head recess; its hole runs through to the slot so the displaced plastic can escape.
+                        arm_out = -(xmin + rc) - w2; dpt = min(INS_D, arm_out)
                         if dpt >= 4.0:
-                            hole = hole + cyl_x_span(INS_R, xmax - dpt, BIG)
+                            hole = hole + cyl_x_span(INS_R, -BIG, -w2)
                         else:
                             hole = cyl_x_span(1.7, -BIG, w2) + cyl_x_span(1.3, -BIG, BIG) + cyl_x_span(3.1, -BIG, xmin + rc)
                         inf.update(axle_role=role, recess=float(rc), seat=float(xmin + rc), screw_len=0,
-                                   insert=bool(dpt >= 4.0), insert_depth=float(dpt))
-                        print(f'  axle head: recess {rc:.2f} (arm left {-xmin - w2 - rc:.2f}); inner arm {arm_in:.2f} -> insert {dpt >= 4.0} ({dpt:.2f} deep)', flush=True)
+                                   insert=bool(dpt >= 4.0), insert_depth=float(dpt), insert_arm='outer')
+                        print(f'  axle head: recess {rc:.2f}; outer arm under the head {arm_out:.2f} -> insert {dpt >= 4.0} ({dpt:.2f} deep, through)', flush=True)
                     elif role == 'end':
                         inf.update(axle_role=role, screw_len=0, far_arm=float(xmax - w2))
                         print(f'  axle end: far arm {xmax - w2:.2f} (the axle tip rests in it)', flush=True)

@@ -56,21 +56,22 @@ This replaces the Enabling the Future multi-hand spreadsheet, which works out to
 
 ## Printed parts
 
-**Newest: Bukang-liwayway v3.2 (realistic), test print, [bukang-liwayway/](bukang-liwayway/README.md).** Shaped from a real child's hand, with a closed palm (rigid PETG back + thin TPU cover that screws on along one edge and snaps shut, open at the wrist end so the hand goes in), one knuckle axle for three fingers, brass heat-set inserts, rubber grip pads, fingernails, hidden lines and the logo on the back. Printing, assembly and stringing guides (PDF, v3.2) and the hardware card `stl/HARDWARE.md` are in the same folder. The same realistic hand will be the starting point for Sinag and Tanghali.
+**Newest: Bukang-liwayway v3.3 (realistic), test print, [bukang-liwayway/](bukang-liwayway/README.md).** Shaped from a real child's hand, with a closed palm (rigid PETG back + thin TPU cover held by 12 flush screws into brass inserts, open at the wrist end so the hand goes in), one knuckle axle for three fingers, a thumb that clicks into set grip positions and locks with a tool-free knob, rubber grip pads, fingernails, hidden lines and the logo on the back. Optional TPU art holder for a pencil, pen, marker or brush. Printing, assembly and stringing guides (PDF, v3.3) and the hardware card `stl/HARDWARE.md` are in the same folder. The same realistic hand will be the starting point for Sinag and Tanghali.
 
-![Bukang-liwayway v3.2](bukang-liwayway/hand-hero.jpg)
+![Bukang-liwayway v3.3](bukang-liwayway/hand-hero.jpg)
 
 All parts are in [bukang-liwayway/](bukang-liwayway/README.md). Part IDs: SP1 = Bukang-liwayway, SP2 = Sinag, SP3 = Tanghali.
 
 | ID | Part | Material | Status | Notes |
 |----|------|----------|--------|-------|
-| SP1-01 | Back of the hand (`palm_back_print.stl`, with snip-off print supports) | PETG | **v3.2 test print** | Realistic shape, logo pressed into the back, knuckle block with the finger joints and the knuckle axle, thumb mount, hidden line tunnels, wrist ears, flush step for the cover. |
-| SP1-07 | Palm cover (`palm_flap.stl`) | TPU 95A | **v3.2 test print** | Thin closed palm with a raised grip oval. Screwed along the little-finger edge (3 × M3×5 flat-head into heat-set inserts), 7 push-through snap pegs elsewhere. |
-| SP1-02 | Finger segments (11) | PETG | **v3.2 test print** | Barrel joints on the knuckle creases, fingernails on the tips. A broken segment is a quick reprint, not a new hand. |
-| SP1-06 | Thumb | PETG | **v3.2 test print** | Friction hinge on one M3×20: swing to the grip, tighten one screw. |
-| SP1-03 | Forearm cuff | PETG | **v3.2 test print** | Open palm side, strap slots, vents, low tensioner swelling with 4 flush line clamps. |
-| SP1-04 | Fingertip pads | Bicycle inner tube | **v3.2** | Rubber pads glued into shallow recesses with E6000 or contact cement. |
-| SP1-05 | Return cords | Elastic cord | **v3.2** | Open the fingers again; run hidden inside the fingers and the back of the hand. |
+| SP1-01 | Back of the hand (`palm_back_print.stl`, with snip-off print supports) | PETG | **v3.3 test print** | Realistic shape, logo pressed into the back, knuckle block with the finger joints and the knuckle axle, toothed thumb mount, hidden line tunnels, wrist ears with brass inserts, flush step for the cover. |
+| SP1-07 | Palm cover (`palm_flap.stl`) | TPU 95A | **v3.3 test print** | Thin closed palm with a raised grip oval. 12 × M3×5 flat-head screws into heat-set inserts all round; no snaps, no glue. Flared glove-like mouth at the wrist end. |
+| SP1-02 | Finger segments (11) | PETG | **v3.3 test print** | Barrel joints on the knuckle creases, fingernails on the tips. A broken segment is a quick reprint, not a new hand. |
+| SP1-06 | Thumb + thumb knob | PETG | **v3.3 test print** | Ring of teeth: clicks into set positions 20° apart. Locked by a clip-on hand knob on an M3×20 hex bolt into a brass insert; no tools. |
+| SP1-03 | Forearm cuff | PETG | **v3.3 test print** | Open palm side, strap slots, vents, low tensioner swelling with 4 flush line clamps. |
+| SP1-04 | Fingertip pads | Bicycle inner tube | **v3.3** | Rubber pads glued into shallow recesses with E6000 or contact cement. |
+| SP1-05 | Return cords | Elastic cord | **v3.3** | Open the fingers again; run hidden inside the fingers and the back of the hand. |
+| SP1-08 | Art holder (optional) | TPU 95A | **v3.3 test print** | Sleeve on the index finger's middle segment with a finned tube for a pencil, pen, crayon, marker or brush (about 4.5–11.5 mm). |
 | SP2-xx | Sinag parts | PETG / TPU | Not designed | Starts from the proven Bukang-liwayway hand; adds stronger grip and an adjustable tensioner. |
 | SP3-xx | Tanghali parts | PETG / TPU | Not designed | Phase 2. Adds a sealed electronics box, motor/servo mount and battery holder. |
 
@@ -103,7 +104,7 @@ All parts are in [bukang-liwayway/](bukang-liwayway/README.md). Part IDs: SP1 = 
 
 ## Build order
 
-1. Design Bukang-liwayway (Model 1). Print a test hand at 100%, then measure it and put its real sizes into the sizer. **Bukang-liwayway v3.2 (realistic) is on the printer for its second test print: [bukang-liwayway/](bukang-liwayway/README.md)**.
+1. Design Bukang-liwayway (Model 1). Print a test hand at 100%, then measure it and put its real sizes into the sizer. **Bukang-liwayway v3.3 (realistic) is ready for its third test print: [bukang-liwayway/](bukang-liwayway/README.md)**.
 2. Test fit with a child (with a therapist if possible). Fix what the fitting shows.
 3. Design Sinag from the proven Model 1.
 4. Bench-test an FSR muscle sensor in a cuff (and the motor) before designing Tanghali.
@@ -119,3 +120,4 @@ All parts are in [bukang-liwayway/](bukang-liwayway/README.md). Part IDs: SP1 = 
 - 2026-10-24: Bukang-liwayway v3.1g replaces v3 in [bukang-liwayway/](bukang-liwayway/README.md): every part rebuilt as smooth shapes, thin TPU palm cover (screwed hinge edge + push-through snaps), fingernails, through-holes at every joint, cleaner cuff tensioner and line routing, printing/assembly and illustrated stringing guides (PDF). The v3 files remain in the git history.
 - 2026-10-24: Tanghali's muscle sensor is now a force-sensitive resistor (Interlink FSR 402 Short, 34-00015) instead of MyoWare, to cut e-waste (no disposable electrodes), cost and repair effort; MyoWare stays an optional plug-in. Added to the bill of materials.
 - 2026-10-25: Bukang-liwayway v3.2, fixes from the first full print: one M3 × 45 knuckle axle for index, middle and ring; open wrist end with rounded edges; 2–3 mm line holes; deeper thumb hinge screw (M3 × 20); heat-set inserts; fingers and thumb print at 45°; per-size hardware card (`stl/HARDWARE.md`).
+- 2026-10-30: Bukang-liwayway v3.3, fixes from the v3.2 print: thumb clicks into set positions and locks with a tool-free knob; index axle insert moved so it can't bind; little finger on M3 × 12; palm cover on 12 screws into inserts (no snaps, no glue) with a wider wrist-end mouth; wrist inserts; palm slit closed; optional TPU art holder (SP1-08); both guides rewritten for v3.3.

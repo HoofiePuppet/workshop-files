@@ -1,17 +1,27 @@
 <img alt="Sol Prosthetics" src="../solprosthetics-logo.png" width="160">
 
-# Bukang-liwayway ("Sunrise") v3.3, realistic — test print
+# Bukang-liwayway ("Sunrise") v3.4, realistic — test print
 
-**Status:** v3.3 test print. It has not been fitted to a child yet. · **Updated:** 2026-10-30
+**Status:** v3.4 test print. It has not been fitted to a child yet. · **Updated:** 2026-10-31
 **Designer:** Hoofie Puppet · **License:** CC BY-NC-SA 4.0 (see the repo's LICENSE)
 
 **Model 1, ages about 9 and under.**
 
-![Bukang-liwayway v3.3](hand-hero.jpg)
+![Bukang-liwayway v3.4](hand-hero.jpg)
 
-This is a wrist-driven hand shaped from a real child's hand: a MakeHuman child model, smoothed and grown slightly so the shell is strong. Bending the wrist down pulls four braided lines, and the fingers close. Bending it back lets elastic cords open them again. The thumb clicks into one of several grip positions and is locked by a knob you turn by hand, no tools.
+This is a wrist-driven hand shaped from a real child's hand: a MakeHuman child model, smoothed and grown slightly so the shell is strong. Bending the wrist down pulls four braided lines, and the fingers close. Bending it back lets elastic cords open them again. The thumb clicks into one of three grip positions (open, middle, pinch) and is locked by a knob you turn by hand, no tools.
 
 This is Model 1, Bukang-liwayway. The same realistic hand will be the starting point for Sinag (stronger grip and tensioner) and Tanghali (motor).
+
+## What changed in v3.4 (from printing v3.3)
+
+| Fix | What it does |
+|---|---|
+| Thumb mount braced | The thumb's hinge barrel used to hang over an open window, joined to the palm only at the knob end, so it started in mid-air when printed and came out loose or distorted (and supports scarred it). Everything the thumb doesn't use is now filled solid back to the palm wall; only the slot the thumb swings in stays open. The barrel now grows straight up out of the palm when printed. New script `cad/brace.py`. |
+| Bigger click teeth | **12 teeth, 1 mm tall, 30° apart** (were 18 × 0.45 mm, 20°), on a wider ring on both the thumb and the palm, so they print clean and hold. 3 thumb positions: open, middle and pinch. |
+| Thumb knob | Lifts 1.4 mm before its clip stops it (was 1 mm), so the taller teeth come free; 0.4 mm taller. Same M3 × 20 hex bolt, same use. |
+| Support blocker | Now also fills the thumb slot and the bolt hole, so the slicer puts no support on the slot faces, the teeth or the bore. |
+| Guides | Both PDF guides updated for v3.4 (new thumb knob page with the 3 clicks). |
 
 ## What changed in v3.3 (after the v3.2 test print)
 
@@ -35,10 +45,10 @@ This is Model 1, Bukang-liwayway. The same realistic hand will be the starting p
 
 ## Guides
 
-Both guides describe **v3.3**. For a size other than 100%, use the screw and insert list in that size's [`stl/HARDWARE.md`](stl/HARDWARE.md).
+Both guides describe **v3.4**. For a size other than 100%, use the screw and insert list in that size's [`stl/HARDWARE.md`](stl/HARDWARE.md).
 
-- [Printing and assembly guide (PDF, v3.3)](printing-and-assembly-guide.pdf)
-- [Illustrated printing, assembly and stringing guide (PDF, v3.3)](assembly-and-stringing-illustrated.pdf)
+- [Printing and assembly guide (PDF, v3.4)](printing-and-assembly-guide.pdf)
+- [Illustrated printing, assembly and stringing guide (PDF, v3.4)](assembly-and-stringing-illustrated.pdf)
 
 ## Size at 100%
 
@@ -59,8 +69,8 @@ Both guides describe **v3.3**. For a size other than 100%, use the screw and ins
 
 | File | Part | Material | Qty | Supports |
 |---|---|---|---|---|
-| `palm_back_print.stl` | **Print this one:** the back of the hand (knuckles, thumb mount with its ring of teeth, wrist ears, line tunnels, logo, step for the cover) with a snip-off support under the wrist-end rim built in | PETG | 1 | Yes, normal supports, **with the blocker below**; 5 mm brim |
-| `palm_back_print_support_blocker.stl` | Support blocker for `palm_back_print.stl`: keeps the slicer's supports out of every hole, line tunnel and the rim. Same coordinates as the part, load the two together | — | — | — |
+| `palm_back_print.stl` | **Print this one:** the back of the hand (knuckles, thumb mount braced solid to the palm with its ring of teeth, wrist ears, line tunnels, logo, step for the cover) with a snip-off support under the wrist-end rim built in | PETG | 1 | Yes, normal supports, **with the blocker below**; 5 mm brim |
+| `palm_back_print_support_blocker.stl` | Support blocker for `palm_back_print.stl`: keeps the slicer's supports out of every hole, line tunnel, the rim and the thumb hinge (slot, teeth, bolt hole). Same coordinates as the part, load the two together | — | — | — |
 | `palm_back.stl` | The same back of the hand without the print aids (for reference) | PETG | — | — |
 | `palm_flap_print.stl` | **Print this one:** the TPU palm cover with snip-off support fins and a 0.6 mm sole bar built in | **TPU 95A** | 1 | Build plate only (few or none); 5 mm brim |
 | `palm_flap.stl` | The same cover without the print aids (for reference) | TPU 95A | — | — |
@@ -77,7 +87,7 @@ Both guides describe **v3.3**. For a size other than 100%, use the screw and ins
 
 - **Screw holes never need support.** Every screw hole prints lying sideways and is small (2.6–3.4 mm, with 6.2 mm head recesses), so each layer only bridges a few millimetres over the top of the hole.
 - **Fingers and thumb:** supports **on the build plate only**. That removes every support the slicer wants inside the screw holes; the supports that start on the bed under the low knuckle end stay.
-- **Back of the hand:** it stands on its wrist end, so the line tunnels run almost straight up, but the rim across the back floats about 8 mm up. `palm_back_print.stl` holds that rim on 14 small posts with 0.8 mm necks on a thin sole. Keep normal supports on and load `palm_back_print_support_blocker.stl` with it:
+- **Back of the hand:** it stands on its wrist end, so the line tunnels run almost straight up, but the rim across the back floats about 8 mm up. `palm_back_print.stl` holds that rim on 14 small posts with 0.8 mm necks on a thin sole. Keep normal supports on and load `palm_back_print_support_blocker.stl` with it (it also keeps supports out of the thumb hinge; the thumb mount is braced to the palm and needs none under it):
   - **Creality Print / OrcaSlicer / PrusaSlicer:** drag both files in together and answer **Yes** to loading them as one object with multiple parts. Right-click the blocker part → **Change type → Support blocker**.
   - **Cura:** turn off "Automatically drop models to the build plate" and "Ensure models are kept apart" before loading, so both keep their positions. Select the blocker → **Per Model Settings** → **Don't support overlaps**.
 - **After printing the back:** snip each neck flush at the rim, lift the support off and sand the marks smooth. Check that every tunnel exit on the rim is clear before threading.
@@ -113,7 +123,7 @@ The PDF guides have every step in detail with pictures. In short:
 2. **Clean the holes.** Run a 3.5 mm drill bit by hand through the 3.4 mm holes the screws slide through. **Don't drill the 2.6 mm pilot holes.** Run an M3 screw through every pilot hole once.
 3. **Fingers:** each joint is a barrel in a cup on one M3 × 12, head flush in its recess.
 4. **Knuckle axle:** M3 × 45 from the index side through the three knuckles into the index insert, with threadlocker. The little finger has its own M3 × 12.
-5. **Thumb:** press the hex bolt's head into the knob, fit the thumb tongue into the mount (teeth to the knob side), push the bolt through, start the thread, click the knob over its rim, swing the thumb to the click you want and tighten the knob by hand.
+5. **Thumb:** press the hex bolt's head into the knob, fit the thumb tongue into the mount (teeth to the knob side), push the bolt through, start the thread, click the knob over its rim, swing the thumb to the click you want (3 clicks, 30° apart) and tighten the knob by hand.
 6. **Return cords, then flexor lines,** from the fingertip knot pockets through the channels and tunnels to the wrist end.
 7. **Wrist:** the two M3 × 6 through the cuff arms into the ear inserts, threadlocker, tightened only until the cuff swings freely.
 8. **Tensioner:** feed each line through the cuff, pull snug with the wrist straight and fingers open, and pin it with its M3 × 4 clamp screw.
@@ -135,12 +145,13 @@ The PDF guides have every step in detail with pictures. In short:
 - **Fingers:** no collisions with the fingers straight, at 30° and at 60° per joint.
 - **Wrist:** the hand swings from about 52° down to 30° up with nothing rubbing, cover included.
 - **Pinch:** the thumb (in its pinch click) meets the index fingertip at about 49–55° of finger curl.
-- **Thumb:** clear of the palm in every click; the knob clears the palm and thumb, and its clip catches.
+- **Thumb:** clear of the palm in every click and when loosened; between clicks the teeth lock; the knob clears the palm and thumb at 0 and 1.4 mm lift, and its clip catches.
+- **Thumb mount:** solid to the palm (no part of it starts in mid-air in print orientation), clear of the thumb's whole swing, the index finger, the child's hand and the cover.
 - **Knuckle axle:** the path is clear through all three knuckles.
 - **Line tunnels:** at least about 1 mm of plastic round every tunnel; no openings in the surface except the designed ones.
 - **Print checks:** every STL is one closed, watertight solid.
 
-**On the v3.3 print, check:** the thumb knob and clicks (does it hold in a hard pinch?), the axle with the moved insert, the 12 cover screws, the wrist inserts, threading, how far the fingers close, the pinch, getting the hand in and out, and the art holder.
+**On the v3.4 print, check:** the thumb mount prints solid and clean with the new blocker; the 12 teeth print sharp on the thumb and the palm; the knob and clicks (does it hold in a hard pinch?), the axle with the moved insert, the 12 cover screws, the wrist inserts, threading, how far the fingers close, the pinch, getting the hand in and out, and the art holder.
 
 ## Source (`cad/`)
 
@@ -153,13 +164,14 @@ The hand is generated from the MakeHuman model by Python scripts (trimesh, manif
 | `thumb_solve.py` | Thumb pinch pose and hinge axis |
 | `fingers2.py` (+ `fingers.py`, `joints.py`, `fingerskin.py`) | Finger segments: filleted barrel joints, screw holes, line channels, fingertip recesses and nails |
 | `palm2.py` (+ `palm.py`, `cavity.py`) | Back of the hand, TPU palm cover with its 12 screw bosses, thumb |
-| `thumb_lock.py` | Ring of teeth on the thumb tongue and mount, the thumb insert, and the clip-on knob (`thumb-knob.stl`) |
+| `thumb_lock.py` | Ring of 12 teeth on the thumb tongue and mount, the thumb insert, the clip-on knob (`thumb-knob.stl`), and the thumb-hinge support keep-out |
+| `brace.py` | Fills the space round the thumb barrel back to the palm, clear of the thumb's swing, the index finger, the child's hand and the cover (called by `thumb_lock.py`) |
 | `cuff2.py` | Forearm cuff with the tensioner swelling, line channels and clamps |
 | `art_holder.py` | The optional art holder (`art-holder.stl`) and its fit checks |
 | `sdf.py`, `sdfparts.py`, `lib_grid.py`, `rlib.py` | Smooth-shape (distance field) helpers |
 | `orient.py`, `clean_stl.py` | Print orientation and clean STLs |
 | `flap_print.py` | Adds the snip-off support fins and sole bar to the palm cover (`palm_flap_print.stl`) |
-| `back_print.py` | Adds the snip-off rim support to the back of the hand (`palm_back_print.stl`) and makes its support blocker |
+| `back_print.py` | Adds the snip-off rim support to the back of the hand (`palm_back_print.stl`) and makes its support blocker (holes, tunnels, rim, thumb hinge) |
 | `hardware_card.py` | Writes `stl/HARDWARE.md` (screw lengths and inserts for this size) |
 | `check_pits.py` | Looks at every part from six directions for holes or pits in the surface that aren't designed openings |
 | `check_tunnel_roof.py` | Measures the plastic round every line tunnel from inside the tunnel |
@@ -181,3 +193,4 @@ The hand is generated from the MakeHuman model by Python scripts (trimesh, manif
 - 2026-10-26: both PDF guides updated for v3.2 (knuckle axle, heat-set inserts, 45° printing, print versions and support blocker, open wrist end, hardware card, new grip pad sizes); the illustrated guide has new print-layout, insert and stringing pages.
 - 2026-10-26 (later): support blocker fixed. The first version also filled the opening under the thumb mount, so that overhang printed without support and came out loose (the thumb screw could not bite). The blocker now covers only the line tunnels, the small holes and the rim; every overhang that needs support is left open for the slicer. Reprint the back of the hand with the new `palm_back_print_support_blocker.stl`; `palm_back_print.stl` itself is unchanged.
 - 2026-10-30: v3.3, fixes from the v3.2 test print. Thumb: ring of teeth for set positions, held by a tool-free clip-on knob on an M3 × 20 hex bolt into a brass insert. Index knuckle insert moved to the outer arm so the axle can't bind the index. Little finger bulked out for M3 × 12. Palm cover held by 12 flush M3 × 5 screws into inserts all round (snap pegs removed, no glue), with a wider glove-like mouth at the wrist end. Brass inserts in both wrist ear pads. Slit at the little finger's return-tunnel mouth closed; new surface-pit and tunnel-wall checks. New optional TPU art holder. Both PDF guides rewritten for v3.3; new pictures.
+- 2026-10-31: v3.4, from printing v3.3. Thumb barrel braced solid to the palm (it hung over an open window and printed loose); 12 bigger click teeth (1 mm, 30°, 3 positions) on the thumb and the palm; knob lifts 1.4 mm; support blocker also covers the thumb hinge; both PDF guides updated; new pictures.

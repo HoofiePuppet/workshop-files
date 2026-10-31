@@ -187,6 +187,15 @@ gv, gf, _, _ = measure.marching_cubes(np.pad(gq, 1).astype(np.float32), 0.5)
 gm = trimesh.Trimesh((gv - 1) * 3 * G + [xs[0], ys[0], zt[0]], gf)
 if gm.volume < 0: gm.invert()
 blk = to_mf(hole_blocker(part)) + to_mf(gm)
+# v3.4: the thumb hinge (slot, teeth grooves, bolt bore) never gets support: written by thumb_lock.py in the
+# hand frame, turned to print orientation here
+import json as _json, os as _os
+if _os.path.exists('build/thumb_hinge_keepout.stl') and 'palm_back' in src:
+    _k = trimesh.load('build/thumb_hinge_keepout.stl')
+    _k.apply_transform(np.array(_json.load(open('build/orient.json'))['palm_back']['matrix']))
+    _km = to_mf(_k); assert _km.status() == mf.Error.NoError, _km.status()
+    blk = blk + _km
+    print('blocker: + thumb hinge keep-out %.0f mm3' % _k.volume, flush=True)
 bm = blk.to_mesh(); bt = trimesh.Trimesh(bm.vert_properties[:, :3], bm.tri_verts)
 if bt.bounds[0, 2] < 0.2: bt = bt.slice_plane([0, 0, 0.2], [0, 0, 1], cap=True)   # never below the bed line
 bt.export(dst.replace('.stl', '_support_blocker.stl'))

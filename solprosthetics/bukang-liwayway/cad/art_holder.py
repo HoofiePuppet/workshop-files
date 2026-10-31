@@ -124,8 +124,9 @@ def ride(m, curl):
 for curl in (0, 30, 49, 70):
     sg = pose_finger(Jd, segs, 'index', curl); hd = ride(part, curl)
     th_ = []
-    for k in range(int(TS['swing_deg'] // 20) + 1):
-        a = TS['swing_deg'] - 20 * k
+    _step = json.load(open('build/palm.json')).get('thumb_lock', {}).get('step_deg', 20)   # v3.4: 30 deg clicks
+    for k in range(int(TS['swing_deg'] // _step) + 1):
+        a = TS['swing_deg'] - _step * k
         R = Rot.from_rotvec(np.array(TS['hinge_axis']) * np.radians(a)) * Rot.from_quat(TS['open_quat'])
         M = np.eye(4); M[:3, :3] = R.as_matrix(); M[:3, 3] = piv - R.as_matrix() @ piv
         th_.append(round((thumb.transform(M[:3, :]) ^ hd).volume(), 1))

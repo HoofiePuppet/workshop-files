@@ -13,9 +13,10 @@ Runs after palm2.py and changes build/thumb.stl and build/palm_back.stl (hand fr
 import json, numpy as np, trimesh, manifold3d as mf
 from scipy.spatial.transform import Rotation as Rot
 
-N_TEETH, H_TOOTH = 18, 0.45
-R_IN, R_OUT = 2.7, 4.2              # tooth ring (tongue disc radius 4.5, insert hole radius 2.0)
-TONGUE_HALF = 3.0                   # tongue width 6.0
+N_TEETH, H_TOOTH = 12, 1.0          # v3.4: 12 teeth, 30 deg steps, 1.0 mm tall (18 x 0.45 printed too small to work)
+R_IN, R_OUT = 2.5, 4.4              # tooth ring (tongue disc radius 4.5, insert hole radius 2.0); v3.4 wider
+TONGUE_HALF = 3.0                   # tongue face on the head (teeth) side
+TONGUE_FAR = 2.4                    # v3.4: far face (was 3.0): 1.2 mm free travel to the far cheek, so 1.0 mm teeth come free
 FACE_NEW = 3.1                      # head-side cheek face (was 3.5): 0.1 mm from the tongue when locked
 GROOVE_EXTRA = 0.05                 # tip clearance in the grooves
 SLAB_R = 6.3                        # inside the 6.5 mm barrel
@@ -33,10 +34,11 @@ INSERT_D, INSERT_L = 4.0, 4.0
 FACE_K = 9.0                        # flat seat on the barrel end (the end face was slanted, 8.7 .. 11.3 mm)
 CB_R = 7.6                          # palm cut back to the seat inside this radius (room for the knob)
 CB_FLARE = 2.0                      # ...then opening out at 45 deg so its edge meets the skin at a gentle angle
-POST_R, POST_TOP = 3.55, 12.6       # post; the bolt head bears on its top
-FL_R, FL0, FL1 = 4.0, 11.3, 11.9    # rim on the post: radius, underside, top (then a 45 deg lead-in)
+KU = 0.4                            # v3.4: rim, post and the knob above its lip move up by this, so the lip catches after KNOB_TRAVEL
+POST_R, POST_TOP = 3.55, 12.6 + KU       # post; the bolt head bears on its top
+FL_R, FL0, FL1 = 4.0, 11.3 + KU, 11.9 + KU    # rim on the post: radius, underside, top (then a 45 deg lead-in)
 HEX_AF, HEAD_K = 5.55, 2.0          # M3 hex head: 5.5 across flats, 2 mm tall (snug pocket)
-KNOB_TRAVEL = 1.0
+KNOB_TRAVEL = 1.4                   # v3.4: frees the 1.0 mm teeth (was 1.0 for 0.45 mm teeth)
 SK_IN, SK_OUT, LIP_IN = FL_R + 0.2, FL_R + 1.2, POST_R + 0.2   # skirt (fingers) and lip radii
 GRIP_R, KNOB_TOP = 7.0, POST_TOP + HEAD_K + 2.4
 
@@ -102,13 +104,13 @@ v0 = thumb.volume()
 # even 6 mm eye and neck between the cheeks: free travel of 0.6 mm to the far cheek when loosened
 # tapered, so the 7 mm neck blends into the 6 mm eye without a ledge: full 0.5 mm trim inside the barrel
 # radius, fading to nothing at TAPER_R
-def trim_side(sgn):
-    prof = mf.CrossSection([[[0.0, TONGUE_HALF], [TRIM_R, TONGUE_HALF], [TAPER_R, TONGUE_HALF + 0.5], [TAPER_R + 0.01, 12.0], [0.0, 12.0]]])
+def trim_side(sgn, half=TONGUE_HALF):
+    prof = mf.CrossSection([[[0.0, half], [TRIM_R, half], [TAPER_R, TONGUE_HALF + 0.5], [TAPER_R + 0.01, 12.0], [0.0, 12.0]]])
     rev = mf.Manifold.revolve(prof, 96)                    # around the 2D y axis -> 3D z axis is the height
     rev = rev.rotate([0, 90, 0])                           # height (z) -> local +x (u)
     if sgn < 0: rev = rev.mirror([1, 0, 0])
     return rev.transform(Mr[:3, :])
-thumb = thumb - trim_side(1) - trim_side(-1)
+thumb = thumb - trim_side(hs) - trim_side(-hs, TONGUE_FAR)
 teeth = tooth_ring(Mr, TONGUE_HALF, H_TOOTH, hs, back=1.0)
 # solid ring under the teeth: the tongue's edge is rounded, and without it small air pockets were left
 # sealed between the tooth bases and the curved face
@@ -124,6 +126,20 @@ Mp = np.eye(4); Mp[:3, :3] = pinch.as_matrix(); Mp[:3, 3] = piv - Mp[:3, :3] @ p
 grooves = tooth_ring(Mr, TONGUE_HALF, H_TOOTH + GROOVE_EXTRA + (FACE_NEW - TONGUE_HALF), hs, back=0.0,
                      r_in=R_IN - 0.15, r_out=R_OUT + 0.15).transform(Mp[:3, :])
 palm = to_mf(trimesh.load(B + SRC['palm_back'])); v1 = palm.volume()
+# v3.4: brace the barrel: fill the space round it back to the palm wall, outside the thumb's real path
+if not os.environ.get('NO_BRACE'):
+    from brace import brace
+    _bm, _tsw, _isw = brace(palm, thumb, B)
+    palm = palm + _bm
+    print('palm: barrel brace added, volume %.0f -> %.0f mm3' % (v1, palm.volume()), flush=True)
+    # support keep-out for the slicer: the hinge (the air the thumb's tongue and eye use, out to r 8.5, and the
+    # bolt bore) must never get support: it scars the cheek faces, the teeth grooves and the bore. With the brace
+    # nothing there needs support any more. back_print.py adds this to the support blocker.
+    # a plain solid (the swept thumb cut to this zone came out as touching fragments): the slot between the cheeks
+    # with the groove faces (u -4.4 .. +3.7) out to r 8.5, plus the bolt bore; overlapping the part does no harm
+    _keep = cyl_u(8.5, hs * (FACE_NEW + H_TOOTH + 0.3), -hs * (SLOT_FACE + 0.1), Mw, seg=72) + cyl_u(1.8, -14.0, 9.0, Mw, seg=32)
+    to_tm(_keep).export(B + 'thumb_hinge_keepout.stl')
+    print('hinge support keep-out: %.0f mm3' % _keep.volume(), flush=True)
 slab = cyl_u(SLAB_R, hs * FACE_NEW, hs * (SLOT_FACE + 0.4), Mw, seg=72)   # head-side cheek moves in to 0.1 mm from the tongue
 palm = palm + slab
 # fill v3.2's head-side bore up to the new seat: 3.9 mm of solid cheek under the screw head (was 0.9 mm)
@@ -146,26 +162,26 @@ palm = palm - cyl_u(1.7, hs * (seat + 0.5), hs * (FACE_NEW - 0.01), Mw)   # near
 # the knob, in the hand frame, sitting on the bolt head (bolt tight)
 def knob_shape():
     C = POST_TOP + HEAD_K                                                  # knob roof underside = head top
-    body = rev_u([(0, 13.0), (GRIP_R - 0.5, 13.0), (GRIP_R, 13.5), (GRIP_R, KNOB_TOP - 0.8), (GRIP_R - 0.8, KNOB_TOP), (0, KNOB_TOP)], Mw, hs)
-    skirt = rev_u([(LIP_IN, 9.4 + 0.4), (SK_IN - 0.05, 9.4), (SK_OUT - 0.3, 9.4), (SK_OUT, 9.7), (SK_OUT, 13.2), (LIP_IN, 13.2)], Mw, hs)
+    body = rev_u([(0, 13.0 + KU), (GRIP_R - 0.5, 13.0 + KU), (GRIP_R, 13.5 + KU), (GRIP_R, KNOB_TOP - 0.8), (GRIP_R - 0.8, KNOB_TOP), (0, KNOB_TOP)], Mw, hs)
+    skirt = rev_u([(LIP_IN, 9.4 + 0.4), (SK_IN - 0.05, 9.4), (SK_OUT - 0.3, 9.4), (SK_OUT, 9.7), (SK_OUT, 13.2 + KU), (LIP_IN, 13.2 + KU)], Mw, hs)
     k = body + skirt
     for i in range(12):                                                    # grip flutes
         a = 2 * np.pi * i / 12; off = (np.cos(a) * yj + np.sin(a) * zj) * (GRIP_R + 0.35)
         M2 = Mw.copy(); M2[:3, 3] = piv + off
-        k = k - cyl_u(0.9, hs * 12.5, hs * (KNOB_TOP + 1), M2, seg=20)
-    k = k - rev_u([(0, 9.0), (SK_IN, 9.0), (SK_IN, 13.0), (0, 13.0)], Mw, hs)        # cavity round the post and rim
-    k = k - rev_u([(0, 9.0), (LIP_IN, 9.0), (LIP_IN, 13.0), (0, 13.0)], Mw, hs)
+        k = k - cyl_u(0.9, hs * (12.5 + KU), hs * (KNOB_TOP + 1), M2, seg=20)
+    k = k - rev_u([(0, 9.0), (SK_IN, 9.0), (SK_IN, 13.0 + KU), (0, 13.0 + KU)], Mw, hs)        # cavity round the post and rim
+    k = k - rev_u([(0, 9.0), (LIP_IN, 9.0), (LIP_IN, 13.0 + KU), (0, 13.0 + KU)], Mw, hs)
     # lip: the skirt's inner edge below the rim (LIP_IN .. SK_IN) stays solid from 9.4 to 10.3, lead-in below
     k = k + rev_u([(LIP_IN, 9.75), (SK_IN, 9.4), (SK_IN + 0.4, 9.4), (SK_IN + 0.4, 10.3), (LIP_IN, 10.3)], Mw, hs)
-    hexp = mf.Manifold.cylinder(C - 13.0 + 0.0, HEX_AF / np.sqrt(3), HEX_AF / np.sqrt(3), 6).rotate([0, 90, 0])
-    hexp = hexp.translate([13.0, 0, 0])
+    hexp = mf.Manifold.cylinder(C - 13.0 - KU, HEX_AF / np.sqrt(3), HEX_AF / np.sqrt(3), 6).rotate([0, 90, 0])
+    hexp = hexp.translate([13.0 + KU, 0, 0])
     if hs < 0: hexp = hexp.mirror([1, 0, 0])
     k = k - hexp.transform(Mw[:3, :])
-    k = k - cyl_u(1.75, hs * 12.0, hs * C, Mw)                             # bolt shank
+    k = k - cyl_u(1.75, hs * (12.0 + KU), hs * C, Mw)                             # bolt shank
     for i in range(4):                                                     # 4 slits -> 4 fingers
         a = np.pi / 4 + i * np.pi / 2; d_ = np.cos(a) * yj + np.sin(a) * zj
         Ms = np.eye(4); Ms[:3, 0], Ms[:3, 1], Ms[:3, 2], Ms[:3, 3] = xj * hs, d_, np.cross(xj * hs, d_), piv
-        k = k - mf.Manifold.cube([12.9 - 9.0, SK_OUT + 1, 0.9]).translate([9.0, 0, -0.45]).transform(Ms[:3, :])
+        k = k - mf.Manifold.cube([12.9 + KU - 9.0, SK_OUT + 1, 0.9]).translate([9.0, 0, -0.45]).transform(Ms[:3, :])
     return max(k.decompose(), key=lambda q: q.volume())          # drop flute slivers
 knob = knob_shape()
 print('knob: volume %.0f mm3, pieces %d' % (knob.volume(), len(knob.decompose())))
@@ -175,8 +191,9 @@ print('screw M3 x %d: head seat u=%+.2f, insert u=%+.2f..%+.2f, tip u=%+.2f' % (
 # ---------------- check: the tongue at every 20 deg position from the pinch back to the open pose sits in
 # the palm without touching (teeth in the grooves)
 fails = []
-for k in range(int(SWING // 20) + 1):
-    a = SWING - 20 * k
+STEP = 360.0 / N_TEETH
+for k in range(int(SWING // STEP) + 1):
+    a = SWING - STEP * k
     Ra = Rot.from_rotvec(ax_w * np.radians(a)) * R_open
     Ma = np.eye(4); Ma[:3, :3] = Ra.as_matrix(); Ma[:3, 3] = piv - Ma[:3, :3] @ piv
     hinge_zone = cyl_u(7.5, -8, 8, Mr)
@@ -184,9 +201,9 @@ for k in range(int(SWING // 20) + 1):
     ov = (tk ^ palm).volume()
     print('  position %5.1f deg from open: thumb/palm overlap %.3f mm3' % (a, ov))
     if ov > 0.05: fails.append(a)
-# loosened: the tongue slides 0.5 mm (of its 0.6) to the far side, the teeth must clear the cheek face
-Ml = np.eye(4); Ml[:3, 3] = -hs * 0.5 * xj
-Ra = Rot.from_rotvec(ax_w * np.radians(SWING - 10)) * R_open     # half-way between two positions
+# loosened: the tongue slides 1.1 mm (of its 1.2) to the far side, the teeth must clear the cheek face
+Ml = np.eye(4); Ml[:3, 3] = -hs * 1.1 * xj
+Ra = Rot.from_rotvec(ax_w * np.radians(SWING - STEP / 2)) * R_open     # half-way between two positions
 Ma = np.eye(4); Ma[:3, :3] = Ra.as_matrix(); Ma[:3, 3] = piv - Ma[:3, :3] @ piv
 tk = (thumb ^ cyl_u(7.5, -8, 8, Mr)).transform(Ma[:3, :]).transform(Ml[:3, :])
 print('  loosened, between positions: overlap %.3f mm3' % (tk ^ palm).volume())
@@ -195,8 +212,8 @@ print('  loosened, between positions: overlap %.3f mm3' % (tk ^ palm).volume())
 for lift in (0.0, KNOB_TRAVEL):
     kk = knob.translate((xj * hs * lift).tolist())
     print('  knob lifted %.1f: knob/palm overlap %.3f mm3' % (lift, (kk ^ palm).volume()))
-    for k_ in range(int(SWING // 20) + 1):
-        a = SWING - 20 * k_
+    for k_ in range(int(SWING // STEP) + 1):
+        a = SWING - STEP * k_
         Ra = Rot.from_rotvec(ax_w * np.radians(a)) * R_open
         Ma = np.eye(4); Ma[:3, :3] = Ra.as_matrix(); Ma[:3, 3] = piv - Ma[:3, :3] @ piv
         ov = (thumb.transform(Ma[:3, :]) ^ kk).volume()
@@ -212,6 +229,13 @@ Rp = trimesh.geometry.align_vectors(up, [0, 0, 1]); km.apply_transform(Rp)
 km.apply_translation(-np.array([km.centroid[0], km.centroid[1], km.bounds[0, 2]]))
 os.makedirs('stl', exist_ok=True); km.export('stl/thumb-knob.stl')
 print('thumb-knob.stl: %.1f x %.1f x %.1f mm' % tuple(km.extents))
+# v3.4: the brace closes the old v3.2 pilot's open end past the far cheek, which would leave a sealed air pocket in
+# the palm; the palm has no designed internal voids, so keep its outer shell only = solid
+_pt = to_tm(palm); _pt.merge_vertices(); _sh = _pt.split(only_watertight=False)
+if len(_sh) > 1:
+    _out = max(_sh, key=lambda q: q.volume)
+    print('palm: filled %d sealed air pocket(s), %.1f mm3' % (len(_sh) - 1, sum(-q.volume for q in _sh if q is not _out)), flush=True)
+    palm = to_mf(_out)
 to_tm(thumb).export(B + 'thumb.stl'); to_tm(palm).export(B + 'palm_back.stl')
 PJ['thumb_screw'] = SCREW; PJ['thumb_insert'] = True; PJ['thumb_knob'] = {'travel': KNOB_TRAVEL, 'bolt': 'hex'}; PJ['thumb_lock'] = {'teeth': N_TEETH, 'step_deg': 360 / N_TEETH}
 json.dump(PJ, open(B + 'palm.json', 'w'), indent=1)

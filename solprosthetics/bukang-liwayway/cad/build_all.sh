@@ -14,7 +14,7 @@ rm -rf build_v3 && cp -r build build_v3
 python3 fingers2.py       # finger segments: barrel joints, knuckle axle, inserts, line channels, nails
 python3 thumb_solve.py    # thumb pinch pose and hinge axis for the final fingers
 python3 palm2.py          # back of the hand, TPU cover, thumb
-python3 thumb_lock.py      # v3.3: thumb rosette lock (teeth, insert in the tongue, M3 x 12)
+python3 thumb_lock.py      # thumb lock: 12 teeth (v3.4), insert in the tongue, clip-on knob; v3.4 brace.py fills round the barrel
 python3 cuff2.py          # forearm cuff, tensioner, line channels and clamps
 python3 orient.py         # print orientation -> stl/
 python3 clean_stl.py      # one closed solid per STL

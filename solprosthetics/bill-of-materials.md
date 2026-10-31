@@ -1,7 +1,7 @@
 # Sol Prosthetics — Bill of Materials
 
-**Status:** Bukang-liwayway v3.3 (realistic) test print · **Updated:** 2026-10-30
-Quantities are for one Bukang-liwayway v3.3 hand ([bukang-liwayway/](bukang-liwayway/README.md)) at 100%.
+**Status:** Bukang-liwayway v3.4 (realistic) test print · **Updated:** 2026-10-31
+Quantities are for one Bukang-liwayway v3.4 hand ([bukang-liwayway/](bukang-liwayway/README.md)) at 100%.
 Sourcing: Lazada PH / Shopee PH / local hardware store unless noted.
 
 ## A. Buy — Models 1 and 2 (mechanical)
@@ -38,17 +38,17 @@ Sourcing: Lazada PH / Shopee PH / local hardware store unless noted.
 | B5 | Fuse + holder | 1 | Sized for the motor. | Not yet |
 | B6 | Electrode pads (spare) | pack | Only with the optional MyoWare (B1b). Disposable, replace often in the heat. | Optional |
 
-## C. Print (Bukang-liwayway v3.3)
+## C. Print (Bukang-liwayway v3.4)
 
 | File | Part | Qty | Material | Status |
 |------|------|-----|----------|--------|
-| `palm_back_print.stl` | Back of the hand (with snip-off print supports; load `palm_back_print_support_blocker.stl` with it) | 1 | PETG | v3.3 test print |
-| `palm_flap_print.stl` | Palm cover (with snip-off print supports) | 1 | TPU 95A | v3.3 test print |
-| `thumb.stl` | Thumb | 1 | PETG | v3.3 test print |
-| `thumb-knob.stl` | Thumb knob | 1 | PETG | v3.3 test print |
-| `finger-*.stl` | Finger segments (index, middle, ring 3 each; little 2) | 11 | PETG | v3.3 test print |
-| `cuff.stl` | Forearm cuff | 1 | PETG | v3.3 test print |
-| `art-holder.stl` | Art holder (optional) | 1 | TPU 95A | v3.3 test print |
+| `palm_back_print.stl` | Back of the hand (with snip-off print supports; load `palm_back_print_support_blocker.stl` with it) | 1 | PETG | v3.4 test print |
+| `palm_flap_print.stl` | Palm cover (with snip-off print supports) | 1 | TPU 95A | v3.4 test print |
+| `thumb.stl` | Thumb | 1 | PETG | v3.4 test print |
+| `thumb-knob.stl` | Thumb knob | 1 | PETG | v3.4 test print |
+| `finger-*.stl` | Finger segments (index, middle, ring 3 each; little 2) | 11 | PETG | v3.4 test print |
+| `cuff.stl` | Forearm cuff | 1 | PETG | v3.4 test print |
+| `art-holder.stl` | Art holder (optional) | 1 | TPU 95A | v3.4 test print |
 
 ## Notes
 

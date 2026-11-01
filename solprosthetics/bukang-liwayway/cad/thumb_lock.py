@@ -41,6 +41,14 @@ HEX_AF, HEAD_K = 5.55, 2.0          # M3 hex head: 5.5 across flats, 2 mm tall (
 KNOB_TRAVEL = 1.4                   # v3.4: frees the 1.0 mm teeth (was 1.0 for 0.45 mm teeth)
 SK_IN, SK_OUT, LIP_IN = FL_R + 0.2, FL_R + 1.2, POST_R + 0.2   # skirt (fingers) and lip radii
 GRIP_R, KNOB_TOP = 7.0, POST_TOP + HEAD_K + 2.4
+# v3.4b knob (the 4 short 1 mm fingers snapped going on): 8 narrow fingers, 1.2 mm thick (1.5 at the lip), ~5.6 mm
+# long from the lip up to the roof, inside the grip ring (which also guards them) -> longer AND lower: the knob
+# stands 0.8 mm less proud than v3.4 (thinner roof over the bolt head), 0.6 mm wider
+FIN_N, FIN_IN, FIN_OUT, SLIT = 8, 4.5, 5.7, 0.8
+HUB_R = 3.9                         # hub round the hex pocket (hex corners at r 3.2): 0.6 mm gap to the fingers
+FIL_I, FIL_O = 0.65, 0.5            # rounded finger roots, run into the hub and the grip ring (no thin crevices)
+KNOB_ROOF = 1.6                     # over the bolt head (v3.4: 2.4)
+GRIP_R2, RING_IN, RING_BOT = 7.3, 6.15, 13.0 + KU   # grip ring round the fingers: outer, inner radius, bottom
 
 B = 'build/'
 # palm2's output is kept as *_prelock.stl, so this step can be re-run on its own (TL_RERUN=1) without stacking twice
@@ -161,27 +169,37 @@ palm = palm - cyl_u(1.7, hs * (seat + 0.5), hs * (FACE_NEW - 0.01), Mw)   # near
 
 # the knob, in the hand frame, sitting on the bolt head (bolt tight)
 def knob_shape():
+    """v3.4b knob: 6 long, thick clip fingers hanging from the knob's top (the 4 short 1 mm v3.4 fingers snapped when
+    pushed over the rim). Fingers r FIN_IN..FIN_OUT, from the lip (u 9.4) up to their root at the roof (u = C, the bolt
+    head's top), with rounded roots; a separate hub round the hex pocket, clear of the fingers, so their whole
+    length flexes. Same catch (lip under the rim, KNOB_TRAVEL lift); grip ring above the fingers."""
     C = POST_TOP + HEAD_K                                                  # knob roof underside = head top
-    body = rev_u([(0, 13.0 + KU), (GRIP_R - 0.5, 13.0 + KU), (GRIP_R, 13.5 + KU), (GRIP_R, KNOB_TOP - 0.8), (GRIP_R - 0.8, KNOB_TOP), (0, KNOB_TOP)], Mw, hs)
-    skirt = rev_u([(LIP_IN, 9.4 + 0.4), (SK_IN - 0.05, 9.4), (SK_OUT - 0.3, 9.4), (SK_OUT, 9.7), (SK_OUT, 13.2 + KU), (LIP_IN, 13.2 + KU)], Mw, hs)
-    k = body + skirt
-    for i in range(12):                                                    # grip flutes
-        a = 2 * np.pi * i / 12; off = (np.cos(a) * yj + np.sin(a) * zj) * (GRIP_R + 0.35)
+    top = C + KNOB_ROOF
+    grip = rev_u([(RING_IN, RING_BOT), (GRIP_R2 - 0.4, RING_BOT), (GRIP_R2, RING_BOT + 0.4), (GRIP_R2, top - 0.7), (GRIP_R2 - 0.7, top),
+                  (0, top), (0, C), (RING_IN, C)], Mw, hs)                  # roof + grip ring hanging round the fingers
+    for i in range(12):                                                    # shallow grip flutes (ring wall stays >= 0.8 mm)
+        a = 2 * np.pi * i / 12; off = (np.cos(a) * yj + np.sin(a) * zj) * (GRIP_R2 + 0.3)
         M2 = Mw.copy(); M2[:3, 3] = piv + off
-        k = k - cyl_u(0.9, hs * (12.5 + KU), hs * (KNOB_TOP + 1), M2, seg=20)
-    k = k - rev_u([(0, 9.0), (SK_IN, 9.0), (SK_IN, 13.0 + KU), (0, 13.0 + KU)], Mw, hs)        # cavity round the post and rim
-    k = k - rev_u([(0, 9.0), (LIP_IN, 9.0), (LIP_IN, 13.0 + KU), (0, 13.0 + KU)], Mw, hs)
-    # lip: the skirt's inner edge below the rim (LIP_IN .. SK_IN) stays solid from 9.4 to 10.3, lead-in below
-    k = k + rev_u([(LIP_IN, 9.75), (SK_IN, 9.4), (SK_IN + 0.4, 9.4), (SK_IN + 0.4, 10.3), (LIP_IN, 10.3)], Mw, hs)
-    hexp = mf.Manifold.cylinder(C - 13.0 - KU, HEX_AF / np.sqrt(3), HEX_AF / np.sqrt(3), 6).rotate([0, 90, 0])
-    hexp = hexp.translate([13.0 + KU, 0, 0])
+        grip = grip - cyl_u(0.6, hs * (RING_BOT - 1), hs * (top + 1), M2, seg=20)
+    # fingers: thicker below the rim lead-in (r SK_IN) where the lip is, then FIN_IN up to the root; rounded roots
+    fing = rev_u([(SK_IN, 9.4), (FIN_OUT - 0.3, 9.4), (FIN_OUT, 9.7), (FIN_OUT, C - FIL_O), (FIN_OUT + FIL_O, C), (FIN_IN - FIL_I, C),
+                  (FIN_IN, C - FIL_I), (FIN_IN, FL1 + (FL_R - POST_R) + 0.3), (SK_IN, FL1 + (FL_R - POST_R))], Mw, hs)
+    # lip under the rim: LIP_IN .. SK_IN from 9.4 to 10.3, lead-in below
+    lip = rev_u([(LIP_IN, 9.75), (SK_IN, 9.4), (SK_IN + 0.4, 9.4), (SK_IN + 0.4, 10.3), (LIP_IN, 10.3)], Mw, hs)
+    # hub round the bolt head (hex pocket), clear of the fingers by HUB_GAP
+    hub = rev_u([(1.75, POST_TOP + 0.2), (HUB_R, POST_TOP + 0.2), (HUB_R, C), (1.75, C)], Mw, hs)
+    k = grip + fing + lip + hub
+    hexp = mf.Manifold.cylinder(C - POST_TOP + 0.01, HEX_AF / np.sqrt(3), HEX_AF / np.sqrt(3), 6).rotate([0, 90, 0])
+    hexp = hexp.translate([POST_TOP - 0.01, 0, 0])
     if hs < 0: hexp = hexp.mirror([1, 0, 0])
     k = k - hexp.transform(Mw[:3, :])
-    k = k - cyl_u(1.75, hs * (12.0 + KU), hs * C, Mw)                             # bolt shank
-    for i in range(4):                                                     # 4 slits -> 4 fingers
-        a = np.pi / 4 + i * np.pi / 2; d_ = np.cos(a) * yj + np.sin(a) * zj
+    k = k - cyl_u(1.75, hs * (POST_TOP - 1.0), hs * (C + 0.01), Mw)                # bolt shank
+    for i in range(FIN_N):                                                 # slits between the fingers, up to the roof
+        a = np.pi / FIN_N + i * 2 * np.pi / FIN_N; d_ = np.cos(a) * yj + np.sin(a) * zj
         Ms = np.eye(4); Ms[:3, 0], Ms[:3, 1], Ms[:3, 2], Ms[:3, 3] = xj * hs, d_, np.cross(xj * hs, d_), piv
-        k = k - mf.Manifold.cube([12.9 + KU - 9.0, SK_OUT + 1, 0.9]).translate([9.0, 0, -0.45]).transform(Ms[:3, :])
+        hb = POST_TOP + 0.1                                                # below the hub the slit cuts the lip too
+        k = k - mf.Manifold.cube([hb - 9.0, RING_IN - 0.1 - (LIP_IN - 0.3), SLIT]).translate([9.0, LIP_IN - 0.3, -SLIT / 2]).transform(Ms[:3, :])
+        k = k - mf.Manifold.cube([C - hb + 0.01, RING_IN - 0.1 - (HUB_R + 0.1), SLIT]).translate([hb - 0.01, HUB_R + 0.1, -SLIT / 2]).transform(Ms[:3, :])   # fingers only, not the hub or grip ring
     return max(k.decompose(), key=lambda q: q.volume())          # drop flute slivers
 knob = knob_shape()
 print('knob: volume %.0f mm3, pieces %d' % (knob.volume(), len(knob.decompose())))

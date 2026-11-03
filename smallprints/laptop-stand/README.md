@@ -5,7 +5,7 @@
 
 A simple stand that holds a Dell (or similar) laptop upright between two uprights, to save desk space.
 
-![Laptop Stand (3D view)](laptop-stand-1.jpg)
+![Laptop Stand holding a Dell laptop](laptop-stand-1.jpg)
 
 ## Print
 `Laptop Stand.stl`

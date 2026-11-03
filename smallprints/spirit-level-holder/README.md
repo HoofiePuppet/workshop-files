@@ -5,7 +5,7 @@
 
 A holder for the common 9.5 mm x 39.5 mm spirit level vial. I needed a small level for smaller projects, so I took the vials out of an old Harbor Freight level. The window lets you see the bubble.
 
-![Spirit Level Holder (3D view)](spirit-level-holder-1.jpg)
+![Spirit Level Holder with a vial](spirit-level-holder-1.jpg)
 
 ## Print
 `Bubble Level Holder V2.stl`

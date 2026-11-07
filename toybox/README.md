@@ -20,6 +20,13 @@ A wind-up automaton in the late-Victorian style: a young Filipina in a María Cl
 
 Her files will be posted here in `toybox/ines/` once each part is tested and complete. The eye parts go up after they're fitted to the real glass eyes.
 
+## Planning: De-Susi No. 2, Nena and Tonyo and the Dancing Bamboo
+
+Two young dancers doing the Tinikling, the bamboo dance of Leyte, while two kneeling pole-clappers beat out the rhythm (tap, tap, clap) with a pair of real bamboo poles that slide on hidden tracks.
+
+- **Done:** their song, the traditional Tinikling arranged for the 30-note music box: 3/4, with the bamboo rhythm in the bass. One play of the tune (about 32 s) is one full dance. Hear it on the BBS: Music & Sound, song 16.
+- **Next:** choose the scale (1/6 or 1/8), then sketch the mechanism.
+
 > **Small parts:** toys here contain small parts and are not for children under 3. Build and use at your own risk.
 
 Each toy gets its own folder here: `toybox/<toy-name>/` with its files, photos and a README.

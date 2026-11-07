@@ -12,7 +12,11 @@ A wind-up automaton in the late-Victorian style: a young Filipina in a María Cl
 
 - **Done:** her head (removable magnetic pate), her song (the traditional Cariñosa arranged for the music box), and her eye mechanism. Her eyes glance left and right together on a small steering-style linkage held in by one screw.
 - **Watch:** [her eyes glance (YouTube)](https://youtube.com/shorts/IYBUSyvcPr8)
-- **Next:** her neck, so she can turn and tilt her head.
+- **Designed, printing next:**
+  - Her neck: a ball-and-cup socket like an antique bisque doll's. She turns her head and tilts it toward her shoulder, both from one rod up the middle of her body (two ordinary 6 mm brass tubes joined by a printed sleeve).
+  - Her eye drive: a wire up inside that rod pulls a small rocker behind her eyes, and a little spring sends them back. It hangs from the eye frame under the same single screw, so her face doesn't change.
+  - Her dress form: a printed skirt cone under her waist, fixed to the base, the way the 1880s automaton makers did it. Her María Clara gown (camisa, pañuelo, saya, tapis) is drafted from her own 3D body and will be sewn to fit her.
+- **Next:** test the neck and eye drive together, then the rod's path down through her body to the base.
 
 Her files will be posted here in `toybox/ines/` once each part is tested and complete. The eye parts go up after they're fitted to the real glass eyes.
 

@@ -89,6 +89,17 @@ Kodigo gets its own companion app: a **web app**. Open it in the phone's browser
 - Sends build instructions to the glasses, one step at a time.
 - Sets brightness, auto-brightness and the caption text size.
 
+**Status:** first version live on the BBS as `kodigo-app.html` (captions + translation on the phone/PC screen; the glasses link is ready for the firmware).
+
+### Glasses Bluetooth protocol (for the ESP32 firmware)
+
+- Advertised name starts with `Kodigo`.
+- Nordic UART Service `6e400001-b5a3-f393-e0a9-e50e24dcca9e`; the app **writes** to RX `6e400002-b5a3-f393-e0a9-e50e24dcca9e` in 20-byte chunks.
+- UTF-8 lines ending in `\n`:
+  - `C:<text>` a finished caption line (already translated if translation is on). Add as a new line.
+  - `P:<text>` the line still being spoken. Replace the bottom line (sent about 3×/second, only when translation is off).
+  - `X:` clear the screen.
+
 ### Phones
 
 | Phone | How |

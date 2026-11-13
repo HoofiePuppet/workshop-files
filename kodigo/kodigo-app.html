@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Kodigo">
+<meta name="theme-color" content="#000000">
+<title>Kodigo App - Live Captions</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="images/kodigo/kodigo-icon-180.png">
+<link rel="stylesheet" href="style.css">
+<style>
+/* KODIGO APP (this page only). Live captions + translation on the phone/PC screen,
+   and (when the glasses exist) sends each line to them over Bluetooth.
+   Everything is named ka-... so nothing clashes with style.css.                  */
+body.ka { padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0); }
+.ka-wrap { max-width: 900px; margin: 0 auto; padding: 8px 12px 16px; display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; box-sizing: border-box; }
+.ka-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; border-bottom: 1px dashed var(--dkcyan); padding-bottom: 6px; }
+.ka-top img { height: 34px; width: auto; display: block; }
+.ka-top a { color: var(--cyan); }
+.ka-status { color: var(--gray); font-size: 0.9em; }
+.ka-status .on { color: var(--green); }
+.ka-status .off { color: var(--gray); }
+.ka-status .err { color: var(--red); }
+
+.ka-captions { flex: 1 1 auto; overflow-y: auto; margin: 10px 0; padding: 10px 12px; border: 2px double var(--dkcyan); background: #000;
+  min-height: 40vh; font-size: var(--ka-size, 28px); line-height: 1.25; color: var(--white); scroll-behavior: smooth; }
+.ka-line { margin: 0 0 0.45em; }
+.ka-line .ka-orig { display: block; font-size: 0.55em; color: var(--gray); margin-top: 2px; }
+.ka-line.ka-old { color: var(--gray); }
+.ka-time { font-size: 0.42em; color: #777; margin-right: 0.5em; vertical-align: middle; font-variant-numeric: tabular-nums; }
+.ka-div { text-align: center; color: var(--dkcyan); font-size: 14px; margin: 0.8em 0; border-top: 1px dashed #234; padding-top: 4px; }
+.ka-interim { color: var(--cyan); font-style: italic; opacity: 0.85; }
+.ka-empty { color: var(--gray); font-size: 18px; }
+.ka-empty b { color: var(--yellow); font-weight: normal; }
+
+.ka-big { display: block; width: 100%; font: inherit; font-size: 22px; padding: 14px 10px; cursor: pointer; border: 2px double var(--green);
+  background: #001a00; color: var(--green); letter-spacing: 0.08em; }
+.ka-big.listening { border-color: var(--red); background: #1a0000; color: var(--red); }
+.ka-big:disabled { opacity: 0.5; cursor: default; }
+
+.ka-row { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-top: 10px; }
+.ka-row label { color: var(--yellow); }
+.ka-row select, .ka-row button, .ka-row input[type=range] { font: inherit; font-size: 16px; }
+.ka-row select, .ka-row button { background: #000; color: var(--white); border: 1px solid var(--gray); padding: 6px 8px; }
+.ka-row button { cursor: pointer; }
+.ka-row button:hover, .ka-row select:hover { border-color: var(--cyan); }
+.ka-row input[type=range] { width: 140px; accent-color: #55ff55; }
+.ka-note { color: var(--gray); font-size: 0.9em; margin: 8px 0 0; }
+.ka-note b { color: var(--yellow); font-weight: normal; }
+.ka-help { margin-top: 10px; border: 1px dashed var(--gray); padding: 6px 10px; }
+.ka-help summary { color: var(--cyan); cursor: pointer; }
+.ka-help p, .ka-help li { color: var(--gray); }
+.ka-help b { color: var(--white); font-weight: normal; }
+@media (max-width: 600px) {
+  .ka-captions { min-height: 45vh; }
+  .ka-row select { max-width: 100%; }
+}
+</style>
+</head>
+<body class="ka">
+<div class="ka-wrap">
+
+  <div class="ka-top">
+    <img src="images/kodigo/kodigo-logo.png" alt="Kodigo" width="565" height="137">
+    <div class="ka-status" id="status" aria-live="polite"><span class="off">Mic off</span> &middot; <span class="off">Glasses not connected</span></div>
+    <a href="kodigo.html">&lt; Back to Kodigo</a>
+  </div>
+
+  <div class="ka-captions" id="captions" aria-live="polite" aria-label="Live captions">
+    <p class="ka-empty" id="empty">Tap <b>START CAPTIONS</b>, allow the microphone, and speech shows up here as text.
+      Newest line is at the bottom.</p>
+  </div>
+
+  <button type="button" class="ka-big" id="go">START CAPTIONS</button>
+
+  <div class="ka-row">
+    <label for="lang">Speech:</label>
+    <select id="lang">
+      <option value="en-US">English (US)</option>
+      <option value="en-PH">English (Philippines)</option>
+      <option value="fil-PH">Filipino / Tagalog</option>
+      <option value="auto">Taglish / mixed (auto-detect)</option>
+      <option value="en-GB">English (UK)</option>
+      <option value="en-AU">English (Australia)</option>
+      <option value="es-ES">Spanish</option>
+      <option value="ja-JP">Japanese</option>
+      <option value="ko-KR">Korean</option>
+      <option value="zh-CN">Chinese (Mandarin)</option>
+    </select>
+    <label for="to">Translate to:</label>
+    <select id="to">
+      <option value="">Off (captions only)</option>
+      <option value="en">English</option>
+      <option value="tl">Filipino / Tagalog</option>
+      <option value="es">Spanish</option>
+      <option value="ja">Japanese</option>
+      <option value="ko">Korean</option>
+      <option value="zh-CN">Chinese</option>
+    </select>
+  </div>
+
+  <div class="ka-row">
+    <label for="engine">Listening:</label>
+    <select id="engine">
+      <option value="auto">Automatic (best for this phone)</option>
+      <option value="phone">Phone's speech service (fastest)</option>
+      <option value="cloud">Kodigo cloud (Whisper: Tagalog, Taglish)</option>
+    </select>
+  </div>
+
+  <div class="ka-row">
+    <label for="size">Text size:</label>
+    <input type="range" id="size" min="18" max="56" step="2" value="28" aria-label="Caption text size">
+    <button type="button" id="clear">Clear screen</button>
+    <button type="button" id="glasses">Connect glasses</button>
+  </div>
+
+  <div class="ka-row">
+    <label>Saved log:</label>
+    <span id="logcount" style="color:var(--gray)"></span>
+    <button type="button" id="savelog">Save as text file</button>
+    <button type="button" id="copylog">Copy all</button>
+    <button type="button" id="dellog">Delete log</button>
+  </div>
+
+  <p class="ka-note" id="note"></p>
+  <p class="ka-note" id="log" style="font-size:13px;color:#888;word-break:break-word;"></p>
+
+  <details class="ka-help">
+    <summary>How to use / install</summary>
+    <ul>
+      <li><b>iPhone:</b> open this page in <b>Safari</b>, then Share &rarr; <b>Add to Home Screen</b>. It opens like an app.
+        Safari will ask for the microphone and speech recognition the first time.</li>
+      <li><b>Android:</b> open in <b>Chrome</b>, menu &rarr; <b>Add to Home screen</b>.</li>
+      <li><b>PC / Mac:</b> works in <b>Chrome</b> or <b>Edge</b> with a microphone.</li>
+      <li><b>Listening:</b> <b>Automatic</b> uses the phone's own fast speech service, and switches to <b>Kodigo cloud</b>
+        (Whisper) for languages the phone can't do, like Tagalog on iPhone. Kodigo cloud captions arrive a phrase at a time,
+        about 2&ndash;4 seconds behind, and are free up to about 3&frac12; hours a day.</li>
+      <li><b>Saved log:</b> every caption is saved <b>on this phone only</b>, with its time, and comes back when you reopen Kodigo.
+        "Clear screen" only clears the screen; the log stays. <b>Save as text file</b> downloads the whole log with dates and times.
+        On iPhone, open Kodigo from the <b>home-screen icon</b> so Safari doesn't wipe the log after 7 days without a visit.</li>
+      <li><b>Translate:</b> pick the language people are speaking under <b>Speech</b>, and the language you read best under
+        <b>Translate to</b>. The original words show small under each translated line.</li>
+      <li><b>Glasses:</b> "Connect glasses" works in Chrome / Edge (PC, Mac, Android). iPhone needs the free <b>WebBLE</b> app,
+        then this page in Safari. Not needed until the glasses are built.</li>
+      <li>Speech-to-text and translation need an internet connection. Expect about a second of delay.</li>
+      <li>Problems? This line helps Claude fix them: <b id="diag"></b></li>
+      <li>Your words are turned into text by your browser's speech service (Google in Chrome, Apple in Safari). Nothing is saved by this page.</li>
+    </ul>
+  </details>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var engineSel = $('engine');
+  var capBox = $('captions'), goBtn = $('go'), langSel = $('lang'), toSel = $('to'),
+      sizeIn = $('size'), clearBtn = $('clear'), glassBtn = $('glasses'), note = $('note'), statusEl = $('status');
+
+  // ---------- settings (remembered on this device only) ----------
+  function load(k, d) { try { var v = localStorage.getItem('kodigo.' + k); return v === null ? d : v; } catch (e) { return d; } }
+  function save(k, v) { try { localStorage.setItem('kodigo.' + k, v); } catch (e) {} }
+  langSel.value = load('lang', 'en-US'); toSel.value = load('to', ''); sizeIn.value = load('size', '28');
+  if (!langSel.value) langSel.value = 'en-US';
+  engineSel.value = load('engine', 'auto'); if (!engineSel.value) engineSel.value = 'auto';
+  engineSel.addEventListener('change', function () { save('engine', engineSel.value); if (listening) { stopAll(); note.textContent = 'Listening mode changed: tap START again.'; } });
+  function applySize() { capBox.style.setProperty('--ka-size', sizeIn.value + 'px'); }
+  applySize();
+  sizeIn.addEventListener('input', function () { applySize(); save('size', sizeIn.value); });
+  toSel.addEventListener('change', function () { save('to', toSel.value); });
+  langSel.addEventListener('change', function () { save('lang', langSel.value); if (listening) { restartSoon = true; try { rec.stop(); } catch (e) {} } });
+
+  // ---------- status line ----------
+  var micState = ['off', 'Mic off'], btState = ['off', 'Glasses not connected'];
+  function drawStatus() {
+    statusEl.innerHTML = '<span class="' + micState[0] + '">' + micState[1] + '</span> &middot; <span class="' + btState[0] + '">' + btState[1] + '</span>';
+  }
+  function setMic(c, t) { micState = [c, t]; drawStatus(); }
+  function setBt(c, t) { btState = [c, t]; drawStatus(); }
+
+  // ---------- captions on screen ----------
+  var MAX_LINES = 400, interimEl = null;
+  function atBottom() { return capBox.scrollHeight - capBox.scrollTop - capBox.clientHeight < 60; }
+  function scrollDown(force) { if (force || atBottom()) capBox.scrollTop = capBox.scrollHeight; }
+  function removeEmpty() { var e = $('empty'); if (e) e.remove(); }
+  function showInterim(text) {
+    removeEmpty();
+    var stick = atBottom();
+    if (!interimEl) { interimEl = document.createElement('p'); interimEl.className = 'ka-line ka-interim'; capBox.appendChild(interimEl); }
+    interimEl.textContent = text;
+    capBox.appendChild(interimEl);
+    if (stick) scrollDown(true);
+  }
+  function hhmm(t) { var d = new Date(t); return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); }
+  function fillLine(p, text, orig, t) {
+    p.textContent = '';
+    var tm = document.createElement('span'); tm.className = 'ka-time'; tm.textContent = hhmm(t); p.appendChild(tm);
+    p.appendChild(document.createTextNode(text));
+    if (orig) { var s = document.createElement('span'); s.className = 'ka-orig'; s.textContent = orig; p.appendChild(s); }
+  }
+  function addLine(text, orig, t, noSave) {
+    removeEmpty();
+    var stick = atBottom();
+    t = t || Date.now();
+    var p = document.createElement('p'); p.className = 'ka-line';
+    fillLine(p, text, orig, t);
+    if (!noSave) p.dataset.hid = logAdd(text, orig, t);
+    if (interimEl) capBox.insertBefore(p, interimEl); else capBox.appendChild(p);
+    var lines = capBox.querySelectorAll('.ka-line:not(.ka-interim)');
+    for (var i = 0; i < lines.length - 3; i++) lines[i].classList.add('ka-old');
+    while (lines.length > MAX_LINES) { lines[0].remove(); lines = capBox.querySelectorAll('.ka-line:not(.ka-interim)'); }
+    if (stick) scrollDown(true);
+    return p;
+  }
+  clearBtn.addEventListener('click', function () {
+    capBox.querySelectorAll('.ka-line, .ka-div').forEach(function (n) { n.remove(); });
+    interimEl = null;
+  });
+
+  // ---------- saved log (this device only) ----------
+  var LOG_KEY = 'kodigo.log', LOG_MAX = 5000, logArr = [];
+  try { logArr = JSON.parse(localStorage.getItem(LOG_KEY) || '[]') || []; } catch (e) { logArr = []; }
+  var logSaveTimer = null;
+  function logPersist() {
+    clearTimeout(logSaveTimer);
+    logSaveTimer = setTimeout(function () {
+      if (logArr.length > LOG_MAX) logArr = logArr.slice(logArr.length - LOG_MAX);
+      try { localStorage.setItem(LOG_KEY, JSON.stringify(logArr)); }
+      catch (e) { logArr = logArr.slice(Math.floor(logArr.length / 4)); try { localStorage.setItem(LOG_KEY, JSON.stringify(logArr)); } catch (e2) {} }
+      drawCount();
+    }, 300);
+  }
+  function logAdd(text, orig, t) {
+    var id = t + '-' + Math.random().toString(36).slice(2, 6);
+    logArr.push({ id: id, t: t, x: text, o: orig || '' }); logPersist(); return id;
+  }
+  function logUpdate(id, text, orig) {
+    for (var i = logArr.length - 1; i >= 0 && i > logArr.length - 200; i--) {
+      if (logArr[i].id === id) { logArr[i].x = text; logArr[i].o = orig || ''; logPersist(); return logArr[i]; }
+    }
+    return null;
+  }
+  function drawCount() {
+    var el = $('logcount'); if (!el) return;
+    el.textContent = logArr.length ? logArr.length + ' line' + (logArr.length === 1 ? '' : 's') + ' since ' + new Date(logArr[0].t).toLocaleDateString() : 'empty';
+  }
+  function dayLabel(t) { var d = new Date(t); return d.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }) + ', ' + hhmm(t); }
+  function divider(t) { var d = document.createElement('p'); d.className = 'ka-div'; d.textContent = '— ' + dayLabel(t) + ' —'; capBox.appendChild(d); }
+  function restoreLog() {
+    if (!logArr.length) return;
+    removeEmpty();
+    var show = logArr.slice(-MAX_LINES), last = 0;
+    show.forEach(function (e) {
+      if (!last || e.t - last > 30 * 60 * 1000) divider(e.t);
+      var p = document.createElement('p'); p.className = 'ka-line ka-old'; fillLine(p, e.x, e.o, e.t); p.dataset.hid = e.id;
+      capBox.appendChild(p); last = e.t;
+    });
+    divider(Date.now()); capBox.lastChild.textContent = '— now —';
+    capBox.scrollTop = capBox.scrollHeight;
+  }
+  function logText() {
+    var out = ['KODIGO CAPTION LOG', 'Saved ' + new Date().toLocaleString(), ''], lastDay = '';
+    logArr.forEach(function (e) {
+      var d = new Date(e.t), day = d.toLocaleDateString([], { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      if (day !== lastDay) { out.push('', '=== ' + day + ' ==='); lastDay = day; }
+      out.push('[' + d.toLocaleTimeString() + '] ' + e.x + (e.o ? '   (' + e.o + ')' : ''));
+    });
+    return out.join('\n');
+  }
+  $('savelog').addEventListener('click', function () {
+    if (!logArr.length) { note.textContent = 'The log is empty.'; return; }
+    var blob = new Blob([logText()], { type: 'text/plain;charset=utf-8' });
+    var a = document.createElement('a'), d = new Date();
+    a.href = URL.createObjectURL(blob);
+    a.download = 'kodigo-log-' + d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2) + '.txt';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+  });
+  $('copylog').addEventListener('click', function () {
+    if (!logArr.length) { note.textContent = 'The log is empty.'; return; }
+    var btn = $('copylog');
+    navigator.clipboard.writeText(logText()).then(function () { btn.textContent = 'Copied!'; setTimeout(function () { btn.textContent = 'Copy all'; }, 1500); },
+      function () { note.textContent = 'Copy didn\'t work here; use Save as text file.'; });
+  });
+  var delArmed = null;
+  $('dellog').addEventListener('click', function () {
+    var btn = $('dellog');
+    if (!delArmed) {
+      btn.textContent = 'Tap again to delete'; btn.style.borderColor = 'var(--red)'; btn.style.color = 'var(--red)';
+      delArmed = setTimeout(function () { delArmed = null; btn.textContent = 'Delete log'; btn.style.borderColor = ''; btn.style.color = ''; }, 4000);
+      return;
+    }
+    clearTimeout(delArmed); delArmed = null;
+    logArr = []; try { localStorage.removeItem(LOG_KEY); } catch (e) {}
+    capBox.querySelectorAll('.ka-line, .ka-div').forEach(function (n) { n.remove(); }); interimEl = null;
+    btn.textContent = 'Deleted'; btn.style.borderColor = ''; btn.style.color = '';
+    setTimeout(function () { btn.textContent = 'Delete log'; }, 1500);
+    drawCount();
+  });
+  // keep the log safe if the page is closed mid-save
+  window.addEventListener('pagehide', function () { try { localStorage.setItem(LOG_KEY, JSON.stringify(logArr)); } catch (e) {} });
+
+  // ---------- translation ----------
+  // Speech codes -> translation codes
+  function srcCode() { var l = langSel.value; if (l === 'auto') return 'auto'; if (l === 'fil-PH') return 'tl'; if (l === 'zh-CN') return 'zh-CN'; return l.split('-')[0]; }
+  var builtIn = {};   // Chrome's built-in Translator (on-device, PC Chrome 138+), when it exists
+  function translate(text, from, to) {
+    return translateRaw(text, from, to).then(function (t) { log('translated ' + from + '→' + to + (t ? ' ok' : ' (none)')); return t; },
+      function (e) { log('translate ERROR ' + from + '→' + to + ' ' + ((e && e.message) || e)); throw e; });
+  }
+  function translateRaw(text, from, to) {
+    if (!to || from === to || (from === 'zh-CN' && to === 'zh-CN')) return Promise.resolve(null);
+    if (from !== 'auto' && typeof self.Translator !== 'undefined' && self.Translator.create) {
+      var key = from + '>' + to;
+      var p = builtIn[key] || (builtIn[key] = self.Translator.availability({ sourceLanguage: from, targetLanguage: to })
+        .then(function (a) { if (a === 'unavailable') throw new Error('no'); return self.Translator.create({ sourceLanguage: from, targetLanguage: to }); }));
+      return p.then(function (t) { return t.translate(text); }).catch(function () { builtIn[key] = null; delete builtIn[key]; return webTranslate(text, from, to); });
+    }
+    return webTranslate(text, from, to);
+  }
+  // Fallback: Google Translate's free web endpoint (unofficial; fine for a DIY prototype, may change).
+  function webTranslate(text, from, to) {
+    var url = 'https://translate.googleapis.com/translate_a/single?client=gtx&dt=t&sl=' + encodeURIComponent(from) +
+              '&tl=' + encodeURIComponent(to) + '&q=' + encodeURIComponent(text);
+    return fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (j) { return (j && j[0] || []).map(function (x) { return x[0]; }).join(''); });
+  }
+
+  // ---------- speech recognition ----------
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var rec = null, listening = false, restartSoon = false, lastStart = 0, quickEnds = 0, wakeLock = null, everStarted = false;
+
+  var CAN_CLOUD = !!(window.MediaRecorder && navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+  var IOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  if (!SR && !CAN_CLOUD) {
+    goBtn.disabled = true;
+    note.innerHTML = '<b>This browser can\'t do speech-to-text.</b> On iPhone use Safari; on Android, PC or Mac use Chrome or Edge.';
+  } else if (!window.isSecureContext) {
+    note.innerHTML = '<b>Open this page over https</b> (on the BBS site), or the microphone won\'t work.';
+  }
+
+  function finalText(text) {
+    text = text.trim();
+    if (!text) return;
+    var to = toSel.value, from = srcCode();
+    if (!to || to === from) { addLine(text); sendGlasses('C', text); return; }
+    var p = addLine(text);              // show the original at once, swap in the translation when it arrives
+    translate(text, from, to).then(function (t) {
+      if (!t) return;
+      var e = logUpdate(p.dataset.hid, t, text);
+      fillLine(p, t, text, e ? e.t : Date.now());
+      scrollDown(false);
+      sendGlasses('C', t);
+    }).catch(function () {
+      note.innerHTML = '<b>Translation failed</b> (no internet?). Showing the original words.';
+      sendGlasses('C', text);
+    });
+  }
+
+  var t0 = 0, logLines = [];
+  function log(msg) {
+    var t = t0 ? ((Date.now() - t0) / 1000).toFixed(1) + 's ' : '';
+    logLines.push(t + msg); if (logLines.length > 14) logLines.shift();
+    var el = $('log'); if (el) el.textContent = 'Log: ' + logLines.join(' → ');
+  }
+  function makeRec() {
+    var r = new SR();
+    ['audiostart', 'soundstart', 'speechstart', 'speechend', 'soundend', 'audioend', 'nomatch'].forEach(function (n) {
+      r.addEventListener(n, function () { log(n); });
+    });
+    r.lang = langSel.value;
+    r.continuous = true;
+    r.interimResults = true;
+    r.maxAlternatives = 1;
+    r.onstart = function () { log('start'); everStarted = true; lastStart = Date.now(); setMic('on', 'Listening (' + langSel.options[langSel.selectedIndex].text + ')'); };
+    r.onresult = function (ev) {
+      log('result');
+      var interim = '';
+      for (var i = ev.resultIndex; i < ev.results.length; i++) {
+        var res = ev.results[i];
+        if (res.isFinal) { finalText(res[0].transcript); }
+        else interim += res[0].transcript;
+      }
+      if (interim) { showInterim(interim); if (!toSel.value) sendPartial(interim); }
+      else if (interimEl) { interimEl.remove(); interimEl = null; }
+    };
+    r.onerror = function (ev) {
+      log('ERROR ' + ev.error + (ev.message ? ' (' + ev.message + ')' : ''));
+      if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed') {
+        listening = false;
+        var ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
+        if (!everStarted && ev.error === 'service-not-allowed' && langSel.value.indexOf('en-') !== 0) {
+          note.innerHTML = '<b>' + (ios ? 'iPhone' : 'This browser') + ' can\'t listen in ' + langSel.options[langSel.selectedIndex].text +
+            '.</b> Pick <b>English</b> under Speech. ' + (ios ? 'To caption Tagalog speech, use Chrome on a PC or an Android phone for now.' : '');
+          setMic('err', 'Language not available');
+        } else if (everStarted && ev.error === 'service-not-allowed') {
+          // iPhone: it listened fine, then refused to restart on its own (no tap). Ask for a tap.
+          note.innerHTML = '<b>Captions paused.</b> iPhone only lets listening restart when you tap. Tap <b>START CAPTIONS</b> to carry on.';
+          setMic('off', 'Paused: tap Start');
+        } else if (ev.error === 'service-not-allowed') {
+          note.innerHTML = '<b>The microphone is allowed, but speech recognition is switched off (' + ev.error + ').</b> ' +
+            'On iPhone check: <b>Speech</b> is set to <b>English (US)</b> for the first test (Apple can\'t listen in every language); ' +
+            '<b>Settings &rarr; General &rarr; Keyboard &rarr; Enable Dictation: On</b>; <b>Settings &rarr; Siri</b> switched on; ' +
+            'Screen Time not blocking Speech Recognition; and use a normal Safari tab, not the home-screen icon. Then reload.';
+          setMic('err', 'Speech recognition off');
+        } else {
+          note.innerHTML = '<b>Microphone blocked (' + ev.error + ').</b> ' + micHelp();
+          setMic('err', 'Mic blocked');
+        }
+        drawButton(); keepAwake(false);
+      } else if (ev.error === 'network') {
+        note.innerHTML = '<b>No connection to the speech service.</b> Check your internet.';
+      } else if (ev.error === 'language-not-supported') {
+        listening = false;
+        note.innerHTML = '<b>This browser can\'t listen in that language.</b> Pick another under Speech.';
+        setMic('err', 'Language not supported'); drawButton();
+      }
+      // 'no-speech' and 'aborted' are normal: it just restarts.
+    };
+    r.onend = function () {
+      log('end');
+      if (interimEl) { interimEl.remove(); interimEl = null; }
+      if (listening) {
+        // Browsers stop listening every so often; start again. Back off if it keeps ending instantly.
+        quickEnds = (Date.now() - lastStart < 1500) ? quickEnds + 1 : 0;
+        if (quickEnds > 5) { listening = false; setMic('err', 'Stopped'); note.innerHTML = '<b>Speech recognition keeps stopping.</b> Tap Start to try again.'; drawButton(); return; }
+        setTimeout(function () { if (listening) startRec(); }, restartSoon ? 50 : 250);
+        restartSoon = false;
+      } else {
+        setMic('off', 'Mic off');
+      }
+    };
+    return r;
+  }
+  function startRec() {
+    rec = makeRec();
+    log('start() lang=' + rec.lang + ' continuous=' + rec.continuous);
+    try { rec.start(); } catch (e) { log('start threw ' + (e && e.name)); }
+  }
+  function keepAwake(on) {
+    try {
+      if (on && 'wakeLock' in navigator) navigator.wakeLock.request('screen').then(function (w) { wakeLock = w; }).catch(function () {});
+      else if (!on && wakeLock) { wakeLock.release(); wakeLock = null; }
+    } catch (e) {}
+  }
+  document.addEventListener('visibilitychange', function () { if (listening && document.visibilityState === 'visible') keepAwake(true); });
+  function drawButton() {
+    goBtn.textContent = listening ? 'STOP CAPTIONS' : 'START CAPTIONS';
+    goBtn.classList.toggle('listening', listening);
+  }
+  goBtn.addEventListener('click', function () {
+    if (!SR) return;
+    note.textContent = '';
+    if (listening) {
+      stopAll();
+    } else if (useCloud()) {
+      listening = true; drawButton(); keepAwake(true);
+      t0 = Date.now(); logLines = []; log('tap (cloud)');
+      cloudStart();
+    } else {
+      listening = true; quickEnds = 0; drawButton(); keepAwake(true);
+      t0 = Date.now(); logLines = []; log('tap'); everStarted = false;
+      startRec();   // must run right inside the tap: iPhone Safari refuses it a moment later
+    }
+  });
+  // Ask for the microphone the normal way first (this is what makes iPhone Safari show its
+  // "Allow microphone?" box), then let it go so speech recognition can use it.
+  var micOk = false;
+  function askMic() {
+    if (micOk || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return Promise.resolve();
+    return navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+      micOk = true;
+      stream.getTracks().forEach(function (t) { t.stop(); });
+    });
+  }
+  function micHelp() {
+    var ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    if (ios) return 'On iPhone: in Safari tap <b>aA</b> &rarr; <b>Website Settings</b> &rarr; <b>Microphone: Allow</b>; ' +
+      '<b>Settings &rarr; Apps &rarr; Safari &rarr; Microphone: Ask</b>; and <b>Settings &rarr; General &rarr; Keyboard &rarr; Enable Dictation: On</b>. ' +
+      'Then reload this page. Use Safari, not Chrome, on iPhone.';
+    return 'Click the lock / site icon left of the address and allow the microphone, then reload.';
+  }
+
+  // ---------- Kodigo cloud (Whisper on Cloudflare: worker "kodigo-listen") ----------
+  var CLOUD_URL = 'https://kodigo-listen.hoofiepuppet.workers.dev/listen';
+  function useCloud() {
+    var e = engineSel.value, l = langSel.value;
+    if (e === 'cloud') return true;
+    if (e === 'phone') return !SR;
+    // automatic: the phone's own service where it can, cloud where it can't
+    if (!SR) return true;
+    if (l === 'auto') return true;
+    if (IOS && l === 'fil-PH') return true;
+    return false;
+  }
+  function stopAll() {
+    listening = false; drawButton(); keepAwake(false);
+    try { rec && rec.stop(); } catch (e) {}
+    cloudStop();
+    setMic('off', 'Mic off');
+  }
+  var cl = null;   // cloud session: stream, audio context, recorder, timers
+  function pickType() {
+    var types = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/aac', 'audio/ogg;codecs=opus'];
+    for (var i = 0; i < types.length; i++) { try { if (MediaRecorder.isTypeSupported(types[i])) return types[i]; } catch (e) {} }
+    return '';
+  }
+  function cloudStart() {
+    if (!CAN_CLOUD) { note.innerHTML = '<b>This browser can\'t record audio.</b>'; stopAll(); return; }
+    var AC = window.AudioContext || window.webkitAudioContext;
+    var ctx = AC ? new AC() : null;          // made right inside the tap (iPhone rule)
+    if (ctx && ctx.resume) ctx.resume();
+    setMic('off', 'Asking for the microphone…');
+    navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } })
+      .then(function (stream) {
+        if (!listening) { stream.getTracks().forEach(function (t) { t.stop(); }); return; }
+        cl = { stream: stream, ctx: ctx, type: pickType(), floor: 0.01, timer: null, recorder: null, seq: 0 };
+        if (ctx) {
+          var src = ctx.createMediaStreamSource(stream);
+          cl.an = ctx.createAnalyser(); cl.an.fftSize = 1024; src.connect(cl.an);
+          cl.buf = new Float32Array(cl.an.fftSize);
+        }
+        setMic('on', 'Listening (Kodigo cloud)');
+        log('mic ok, ' + (cl.type || 'default') );
+        newClip();
+        cl.timer = setInterval(tick, 60);
+      }, function (err) {
+        log('mic ERROR ' + (err && err.name));
+        listening = false; drawButton(); keepAwake(false);
+        setMic('err', 'Mic blocked');
+        note.innerHTML = '<b>The microphone was blocked (' + ((err && err.name) || 'unknown') + ').</b> ' + micHelp();
+        if (ctx && ctx.close) ctx.close();
+      });
+  }
+  function level() {
+    if (!cl || !cl.an) return 1;
+    if (cl.an.getFloatTimeDomainData) cl.an.getFloatTimeDomainData(cl.buf);
+    else { var b = new Uint8Array(cl.an.fftSize); cl.an.getByteTimeDomainData(b); for (var j = 0; j < b.length; j++) cl.buf[j] = (b[j] - 128) / 128; }
+    var sum = 0; for (var i = 0; i < cl.buf.length; i++) sum += cl.buf[i] * cl.buf[i];
+    return Math.sqrt(sum / cl.buf.length);
+  }
+  function newClip() {
+    if (!cl || !listening) return;
+    var opts = cl.type ? { mimeType: cl.type } : undefined, r;
+    try { r = new MediaRecorder(cl.stream, opts); } catch (e) { r = new MediaRecorder(cl.stream); }
+    var clip = { r: r, chunks: [], start: Date.now(), lastVoice: 0, speech: 0, keep: false };
+    r.ondataavailable = function (e) { if (e.data && e.data.size) clip.chunks.push(e.data); };
+    r.onstop = function () {
+      if (clip.keep) sendClip(new Blob(clip.chunks, { type: r.mimeType || cl && cl.type || 'audio/webm' }));
+    };
+    cl.clip = clip;
+    r.start();
+  }
+  function endClip(keep) {
+    var c = cl && cl.clip; if (!c) return;
+    c.keep = keep;
+    try { c.r.stop(); } catch (e) {}
+    cl.clip = null;
+    newClip();                       // start the next clip straight away so nothing is missed
+  }
+  function tick() {
+    if (!cl || !cl.clip) return;
+    var v = level(), now = Date.now(), c = cl.clip;
+    var thr = Math.max(0.012, cl.floor * 3);
+    if (v > thr) { c.speech += 60; c.lastVoice = now; }
+    else cl.floor = cl.floor * 0.97 + v * 0.03;          // track the room's background noise
+    var age = now - c.start;
+    if (c.speech >= 240 && now - c.lastVoice > 700 && age > 1200) endClip(true);   // phrase ended (a pause)
+    else if (age > 8000) endClip(c.speech >= 240);                                   // long talk: cut at 8 s
+    else if (c.speech < 120 && age > 5000) endClip(false);                           // just quiet: throw away
+  }
+  function cloudStop() {
+    if (!cl) return;
+    clearInterval(cl.timer);
+    var c = cl.clip; cl.clip = null;
+    if (c) { c.keep = c.speech >= 240; try { c.r.stop(); } catch (e) {} }
+    cl.stream.getTracks().forEach(function (t) { t.stop(); });
+    try { cl.ctx && cl.ctx.close(); } catch (e) {}
+    cl = null;
+  }
+  function sendClip(blob) {
+    if (!blob || blob.size < 800) return;
+    var from = srcCode(), to = toSel.value;
+    var whisperLang = from === 'zh-CN' ? 'zh' : from;
+    var task = 'transcribe';   // Whisper Turbo can't translate: write it down first, then translate the text
+    removeEmpty();
+    var p = document.createElement('p'); p.className = 'ka-line ka-interim'; p.textContent = '…';
+    if (interimEl) capBox.insertBefore(p, interimEl); else capBox.appendChild(p);
+    scrollDown(false);
+    log('clip ' + Math.round(blob.size / 1024) + 'kB');
+    fetch(CLOUD_URL + '?lang=' + encodeURIComponent(whisperLang) + '&task=' + task, {
+      method: 'POST', body: blob, headers: { 'Content-Type': blob.type || 'application/octet-stream' }
+    }).then(function (r) { return r.json().then(function (j) { j._status = r.status; return j; }); })
+      .then(function (j) {
+        if (j.error) {
+          p.remove(); log('cloud ERROR ' + j._status + ' ' + j.error);
+          if (j._status === 429) note.innerHTML = '<b>Kodigo cloud\'s free minutes are used up for today.</b> They come back at 8:00 AM (Philippine time). English still works with Listening set to the phone\'s service.';
+          else if (j._status === 403) note.innerHTML = '<b>Kodigo cloud refused this page.</b> Open the app from the Kodigo site.';
+          else note.innerHTML = '<b>Kodigo cloud had a problem</b> (' + j.error + ').';
+          return;
+        }
+        var text = (j.text || '').trim();
+        if (!text) { p.remove(); return; }
+        p.className = 'ka-line';
+        var said = (j.language || (from === 'auto' ? '' : from) || '').toLowerCase(), tnow = Date.now();
+        if (said === 'tagalog' || said === 'filipino' || said === 'fil') said = 'tl';
+        if (said === 'english') said = 'en';
+        var sameLang = from !== 'auto' && (to === said || (said === 'zh' && to === 'zh-CN'));
+        if (!to || sameLang) {
+          var o = task === 'translate' ? '(translated from ' + (said || 'speech') + ')' : '';
+          fillLine(p, text, o, tnow); p.dataset.hid = logAdd(text, o, tnow);
+          sendGlasses('C', text);
+        } else {
+          fillLine(p, text, '', tnow); p.dataset.hid = logAdd(text, '', tnow);
+          translate(text, from === 'auto' ? 'auto' : (said || from || 'auto'), to).then(function (t) {
+            if (!t) { sendGlasses('C', text); return; }
+            logUpdate(p.dataset.hid, t, text); fillLine(p, t, text, tnow);
+            sendGlasses('C', t);
+          }).catch(function () { sendGlasses('C', text); });
+        }
+        var lines = capBox.querySelectorAll('.ka-line:not(.ka-interim)');
+        for (var i = 0; i < lines.length - 3; i++) lines[i].classList.add('ka-old');
+        scrollDown(false);
+      })
+      .catch(function (e) {
+        p.remove(); log('cloud net ERROR');
+        note.innerHTML = '<b>Can\'t reach Kodigo cloud.</b> Check your internet connection.';
+      });
+  }
+
+  // ---------- Kodigo glasses over Bluetooth ----------
+  // Protocol (for the ESP32 firmware): Nordic UART Service. The app WRITES UTF-8 lines to the RX characteristic:
+  //   "C:<text>\n"  a finished caption line (translated if translation is on)
+  //   "P:<text>\n"  the line still being spoken (replace it on screen; only sent when translation is off)
+  //   "X:\n"        clear the screen
+  var NUS = '6e400001-b5a3-f393-e0a9-e50e24dcca9e', NUS_RX = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';
+  var btDev = null, btChar = null, btQueue = Promise.resolve(), lastPartial = 0, partialTimer = null;
+
+  if (!navigator.bluetooth) {
+    glassBtn.title = 'Needs Chrome or Edge (PC, Mac, Android), or the WebBLE app on iPhone';
+  }
+  function sendGlasses(kind, text) {
+    if (!btChar) return;
+    var bytes = new TextEncoder().encode(kind + ':' + text.replace(/\n/g, ' ') + '\n');
+    btQueue = btQueue.then(function () {
+      var chain = Promise.resolve();
+      for (var i = 0; i < bytes.length; i += 20) {
+        (function (chunk) {
+          chain = chain.then(function () {
+            return btChar.writeValueWithoutResponse ? btChar.writeValueWithoutResponse(chunk) : btChar.writeValue(chunk);
+          });
+        })(bytes.slice(i, i + 20));
+      }
+      return chain;
+    }).catch(function () {});
+  }
+  function sendPartial(text) {           // at most ~3 times a second, so Bluetooth doesn't choke
+    clearTimeout(partialTimer);
+    var wait = Math.max(0, 300 - (Date.now() - lastPartial));
+    partialTimer = setTimeout(function () { lastPartial = Date.now(); sendGlasses('P', text); }, wait);
+  }
+  clearBtn.addEventListener('click', function () { sendGlasses('X', ''); });
+
+  glassBtn.addEventListener('click', function () {
+    if (btDev && btDev.gatt.connected) { btDev.gatt.disconnect(); return; }
+    if (!navigator.bluetooth) {
+      note.innerHTML = '<b>Bluetooth isn\'t available in this browser.</b> Use Chrome or Edge on a PC, Mac or Android phone. ' +
+        'On iPhone, install the free <b>WebBLE</b> app and open this page in Safari. (Only needed once the glasses are built.)';
+      return;
+    }
+    setBt('off', 'Looking for glasses…');
+    navigator.bluetooth.requestDevice({ filters: [{ namePrefix: 'Kodigo' }], optionalServices: [NUS] })
+      .then(function (d) {
+        btDev = d;
+        d.addEventListener('gattserverdisconnected', function () { btChar = null; setBt('off', 'Glasses disconnected'); glassBtn.textContent = 'Connect glasses'; });
+        return d.gatt.connect();
+      })
+      .then(function (s) { return s.getPrimaryService(NUS); })
+      .then(function (svc) { return svc.getCharacteristic(NUS_RX); })
+      .then(function (c) {
+        btChar = c; setBt('on', 'Glasses connected'); glassBtn.textContent = 'Disconnect glasses';
+        sendGlasses('C', 'Kodigo connected');
+      })
+      .catch(function (e) {
+        if (e && e.name === 'NotFoundError') setBt('off', 'Glasses not connected');
+        else { setBt('err', 'Glasses: connection failed'); }
+      });
+  });
+
+  try {
+    $('diag').textContent = [
+      /iPhone|iPad/.test(navigator.userAgent) ? 'iOS' : (/Android/.test(navigator.userAgent) ? 'Android' : 'PC/Mac'),
+      /CriOS/.test(navigator.userAgent) ? 'Chrome-iOS' : (/Safari/.test(navigator.userAgent) && !/Chrome|CriOS|Edg/.test(navigator.userAgent) ? 'Safari' : (/Edg/.test(navigator.userAgent) ? 'Edge' : 'Chrome')),
+      'speech:' + (SR ? 'yes' : 'no'),
+      'rec:' + (window.MediaRecorder ? 'yes' : 'no'),
+      'mic-api:' + (navigator.mediaDevices && navigator.mediaDevices.getUserMedia ? 'yes' : 'no'),
+      'bt:' + (navigator.bluetooth ? 'yes' : 'no'),
+      'https:' + (window.isSecureContext ? 'yes' : 'no'),
+      'app-mode:' + ((window.navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches)) ? 'yes' : 'no')
+    ].join(' · ');
+  } catch (e) {}
+  restoreLog(); drawCount();
+  drawStatus();
+})();
+</script>
+</body>
+</html>

@@ -113,8 +113,9 @@ Kodigo gets its own companion app: a **web app**. Open it in the phone's browser
 
 ## Build stages
 
+0. **Kodigo app (done 2026-11-13).** Live captions (iPhone Safari, Android Chrome, PC), Tagalog/Taglish on iPhone via Kodigo cloud, translation (original shown underneath), saved caption log, own-cloud setting, setup guide.
 1. **Optics test rig (now).** OLED, lens and beam splitter in a printed holder with adjustable spacing, on the bench. Goal: a sharp, comfortable image. No wearable parts yet.
-2. **Electronics on the breadboard.** ESP32-C3 driving the OLED: clock, battery level, then live captions and translation from the Kodigo app.
+2. **Electronics on the breadboard.** ESP32-C3 driving the OLED: clock, battery level, then captions from the Kodigo app over Bluetooth (app side already done, see protocol below).
 3. **Wearable module.** The housing, battery pod behind the ear, buttons, power switch.
 4. **Mounting rail, clip-on adapter and companion frame.**
 

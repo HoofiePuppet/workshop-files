@@ -127,6 +127,21 @@ body.ka { padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env
     <button type="button" id="dellog">Delete log</button>
   </div>
 
+  <details class="ka-help" id="cloudbox">
+    <summary>Your own Kodigo cloud (optional)</summary>
+    <p>Kodigo cloud (for Tagalog and Taglish on iPhone) is shared by everyone, about 3&frac12; hours a day in total.
+      For your <b>own free 3&frac12; hours a day</b>, set up your own in about 10 minutes
+      (<a href="kodigo-setup.html#cloud" style="color:var(--cyan)">steps in the setup guide</a>), then paste its address here.</p>
+    <div class="ka-row" style="margin-top:4px">
+      <input type="url" id="cloudurl" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false"
+        placeholder="kodigo-listen.yourname.workers.dev"
+        style="flex:1 1 260px;font:inherit;font-size:16px;background:#000;color:var(--white);border:1px solid var(--gray);padding:6px 8px;min-width:0">
+      <button type="button" id="cloudtest">Save &amp; test</button>
+      <button type="button" id="cloudreset">Use the shared one</button>
+    </div>
+    <p id="cloudmsg" style="margin:6px 0 0"></p>
+  </details>
+
   <p class="ka-note" id="note"></p>
   <p class="ka-note" id="log" style="font-size:13px;color:#888;word-break:break-word;"></p>
 
@@ -487,7 +502,42 @@ body.ka { padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env
   }
 
   // ---------- Kodigo cloud (Whisper on Cloudflare: worker "kodigo-listen") ----------
-  var CLOUD_URL = 'https://kodigo-listen.hoofiepuppet.workers.dev/listen';
+  var SHARED_CLOUD = 'https://kodigo-listen.hoofiepuppet.workers.dev/listen';
+  var CLOUD_URL = load('cloud', '') || SHARED_CLOUD;
+  function cleanCloud(v) {          // accepts "kodigo-listen.name.workers.dev", with or without https:// or /listen
+    v = (v || '').trim().replace(/\s+/g, '');
+    if (!v) return '';
+    if (!/^https?:\/\//i.test(v)) v = 'https://' + v;
+    v = v.replace(/\/+$/, '');
+    if (!/\/listen$/.test(v)) v += '/listen';
+    return v;
+  }
+  (function () {
+    var box = $('cloudurl'), msg = $('cloudmsg');
+    function show() {
+      box.value = CLOUD_URL === SHARED_CLOUD ? '' : CLOUD_URL.replace(/^https:\/\//, '').replace(/\/listen$/, '');
+      msg.innerHTML = CLOUD_URL === SHARED_CLOUD ? 'Using the <b>shared</b> Kodigo cloud.' : 'Using <b>your own</b> Kodigo cloud.';
+    }
+    show();
+    $('cloudtest').addEventListener('click', function () {
+      var u = cleanCloud(box.value);
+      if (!u) { msg.innerHTML = 'Paste your worker\'s address first.'; return; }
+      msg.textContent = 'Testing…';
+      fetch(u.replace(/\/listen$/, '/'), { method: 'GET' }).then(function (r) { return r.json(); }).then(function (j) {
+        if (j && j.service === 'kodigo-listen' && j.ai) {
+          CLOUD_URL = u; save('cloud', u); show();
+          msg.innerHTML = '<span style="color:var(--green)">&#10003; Works! Saved.</span> Kodigo cloud now uses <b>your own</b> free minutes.';
+        } else if (j && j.service === 'kodigo-listen') {
+          msg.innerHTML = '<span style="color:var(--red)">Almost:</span> the worker is there but its AI isn\'t switched on. In Cloudflare: Settings &rarr; Bindings &rarr; Add &rarr; Workers AI, name <b>AI</b>.';
+        } else {
+          msg.innerHTML = '<span style="color:var(--red)">That address isn\'t a Kodigo cloud.</span> Check you pasted the Kodigo code into the worker.';
+        }
+      }).catch(function () {
+        msg.innerHTML = '<span style="color:var(--red)">Couldn\'t reach it.</span> Check the address (it ends in <b>.workers.dev</b>) and your internet.';
+      });
+    });
+    $('cloudreset').addEventListener('click', function () { CLOUD_URL = SHARED_CLOUD; save('cloud', ''); show(); });
+  })();
   function useCloud() {
     var e = engineSel.value, l = langSel.value;
     if (e === 'cloud') return true;
@@ -599,8 +649,10 @@ body.ka { padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env
       .then(function (j) {
         if (j.error) {
           p.remove(); log('cloud ERROR ' + j._status + ' ' + j.error);
-          if (j._status === 429) note.innerHTML = '<b>Kodigo cloud\'s free minutes are used up for today.</b> They come back at 8:00 AM (Philippine time). English still works with Listening set to the phone\'s service.';
-          else if (j._status === 403) note.innerHTML = '<b>Kodigo cloud refused this page.</b> Open the app from the Kodigo site.';
+          if (j._status === 429) note.innerHTML = '<b>Kodigo cloud\'s free minutes are used up for today</b> (back at 8:00 AM Philippine time). ' +
+            (CLOUD_URL === SHARED_CLOUD ? 'Get your own free 3&frac12; hours a day: open <b>Your own Kodigo cloud</b> below. ' : '') +
+            'English still works with Listening set to the phone\'s service.';
+          else if (j._status === 403) note.innerHTML = '<b>Kodigo cloud refused this page.</b> Open the app from the Kodigo site, or check your own worker lists this site.';
           else note.innerHTML = '<b>Kodigo cloud had a problem</b> (' + j.error + ').';
           return;
         }

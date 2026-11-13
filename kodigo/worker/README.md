@@ -7,6 +7,12 @@ It's used for languages the phone can't listen in itself (Tagalog and Taglish on
 - **Separate worker**, nothing to do with the SysOp console. No location blocking.
 - Only answers the sites listed in `ALLOWED_ORIGINS`, refuses clips over 1.5 MB, drops the phrases Whisper tends to "hear" in silence.
 
+## Anyone can have their own (free)
+
+The Kodigo app uses a shared worker by default. Its free minutes are shared by every user, so anyone can make their **own** worker
+(own free ~210 minutes a day) and paste its address into the app under **Your own Kodigo cloud → Save & test**. No code editing:
+the worker already accepts the official app at hoofiepuppet.neocities.org.
+
 ## Set up (step by step)
 
 The full illustrated steps are in **Part 7** of [Kodigo-Setup-Guide.pdf](../Kodigo-Setup-Guide.pdf). Short version:

@@ -89,6 +89,10 @@ Kodigo gets its own companion app: a **web app**. Open it in the phone's browser
 - Sends build instructions to the glasses, one step at a time.
 - Sets brightness, auto-brightness and the caption text size.
 
+**Setup guide (iPhone, Android, PC, and your own Kodigo cloud):** [Kodigo-Setup-Guide.pdf](Kodigo-Setup-Guide.pdf) · also on the BBS as `kodigo-setup.html`.
+
+**Kodigo cloud:** Tagalog and Taglish captions on iPhone (Apple's dictation has no Filipino) go through a free Cloudflare worker running Whisper: see [worker/](worker/). About 2–4 s behind, about 210 free minutes a day. English stays on the phone's own faster speech service.
+
 **Status:** first version live on the BBS as `kodigo-app.html` (captions + translation on the phone/PC screen; the glasses link is ready for the firmware).
 
 ### Glasses Bluetooth protocol (for the ESP32 firmware)

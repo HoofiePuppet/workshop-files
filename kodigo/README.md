@@ -47,7 +47,7 @@ Both use one shared mounting rail, so a single Kodigo module moves between them.
                        [ lens, 40 mm focal length ]   <- makes the text look
                               |                          about 1 m+ away
                               v
-                       [ 50/50 beam splitter ]        <- see-through mirror at 45°
+                       [ splitter: HUD film ]         <- see-through mirror at 45°
                               |
                               v
                           your eye  (sees the world AND the text)
@@ -56,6 +56,7 @@ Both use one shared mounting rail, so a single Kodigo module moves between them.
 - The screen sits slightly inside the lens's focal length (about 33–38 mm away), so your eye sees a sharp, enlarged image floating at a comfortable distance instead of a blur 3 cm from your face.
 - The mirror reverses the picture, so the firmware draws the screen flipped.
 - Captions and translation are done on the **phone** (the ESP32 is far too small for speech recognition). The phone sends each finished line to the glasses over Bluetooth.
+- **Splitter (no broken glass, by design):** HUD reflective film (static cling, 0.3 mm), either alone in a printed frame gripping all four edges, or on a 1.5 mm clear acrylic piece (1 × 1⅜ in, scored and snapped from a 4 × 4 in sheet). Film side faces the screen and eye. A glass 50/50 cube stays an optional comparison: brightest, but glass, heavier and about ₱825.
 - White OLED text reads best through the mirror. Indoors and at the workbench it's clear; bright Philippine sunlight washes it out.
 
 ## What it will show
@@ -106,7 +107,7 @@ Kodigo gets its own companion app: a **web app**. Open it in the phone's browser
 
 | ID | Part | Material | Status | Notes |
 |----|------|----------|--------|-------|
-| KD-01 | Optics test rig | PETG | Not designed | Bench holder for the OLED, lens and beam splitter, with adjustable display-to-lens spacing (about 30–40 mm). |
+| KD-01 | Optics test rig | PETG | Not designed | Bench holder for the OLED, lens and splitter, with adjustable display-to-lens spacing (about 30–40 mm). Splitter frame grips all four edges. |
 | KD-02 | Display module housing | PETG | Not designed | Holds the OLED, lens, beam splitter, ESP32-C3 and buttons. Slides onto the mounting rail. |
 | KD-03 | Battery pod | PETG | Not designed | Behind the ear, balances the weight of the module. Holds the LiPo, charger board and power switch. |
 | KD-04 | Clip-on adapter | PETG / TPU | Not designed | Puts the mounting rail onto the arm of ordinary glasses. |
@@ -118,5 +119,5 @@ Kodigo gets its own companion app: a **web app**. Open it in the phone's browser
 - Mono vs full-colour OLED.
 - iPhone: test WebBLE (and Bluefy) with captions on a real iPhone.
 - Later: a small microphone on the glasses (picks up the person in front of you better than a phone in a pocket).
-- Beam splitter cube vs a plain acrylic/glass plate.
+- Splitter: HUD film alone vs film on acrylic vs (optional) glass cube.
 - Exact mounting-rail profile shared by the clip-on adapter and the frame.

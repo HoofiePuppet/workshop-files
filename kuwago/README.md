@@ -8,28 +8,26 @@
 
 *Homemade 3D-printed night vision goggles.*
 
-**Status:** Planning · **Started:** 2026-11-14 · **Designer:** Hoofie Puppet
+**Status:** v2.3 designed · STLs ready · screen next · **Started:** 2026-11-14 · **Designer:** Hoofie Puppet
 **License:** (c) 2026 Hoofie Puppet, CC BY-NC-SA 4.0 (see the repo's LICENSE)
+**Build guide (illustrated, with print settings):** [Kuwago-Build-Guide.pdf](Kuwago-Build-Guide.pdf)
 **Shopping list:** [bill-of-materials.md](bill-of-materials.md)
 **On the BBS:** [hoofiepuppet.neocities.org/kuwago.html](https://hoofiepuppet.neocities.org/kuwago.html)
 
-![Kuwago concept: angular matte black goggles with two infrared lights and a camera on the front, battery pod on the strap](kuwago-concept.jpg)
-
-*AI-generated concept image, not an actual build.*
+![Kuwago v2.3: flat black goggles with a flush owl face, two IR LED eyes and the camera lens as the beak](kuwago-v2-front.jpg)
 
 ## What it is
 
-Kuwago is a pair of digital night vision goggles built from a Raspberry Pi Zero, an infrared night-vision camera, a small screen and the two lenses from a Google Cardboard viewer, in a light 3D-printed PLA visor. Two infrared LEDs light up the dark with light your eyes can't see; the camera can, and the goggles show you the live picture.
+Kuwago is a pair of digital night vision goggles built from a Raspberry Pi Zero, an infrared night-vision camera, a small HDMI screen and the two lenses from a Google Cardboard viewer, in a light 3D-printed PLA housing. Two infrared LEDs light up the dark with light your eyes can't see; the camera can, and the goggles show you the live picture.
 
-"Kuwago" is Filipino for **owl**: the bird that sees in the dark. The front even looks like one, with the camera as the beak and the two IR lights as the eyes.
+"Kuwago" is Filipino for **owl**: the bird that sees in the dark. The front is an owl's face: the two IR lights are the eyes and the camera is the beak.
 
-## Official logo
-
-- **kuwago-logo.png**: the official Kuwago logo (green geometric owl face over "KUWAGO"). Transparent background, made for dark backgrounds.
-- **kuwago-logo-dark.png**: the same logo in dark green, for light backgrounds. GitHub picks the right one for your theme automatically.
-- **kuwago-emblem.png**: the owl only, no lettering.
-- **kuwago-icon-180.png**: the owl on black, 180 × 180, for a home-screen or app icon.
-- Cut from the first concept image (2026-11-14). Always use these files; don't redraw or restyle the logo.
+| | |
+|---|---|
+| Size | about **97 × 69 × 87 mm** (129 mm wide across the strap wings) |
+| Plastic | about **139 g of PLA**, 12 parts, all print flat, **no supports** |
+| Battery | 2000 mAh LiPo in a pod at the back of the head, USB-C charging |
+| Runtime | about 2½–3 hours |
 
 ## How it works
 
@@ -46,67 +44,62 @@ Kuwago is a pair of digital night vision goggles built from a Raspberry Pi Zero,
                                           both eyes (one sharp picture)
 ```
 
-- **One camera, both eyes** (bi-ocular, like PVS-7 military goggles). Both eyes see the same flat picture, so there's no fake 3D and no eye strain from it.
-- **Optics:** the screen sits just inside the lenses' focal length (listed as 40 mm / 45 mm), so the eye sees a sharp, relaxed picture. A focus slider covers 34–48 mm.
-- **Eye spacing:** lens centres are fixed at 63 mm; the software slides the two pictures closer or further apart to match the wearer's eyes, set once and saved.
-- **Low lag:** HDMI screen, camera drawn straight to it by the Pi's GPU (no desktop, boots into the live view).
-- **No "swimming":** the camera sees wider than the lenses show, so the software crops it until one degree of head turn equals one degree on screen.
-- Green "phosphor" or black-and-white view; low-battery warning from the LiPo SHIM.
+- **One camera, both eyes** (bi-ocular, like PVS-7 military goggles): no fake 3D, no eye strain from it.
+- **Optics:** the screen sits just inside the lenses' focal length; a focus slider covers 34–48 mm lens-to-screen.
+- **Eye spacing:** lens centres fixed at 63 mm; the software slides the two pictures to match the wearer's eyes.
+- **Low lag:** HDMI screen, camera drawn straight to it by the Pi's GPU, boots straight into the live view.
+- **No "swimming":** the camera picture is cropped so one degree of head turn is one degree on screen.
 
-## Design goals
+## The design (v2.3)
 
-The SysOp built a night vision goggle years ago from someone else's design: nearly impossible to build, bulky, uncomfortable, front-heavy and ugly. Kuwago is designed against every one of those.
+![Side: the Kuwago logo as 12 green inlay pieces glued flush](kuwago-v2-side.jpg)
 
-| Goal | How |
-|---|---|
-| Minimal PLA | Skeleton frame, not a box: the screen is the back wall, the lens plate the front, two slim rails join them. ~60–80 g. |
-| Easy to print | ~5 main parts, all flat, no supports, fit an ordinary bed. |
-| Easy to put together | Snap fits + a handful of M2.5 screws, no glue, cables in built-in channels. |
-| Balanced & comfortable | Pi and SHIM sandwiched between screen and camera, so it stays short. Battery in a pod at the back of the strap as a counterweight. Optional top strap, foam seal, nose cutout, hidden anti-fog vents. |
-| Swappable screen | The screen rides in its own tray: unplug HDMI + power, undo two thumb screws, slide it out. Pi, camera and battery stay put. |
-| Futuristic look | Faceted visor, three "eyes" on the front, matte black with an optional snap-in translucent accent strip. |
+- **Flat rectangle, flush owl face.** The camera sits in the upper half and the Pi Zero in the lower half, both inside the screen's height. Eye rings, facial discs, brow, beak and ear marks are cut *into* the flat front. The IR LEDs sit flush in the eyes.
+- **Side logo as 12 glue-in inlays.** Owl head, cheeks, eyes, brow bar and K-U-W-A-G-O print together in green (no mid-print colour change), each into its own recess (+0.10 mm per side, 1.06 mm deep). Tape-transfer trick in the guide.
+- **Swappable screen tray.** Unplug HDMI + power, undo 2 screws, lift out. The electronics never move.
+- **Balanced.** Battery and charger ride in a pod at the back of the head as a counterweight.
+- **Tough cable.** The battery lead is sleeved in gutted 550 paracord. Both cable holes are 4.2 mm sockets that take the paracord's sealed end like a grommet, with a zig-zag strain relief behind each so a tug never reaches the plug.
+- **Comfort.** Curved foam face shroud, nose cutout, hidden anti-fog vents.
 
-## Parts repository
+![Exploded view](kuwago-v2-exploded.jpg)
 
-### Electronics (on hand)
+## Printed parts — [`stl/`](stl/)
+
+All STLs are already oriented for printing. Full settings are in the [build guide](Kuwago-Build-Guide.pdf): PLA, 210–215 °C, 60 °C bed, 0.20 mm layers, 3 walls, 20 % gyroid, **no supports**.
+
+| File | Qty | Notes |
+|---|---|---|
+| kw-01-shell | 1 | Front wall down. Logo recesses, cable grommet, strain relief built in. |
+| kw-02-owl-face | 1 | Flat back down. The flush owl face. |
+| kw-03-lens-plate | 1 | Eye side down. Two M2.5 nuts drop into its side pockets. |
+| kw-04-lens-ring | 2 | Press-fit lens retainers, 0.12 mm layers. |
+| kw-05-screen-tray-mpi3508 | 1 | **v0: wait for your screen.** Clones vary; measure yours and regenerate before printing. |
+| kw-06-face-shroud | 1 | Sleeve end down. Foam goes on the curved edge. |
+| kw-07-camera-retainer | 1 | |
+| kw-08-battery-pod | 1 | Battery + TP4056 charger, strap slots, cable grommet. |
+| kw-09-battery-pod-lid | 1 | |
+| kw-10-thumb-knob | 2 | Press an M2.5 screw head into each. |
+| kw-11-brow-accent | 1 | Optional, translucent amber, presses flush into the brow. |
+| kw-12-logo-inlays | 1 plate | 12 green pieces for the side logo. |
+
+## Electronics (key numbers)
 
 | Part | Key numbers | Notes |
 |---|---|---|
-| Raspberry Pi Zero | — | Pi Zero 2 W is a drop-in upgrade for a smoother picture. |
-| Pimoroni LiPo SHIM | 5 V boost, low-battery pin | Rocker switch goes to **EN + GND** (closed = off), not inline on the battery. |
-| PKCELL LP803860 LiPo | 3.7 V, 2000 mAh | ~2½–3 h with the screen and IR on. |
-| IR night-vision camera (OV5647) | Board 73 × 25 × 1 mm; IR LEDs Ø18.5 mm, 13 mm tall; lens sticks out 25 mm | LED centres ±27.25 mm from the board centre. Light sensors switch the IR on in the dark; blue screws set the threshold. |
-| Pi Zero camera ribbon | ~30 cm | Slack folds flat into a lidded channel; a 10–15 cm ribbon is tidier. |
-| Google Cardboard lenses | Ø25.0 mm, centre 5.0 mm, edge ~2.5 mm | Seat: 25.3 mm bore, 2.8 mm deep, 1.0 mm eye-side lip with a 23.0 mm opening; retaining ring with springy tabs (fits a 2.0–3.2 mm edge). |
-
-### Screens (swappable trays)
-
-| Screen | Resolution | Per eye | Notes |
-|---|---|---|---|
-| MPI3508 3.5" HDMI | 480 × 320 | 240 × 320 | **First screen** (cheap). Must be HDMI, not SPI. Clones vary: tray is measured from the actual unit. Power from the SHIM (5 V + GND). |
-| Waveshare 3.5" HDMI LCD (E) | 640 × 480 | 320 × 480 | Upgrade: sharper, capacitive glass, USB-C power, cables included. |
-
-### Printed parts (PLA, matte black) — STLs coming as they're designed and tested
-
-| Part | Qty | Notes |
-|---|---|---|
-| Front visor | 1 | Camera board on standoffs behind the front wall; Pi + SHIM inside the stack. |
-| Lens / focus plate | 1 | Two lens seats 63 mm apart, slides 34–48 mm from the screen, thumb-screw lock. |
-| Lens retaining rings | 2 | Springy tabs, clamp the rim only. |
-| Face shroud | 1 | Nose cutout, hidden vents, optional gap at the bottom for peripheral view. |
-| Screen tray — MPI3508 | 1 | Swappable. |
-| Battery pod | 1 | Rides on the back of the strap. |
-| Strap clips | 2 | |
-| Accent strip *(optional)* | 1 | Translucent, snap-in. |
+| Raspberry Pi Zero (or Zero 2 W) | 58 × 23 mm holes | Mounted on the front wall, ports down. |
+| Pimoroni LiPo SHIM | 5 V boost | Does **not** charge. Switch to **EN + GND** (closed = off). |
+| TP4056 USB-C charger (protected) | — | In the battery pod. |
+| PKCELL LP803860 LiPo | 3.7 V 2000 mAh | In the battery pod. |
+| OV5647 night-vision camera | board 73 × 25 mm; LEDs Ø18.5 × 13 mm; lens 25 mm | IR always on (its light sensors sit in the dark). |
+| MPI3508 3.5" HDMI screen | 480 × 320 | Must be HDMI, not SPI. Upgrade: Waveshare 3.5" HDMI (E) 640 × 480. |
+| 90° mini-HDMI FPV ribbon cable | — | Only ~7 mm under the Pi. |
+| Google Cardboard lenses | Ø25, 40–45 mm focal length | Seat 25.3 mm, 1.0 mm lip, ring counterbore 27.8 mm. |
+| Optional MAX17048 fuel gauge | I2C | On-screen battery % bar. |
 
 ## Build stages
 
-1. **Parts** — 3.5" HDMI screen next to buy. *(now)*
-2. **Bench test** — camera to screen live on the Pi, measure lag, choose the green / B&W look.
-3. **Optics** — lenses, focus slider and eye spacing in a printed test frame.
-4. **The visor** — frame, screen tray, face shroud, battery pod, strap clips.
+1. **Design** — v2.3 STLs and illustrated build guide. ✔
+2. **Parts** — MPI3508 screen, 90° mini-HDMI cable, TP4056 charger next. *(now)*
+3. **Bench test** — camera to screen live on the Pi, measure lag, pick the green / B&W look.
+4. **Print + fit** — shell and owl face first, then the rest; regenerate the screen tray to the real screen.
 5. **Night test** outside, then the upgrade screen tray.
-
-## Comfort tips
-
-Start with 5–10 minute sessions and slow head turns; flip the goggles up between uses. Most people get used to digital NVGs within a few tries.

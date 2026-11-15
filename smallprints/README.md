@@ -1,6 +1,6 @@
 # Odds & Ends (Small Prints)
 
-Small finished designs from Hoofie Puppet's Workshop: handy tools, fixes around the house, and a bit of fun.
+Small finished designs from Hoofie Puppet's Workshop: handy tools, fixes around the house, a bit of fun, and things for the cats.
 **Designer:** Hoofie Puppet · **License:** CC BY-NC-SA 4.0 (see the repo's LICENSE.txt)
 **On the BBS:** [Odds & Ends](https://hoofiepuppet.neocities.org/smallprints.html)
 
@@ -14,3 +14,9 @@ Small finished designs from Hoofie Puppet's Workshop: handy tools, fixes around 
 | [No-Moist](no-moist) | Rechargeable-desiccant box for hearing aid dryers (PETG / ABS only) |
 | [Laptop Stand](laptop-stand) | Holds a Dell (or similar) laptop upright |
 | [Weather Forecasting Stone](weather-stone) | The classic joke weather station |
+
+## For the cats
+| Design | What it is |
+|---|---|
+| [Kuting Kalansing](kuting-kalansing) | 50 mm jingle ball in two locking halves with 9 mm bells inside (PETG only) |
+| [AutoPooper 3000](../autopooper) | Automatic rotating-drum litter box (in development) |

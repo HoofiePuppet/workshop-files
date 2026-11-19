@@ -130,6 +130,13 @@ A 3S (12 V) Li-ion pack feeds a thin trunk line, with a 15 A main fuse. A USB po
 6. Legs, one at a time.
 7. Hood last: mesh face panel, wiring and comfort.
 8. Outdoor test at dusk, then the optional extras (side cameras, gloves and boots).
+9. Mk II: try one or two LED matrix panels on the chest (only after Mk I works).
+
+## Versions
+
+- **Mk I (the plan now):** pixel strings over the whole suit. Coarse dots softened by the white diffusion fabric. Cheap, flexible, and it covers the whole body. This is what the parts list builds.
+- **Mk II (planned, not built):** flexible 16x16 LED matrix panels (256 pixels, about 16 cm square) on the big flat areas first: chest and back, then thighs. A much finer picture, but more current and more money, so it goes on in patches, not as a full-body skin.
+- **Later ideas:** depth cameras or head tracking so the picture is corrected for where the viewer stands, and side cameras for 360 degrees.
 
 ## Files
 

@@ -41,6 +41,7 @@ two legs and the hood).
 | Side webcams (left and right), about $15 each | 2 | For a 360-degree view once front and back work |
 | Pixel sections for gloves and boots | 4 | Only if the main sections work well |
 | Spare ESP32 and 5 V converter, about $10 | 1 of each | Handy for swapping a failed section |
+| Mk II: flexible 16x16 WS2812B LED matrix panel, 5 V, about $12 to $15 each (search: `WS2812B 16x16 flexible matrix`) | 1 to 2 to start | 256 pixels about 16 cm square. Try on the chest after Mk I works. A full white panel can draw about 15 A at 5 V, so cap the brightness in software |
 
 ## Power estimate
 

@@ -9,14 +9,14 @@ two legs and the hood).
 
 | Part | Section | Qty | Unit | Subtotal | Notes | Search term |
 | --- | --- | ---: | ---: | ---: | --- | --- |
-| Raspberry Pi 4 (2 GB) | Hub (torso front) | 1 | $45 | $45 | Reads the cameras and slices the image. A Pi Zero 2 W (about $15) can work with a single camera | `Raspberry Pi 4 Model B 2GB` |
+| Raspberry Pi 4 (2 GB) | Hub (torso front) | 1 | $45 | $45 | Reads the cameras and slices the image. A Pi Zero 2 W (about $15) can work with a single camera | `Raspberry Pi 4 Model B 2GB` (Raspberry Pi 4 Model B, BCM2711) |
 | USB webcam, wide-angle | Hub (torso front) | 2 | $15 | $30 | Back camera feeds the front; front camera feeds the back. Start with one | `USB webcam wide angle 1080p` |
 | Small WiFi router | Hub (torso front) | 1 | $15 | $15 | Dedicated network linking the Pi to every section. Test latency early | `mini travel wifi router` |
-| ESP32 dev board | Every section | 7 | $6 | $42 | One controller per section, WLED-style pixel firmware | `ESP32 DevKit V1 30 pin` |
+| ESP32 dev board | Every section | 7 | $6 | $42 | One controller per section, WLED-style pixel firmware | `ESP32-WROOM-32 DevKit V1 30 pin` (ESP32-DevKitC / DevKit V1, ESP32-WROOM-32 module) |
 | WS2811 12 mm pixel string (50 pixels) | Every section | 20 | $9 | $180 | About 1,000 pixels split across the sections; check the spacing in the listing | `WS2811 12mm 50 pixels string 5V` |
-| Level shifter chip (74AHCT125) | Every section | 7 | $1 | $7 | Optional; helps avoid flicker on the pixel data line | `74AHCT125 level shifter` |
-| Buck converter 12 V to 5 V, 5 A | Every section | 7 | $4 | $28 | Local 5 V power, one per section | `DC DC buck converter 12V to 5V 5A` |
-| Buck converter 12 V to 5 V, 3 A | Hub (torso front) | 1 | $6 | $6 | Powers the Pi | `12V to 5V 3A USB buck converter` |
+| Level shifter chip (74AHCT125) | Every section | 7 | $1 | $7 | Optional; helps avoid flicker on the pixel data line | `74AHCT125 level shifter` (SN74AHCT125N, DIP-14) |
+| Buck converter 12 V to 5 V, 5 A | Every section | 7 | $4 | $28 | Local 5 V power, one per section. XL4015 5 A module; an LM2596S is only 3 A max, so use it only for the hood and arms at limited brightness. Set 5.0 V with a multimeter before connecting pixels | `XL4015 5A DC DC buck converter` |
+| Buck converter 12 V to 5 V, 5 A | Hub (torso front) | 1 | $6 | $6 | Powers the Pi and webcams. XL4015 5 A module; a 3 A LM2596S is marginal for a Pi 4 with two webcams | `XL4015 5A DC DC buck converter` |
 | Inline blade fuse holder with fuse | Every section | 7 | $2 | $14 | A short stays inside its own section | `inline blade fuse holder 12V` |
 | XT30 connector pair (2-pin power) | Every section | 7 | $2 | $14 | Same plug on every section to the 12 V trunk | `XT30 connector male female pair` |
 | JST-SM 3-pin connector pairs (pack of 50) | Every section | 1 | $10 | $10 | Pixel string to controller | `JST SM 3 pin connector pair` |

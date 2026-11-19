@@ -14,6 +14,58 @@ section at a time by an ordinary maker with a hobby printer.
 
 **Status:** planning. Concept, name, logo, parts list and section plan are done. The module case is next.
 
+## What Anino is for
+
+Anino is a maker project, a costume and an engineering experiment, not a product claim. It exists to:
+
+- show how camera-based "see-through" camouflage works, using parts an ordinary maker can buy;
+- make a wearable piece for costume, stage, art and photography: a person who seems to fade into the backdrop;
+- be a modular test bed, so better pixels, cameras and software can be swapped in later without starting over.
+
+It does not hide you from infrared or thermal cameras, and it does not work up close or from every direction.
+
+## What it does
+
+Cameras on the back of the suit watch the scene behind you, and the pixels on your front show that scene. A viewer
+in front of you sees something close to what is behind you where your body would be. Cameras on the front can feed
+the pixels on your back the same way.
+
+## The theory
+
+If every spot on the front of your body shows the light that would be coming from the scene behind that spot, the
+eye reads the background instead of a body. Two things have to be right:
+
+- **Perspective:** the picture has to look as if it was taken from where the viewer's eye is looking through you.
+- **Brightness and color:** the pixels have to be bright and colorful enough to match the real background.
+
+A flat picture can only be correct from one direction and distance. When the viewer moves, the real background
+shifts differently from the picture (parallax), and the illusion breaks. That is why Anino aims for a soft, coarse
+match instead of a perfect one. This is the principle of disruptive camouflage: you don't need to erase the body,
+only to match its brightness and color and break up its outline until the eye stops seeing a person.
+
+There are two ways to put the picture on the body:
+
+| Approach | How it works | Trade-off |
+| --- | --- | --- |
+| **Own light (Anino)** | LED pixels or screens make their own light | Readable in daylight and works on its own; costs power, wiring and heat on the body |
+| **Reflected light (projector)** | A cloak covered in retroreflective cloth is lit by a projector beside the viewer's eye | Cheap cloth, but the projector must be near the viewer, so it can't be worn alone |
+
+A black or light-absorbing cloak can't help a projector: a projector can only add light, never darken a surface, and
+a black surface reflects almost nothing back to show.
+
+## Inspiration
+
+- **Researchers' camera cloaks.** Videos of "invisible man" style demos, where a hand held in front of a camera-backed
+  panel seems to vanish. The best-known research is the optical camouflage work from Susumu Tachi's lab at the
+  University of Tokyo, first described in 2003: a coat covered in retroreflective material, a camera behind the
+  wearer and a projector at the viewer's side.
+- **The two-tablet trick.** A video of someone with a tablet on each side of their body, one filming and the other
+  showing, to look as if there is a hole through them. It proved the idea works with ordinary screens.
+- **Flexible OLED is out of reach.** The screens that would suit a suit best are expensive and not sold to ordinary
+  makers, so Anino asks how close cheap, coarse LED pixels can get.
+- **Making it for the average maker.** Take something that normally needs a lab, and design it so it can be built in
+  sections with a hobby printer and basic tools.
+
 ## What it can and can't do
 
 Nobody can make a person truly invisible. Anino is an **outline breaker**, built on a budget. It works best:

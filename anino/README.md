@@ -130,7 +130,8 @@ A 3S (12 V) Li-ion pack feeds a thin trunk line, with a 15 A main fuse. A USB po
 6. Legs, one at a time.
 7. Hood last: mesh face panel, wiring and comfort.
 8. Outdoor test at dusk, then the optional extras (side cameras, gloves and boots).
-9. Mk II: try one or two LED matrix panels on the chest (only after Mk I works).
+9. Brightness and colour tuning: test in daylight and in the dark, and turn the brightness down and mute the colours until it stops looking like a string of party lights.
+10. Mk II: try one or two LED matrix panels on the chest (only after Mk I works).
 
 ## Versions
 

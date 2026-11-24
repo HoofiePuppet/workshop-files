@@ -21,7 +21,7 @@
 
 ## What it is
 
-Kodigo is a cheap, 3D-printed, Google Glass–style heads-up display made specifically to help people who are **hard of hearing (HoH)**. A tiny screen beside your eye shows **live captions** of what people are saying, floating in front of you, so you can look at the person talking and read their words at the same time. It **translates** too: someone speaking Tagalog can show up as English captions, or the other way round.
+Kodigo is an inexpensive, 3D-printed, Google Glass–style heads-up display made specifically to help people who are **hard of hearing (HoH)**. A tiny screen beside your eye shows **live captions** of what people are saying, floating in front of you, so you can look at the person talking and read their words at the same time. It **translates** too: someone speaking Tagalog can show up as English captions, or the other way round.
 
 The same screen also shows build instructions one step at a time, phone notifications and texts, the time and the battery level.
 

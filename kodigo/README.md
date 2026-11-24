@@ -109,7 +109,7 @@ Kodigo gets its own companion app: a **web app**. Open it in the phone's browser
 | Phone | How |
 |-------|-----|
 | Android | Chrome. Works as-is. |
-| iPhone | Apple doesn't allow Web Bluetooth in iPhone browsers (Chrome on iPhone runs on Safari's engine, so it has the same limit; Android emulators can't reach the iPhone's Bluetooth or mic). Fix: the free **WebBLE** app (iOS 26+), a Safari extension that adds Web Bluetooth, then use the Kodigo app in Safari. Backup: the free **Bluefy** browser. **To be tested on a real iPhone.** A native iPhone app (Swift: CoreBluetooth + Apple's Speech and Translation frameworks, which can run on-device) only if neither works well; it needs a Mac or cloud build and a US$99/year Apple Developer account to share. |
+| iPhone | Apple doesn't allow Web Bluetooth in iPhone browsers (Chrome on iPhone runs on Safari's engine, so it has the same limit; Android emulators can't reach the iPhone's Bluetooth or mic). Fix: the free **beacio** app (iOS 26.2+), a Safari Web Extension that adds Web Bluetooth to Safari, so the Kodigo app stays in Safari (enable it under aA → Manage Extensions, then aA → beacio → Allow on Every Website). Backup: the free **Bluefy – Web BLE Browser** app (open the Kodigo app inside it). Skip the paid "WebBLE" browser by GreenParkSoftware (about ₱129 / US$1.99), a different, older app. **To be tested on a real iPhone.** A native iPhone app (Swift: CoreBluetooth + Apple's Speech and Translation frameworks, which can run on-device) only if neither works well; it needs a Mac or cloud build and a US$99/year Apple Developer account to share. |
 
 ## Build stages
 
@@ -123,17 +123,19 @@ Kodigo gets its own companion app: a **web app**. Open it in the phone's browser
 
 | ID | Part | Material | Status | Notes |
 |----|------|----------|--------|-------|
-| KD-01 | Optics test rig | PETG | Not designed | Bench holder for the OLED, lens and splitter, with adjustable display-to-lens spacing (about 30–40 mm). Splitter frame grips all four edges. |
+| KD-01 | Optics test rig | PETG | Designed v1 (`kd01.py`) | 160 mm rail with mm scale (distance from lens); sliding feet with groove-on-key + one M3 each. Lens holder + C-ring, turntable splitter mount (5° marks around 45°), frames for acrylic or film-only, OLED carriage with provisional 1.3"/0.96" adapters. No supports. |
 | KD-02 | Display module housing | PETG | Not designed | Holds the OLED, lens, beam splitter, ESP32-C3 and buttons. Slides onto the mounting rail. |
 | KD-03 | Battery pod | PETG | Not designed | Behind the ear, balances the weight of the module. Holds the LiPo, charger board and power switch. |
-| KD-04 | Clip-on adapter | PETG / TPU | Not designed | Puts the mounting rail onto the arm of ordinary glasses. |
-| KD-05 | Companion glasses frame | PETG | Not designed | For people who don't wear glasses. Mounting rail built into the right arm. |
+| KD-04 | Clip-on adapter | PETG / TPU | Not designed | Puts Kodigo rail v1 onto the arm of ordinary glasses. |
+| KD-05 | Companion glasses frame | PETG | Designed v3 (`kd05.py`) | 50-20-140 round panto, open frame, keyhole bridge, top-corner 1.75 mm filament-pin hinges, Kodigo rail on the right arm. Snap-in nose saddle on 2 pegs: narrow/medium/wide × standard/low-bridge. |
+| KD-06 | Bracelet remote | PETG | Designed v1 (`kd06.py`) | Watch-style case on a standard 20 mm strap: 3 buttons, USB-C, slide switch, LiPo 502030 + TP4056 + ESP32-C3. Lid has a flush recess for a glued, resin-filled two-colour logo chip. |
+| KD-07 | Carrying case | PETG / PLA + TPU insert | Designed v2 (`kd07.py`) | Hinged box (1.75 mm filament pin), rubber-band eyelet lugs, TPU foam-style insert with pockets for the folded glasses, bracelet, spare nose pieces, USB-C coil and a placeholder module pocket. 80 x 40 mm resin-filled logo chip on the lid. |
 
 ## Open questions
 
 - 1.3" OLED is the main screen (more caption lines); compare with the 0.96" through the optics.
 - Mono vs full-colour OLED.
-- iPhone: test WebBLE (and Bluefy) with captions on a real iPhone.
+- iPhone: test beacio (and Bluefy as backup) with captions on a real iPhone, including from the home-screen icon.
 - Later: a small microphone on the glasses (picks up the person in front of you better than a phone in a pocket).
 - Splitter: HUD film alone vs film on acrylic vs (optional) glass cube.
-- Exact mounting-rail profile shared by the clip-on adapter and the frame.
+- Kodigo rail v1 (set in KD-05): dovetail 5 → 7 mm wide, 2 mm tall, 40 mm long on the outer right arm, front stop, small snap ridge at the back. KD-02 slides on from the ear end; KD-04 copies it.

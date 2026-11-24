@@ -301,11 +301,69 @@ def arm(rail):
     return a
 
 
+# ---- slip-on ear-tip sleeve (removable cord loop for a retainer band) ----
+CAP_NECK_H = ARM_H_BACK + 0.2        # neck 5.2: snug on the 5.0 ear tip; the 5.6 end bulb must squeeze through (the catch)
+CAP_CAV_H = 5.8                      # bulb pocket at the closed end: 5.6 bulb + 0.2
+CAP_POCKET_LEN = 5.0                 # pocket length
+CAP_CAV_W = ARM_T + 0.3              # cavity width 4.3: arm thickness + 0.3 clearance
+CAP_WALL = 2.0
+CAP_DEPTH = 20.3                     # cavity depth measured from the mouth
+CAP_END = 2.4                        # closed end wall
+CAP_SNAP = 0.0                       # optional inward snap ridge per side (0 = off; the tight cavity does the gripping)
+CAP_LOOP_SLOT = (3.4, 6.2)           # cord slot: along arm, across (fits 3 mm cord or 5 mm flat elastic)
+CAP_SIG = "HP-KD05E-26"
+
+
+def ear_sleeve():
+    """Local frame: x along the ear tip (0 = open mouth), y = across tip height, z = arm thickness, centred."""
+    H, W = CAP_CAV_H, CAP_CAV_W
+    oh, ow = H + 2 * CAP_WALL, W + 2 * CAP_WALL
+    body_len = CAP_DEPTH + CAP_END
+    s = box(0, body_len, -oh / 2, oh / 2, -ow / 2, ow / 2)
+    try:
+        s = s.edges("|X").fillet(1.8)
+        s = s.faces(">X").edges().fillet(1.0)
+    except Exception as e:
+        print("sleeve fillet skipped:", e)
+    # cord loop plate beyond the closed end
+    sx, sy = CAP_LOOP_SLOT
+    lug_len = 2.4 + sx + 2.4
+    lug = box(body_len - 1.0, body_len + lug_len, -oh / 2, oh / 2, -2.0, 2.0)
+    try:
+        lug = lug.edges("|Z").fillet(2.0)
+    except Exception as e:
+        print("lug fillet skipped:", e)
+    s = s.union(lug)
+    s = s.cut(box(body_len + 2.4, body_len + 2.4 + sx, -sy / 2, sy / 2, -3, 3).edges("|Z").fillet(min(sx, sy) / 2 - 0.05))
+    # cavity
+    xk = CAP_DEPTH - CAP_POCKET_LEN
+    def _cav(x0, x1, h):
+        b = box(x0, x1, -h / 2, h / 2, -W / 2, W / 2)
+        try:
+            b = b.edges("|X").chamfer(0.8)   # 45 deg roof corners: shorter bridge, no supports
+        except Exception as e:
+            print("cavity chamfer skipped:", e)
+        return b
+    cav = _cav(-1, xk + 0.05, CAP_NECK_H).union(_cav(xk, CAP_DEPTH, H))
+    s = s.cut(cav)
+    # snap ridges just behind the ear-tip bulb (triangular, one per side)
+    rx = CAP_DEPTH - 4.6
+    for sgn in ((1, -1) if CAP_SNAP > 0 else ()):
+        r = (cq.Workplane("XY", origin=(0, 0, -W / 2))
+             .polyline([(rx - 1.1, sgn * H / 2), (rx + 0.4, sgn * H / 2),
+                        (rx + 0.4, sgn * (H / 2 - CAP_SNAP)), (rx - 0.2, sgn * (H / 2 - CAP_SNAP))]).close().extrude(W))
+        s = s.union(r)
+    # hidden mark on the cavity floor (face on the bed when printed)
+    s = s.cut(engrave((9.0, 0, -W / 2), (1, 0, 0), (0, 0, 1), CAP_SIG, 2.0))
+    return s
+
+
 def build():
     parts = {
         "KD05-A_front": front(),
         "KD05-B_arm_right_rail": arm(True),
         "KD05-C_arm_left": arm(False).mirror("YZ"),
+        "KD05-E_ear_sleeve": ear_sleeve(),
     }
     for w in NOSE_SIZES:
         for h in NOSE_HEIGHTS:
@@ -318,6 +376,11 @@ def print_pose(name, p):
         s = p                                   # front face down (Z=0 on bed)
     elif name == "KD05-B_arm_right_rail":
         s = p.rotate((0, 0, 0), (0, 1, 0), -90)  # inner face down, rail up
+    elif name.startswith("KD05-E"):
+        # stand on the long edge (y -> up): the loop tab is flush with the bed side, nothing overhangs
+        s = p.rotate((0, 0, 0), (1, 0, 0), 90)
+        bb = s.val().BoundingBox()
+        s = s.translate((-bb.center.x, -bb.center.y, -bb.zmin))
     elif name.startswith("KD05-D"):
         s = p                                   # front face (against bridge) down
     else:

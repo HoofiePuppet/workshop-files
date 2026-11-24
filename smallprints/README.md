@@ -13,6 +13,7 @@ Small finished designs from Hoofie Puppet's Workshop: handy tools, fixes around 
 | [Airbrush Bottle Holder](airbrush-bottle-holder) | Holds 20 airbrush paint bottles up to 33 mm, flat on the desk or leaning on the wall |
 | [No-Moist](no-moist) | Rechargeable-desiccant box for hearing aid dryers (PETG / ABS only) |
 | [Laptop Stand](laptop-stand) | Holds a Dell (or similar) laptop upright |
+| [Paper Cutter](paper-cutter) | Desk-top paper guillotine for a standard 18 mm box-cutter blade, 4-piece base, locking lever (print-testing) |
 | [Weather Forecasting Stone](weather-stone) | The classic joke weather station |
 
 ## For the cats

@@ -1,6 +1,6 @@
 # Kodigo — Bill of Materials
 
-**Status:** Planning · **Updated:** 2026-11-13 (captions, translation, app)
+**Status:** Planning · **Updated:** 2026-11-21 (parts chosen, KD-01 + KD-05 designed, KD-06 bracelet added)
 Sourcing: Shopee / Lazada PH. Prices are rough estimates; check current listings.
 Search terms are what to type into Shopee or Lazada.
 
@@ -8,32 +8,51 @@ Search terms are what to type into Shopee or Lazada.
 
 | # | Item | Qty | Est. ₱ | Search term | Notes | Status |
 |---|------|-----|--------|-------------|-------|--------|
-| A1 | ESP32-C3 SuperMini board | 1 | ~220 | `ESP32-C3 SuperMini` | The brain. Bluetooth + WiFi, USB-C. Buy 2 for a spare. | To buy |
-| A2 | 1.3" OLED, SH1106, I2C | 1 | ~250 | `1.3 OLED SH1106 I2C` | Main screen: fits more caption lines. White reads best through the mirror. | To buy |
-| A3 | 0.96" OLED, SSD1306, I2C, 128×64 | 1 | ~150 | `0.96 OLED SSD1306 I2C white` | For comparison through the optics. | To buy |
+| A1 | ESP32-C3 SuperMini board | 3 | ~183 each | `ESP32-C3 SuperMini` | The brain. Get the variant with the pin header **loose** (CHENJ, LazMall, variant A1). One board gets pins for the breadboard rig, one gets wires soldered straight on for the glasses, the third goes in the bracelet (see section B2). | To buy |
+| A2 | 1.3" OLED, SH1106, I2C | 1 | ~201 | `1.3 OLED SH1106 I2C` | Bigger text through the lens. **White** (EstarDyn, LazMall). 35.5 × 33.5 mm. Pin order **VDD GND SCK SDA** (power first). | To buy |
+| A3 | 0.96" OLED, SSD1306, I2C, 128×64 | 1–2 | ~99 | `0.96 OLED SSD1306 I2C white` | Smaller, lighter module. **White** (FU Labs). Pin order **GND VCC SCL SDA** (ground first). Wire by the printed labels. | To buy |
 | A3b | Full-colour OLED, SSD1351, SPI, 128×128 *(optional)* | 1 | ~700–900 | `SSD1351 OLED 128x128 RGB` | Any text colour in software. Costs more and uses more battery than mono. | To buy |
 | A4 | Bi-convex lenses, 25 mm dia, 40 mm focal length | 1 pair | — | `Google Cardboard lens 25mm 40mm` | Focusing lens. Display sits about 33–38 mm from it. | Have |
 | A5 | HUD reflective film, static cling, 0.3 mm PET, 15 × 12.5 cm | 1 | ~88 | `AUMOTOP HUD reflective film` | **Main splitter.** Makes the text brighter; no glue. Try it alone in a printed frame or on an acrylic piece. About 20 pieces per sheet. | To buy |
 | A5b | Clear acrylic sheet, 4 × 4 in, 1.5 mm | 1–2 | ~20–37 each | `custom cut acrylic sheet clear 4x4 1.5mm` | Backing for the film. Score and snap into 1 × 1⅜ in pieces (12 per sheet: 8 full size + 4 at 1 × 1¼ in). | To buy |
 | A5c | Beam splitter cube, glass, 50/50, 10–15 mm *(optional)* | 1 | ~825 | `beam splitter prism 15mm 1:1` | Comparison only: brightest, no ghost, but glass, heavy and pricey. Not "polarizing". | Optional |
-| A6 | Mini breadboard + Dupont jumpers | 1 set | ~120 | `mini breadboard dupont jumper wire` | Wiring the test rig without soldering. | To buy |
+| A6 | Breadboard (400 holes) + Dupont jumpers | 1 set | — | — | Wiring the test rig. Need 4 female-to-male jumpers per OLED. | Have |
+| A7 | Double-sided perfboards + male pin headers | — | — | — | Small cut piece = button/resistor board behind the ear. | Have |
+| A8 | LiPo 3.7 V 2000 mAh (PKCELL LP803860) | 1 | — | — | Old cell from the night-vision project. Bench power for the rig via a TP4056 — **check first** (not swollen, ≥ 3.0 V; under 2.5 V = retire). Too big for the glasses. | Have (check) |
 
 ## B. Buy: wearable build (later)
 
 | # | Item | Qty | Est. ₱ | Search term | Notes | Status |
 |---|------|-----|--------|-------------|-------|--------|
-| B1 | LiPo 3.7 V ~400 mAh (e.g. 602030) | 1 | ~180 | `lipo 3.7v 400mah 602030` | Behind-the-ear battery, with a protection circuit. | To buy |
-| B2 | TP4056 USB-C charger module, with protection | 2 | ~40 each | `TP4056 type-c protection module` | Charges the LiPo. One spare. | To buy |
-| B3 | 6×6 mm tactile buttons | 1 pack | ~50 | `tactile switch 6x6 pack` | Next / previous step. | To buy |
+| B1 | LiPo 3.7 V 400 mAh, **802035** (8 × 20 × 35 mm) | 1 | ~180 | `lipo 3.7v 400mah 802035` | Behind-the-ear battery, ~7 h. Must have a protection circuit. (602030 is only 300 mAh.) KD-03 is sized for this. | To buy |
+| B2 | TP4056 USB-C charger module, with protection | 3 | ~40 each | `TP4056 type-c protection module` | Charges the LiPo: one for the glasses, one for the bracelet, one spare. | To buy |
+| B3 | Tactile buttons **6 × 6 × 5 mm, 4-pin through-hole** | 1 pack | ~50 | `tactile switch 6x6x5 4 pin` | Next / previous step. Not SMD. An assorted-height pack is fine. | To buy |
 | B4 | Mini slide switch | 1 pack | ~40 | `SS12D00 slide switch` | Power on/off. | To buy |
-| B5 | 100k resistors | 1 pack | ~40 | `100k ohm resistor pack` | Voltage divider for the battery-level reading. | To buy |
-| B5b | BH1750 light sensor module *(optional)* | 1 | ~100 | `BH1750 light sensor module` | Automatic brightness. Shares the OLED's I2C wires. | To buy |
+| B5 | 100k resistors (1 %, blue body) | 2 | — | — | Battery-level divider. From the 600-pc assortment (brown-black-black-orange-brown). | Have |
+| B5b | BH1750 light sensor, GY-302 board *(optional)* | 1 | ~113 | `GY-302 BH1750` | Automatic brightness. Shares the OLED's I2C wires; leave ADDR unconnected. ~14 × 19 mm. | To buy |
 | B6 | 30 AWG silicone wire | 1 roll | ~120 | `30AWG silicone wire` | Thin, flexible wiring inside the frame. | To buy |
-| B7 | M2 screws + heat-set inserts kit *(optional)* | 1 kit | ~200 | `M2 heat set insert screw kit` | Assembling the printed housing. | To buy |
+| B7 | M2 screws + heat-set inserts kit *(optional)* | 1 kit | ~200 | `M2 heat set insert screw kit` | Assembling the printed housing. | Have |
 
-**Estimated total still to buy:** about ₱1,550 (test rig about ₱840, wearable about ₱710), plus about ₱900 for the optional colour OLED and light sensor.
+## B2. Buy: bracelet (KD-06, wrist remote)
 
-**Phone:** an Android phone with Chrome runs the Kodigo app as-is. iPhone needs the free WebBLE app (or Bluefy); see README.md.
+The bracelet is its own small ESP32-C3 with 3 buttons. It sends commands to the glasses over Bluetooth. Build it after the glasses firmware works.
+
+| # | Item | Qty | Est. ₱ | Search term | Notes | Status |
+|---|------|-----|--------|-------------|-------|--------|
+| C1 | ESP32-C3 SuperMini board | 1 | ~183 | `ESP32-C3 SuperMini` | Counted in A1 (third board). | To buy |
+| C2 | LiPo 3.7 V 250 mAh, **502030** (5 × 20 × 30 mm) | 1 | ~100–130 | `lipo 3.7v 502030 250mah` | With protection circuit. The case is sized for these dimensions; check the real cell before printing. | To buy |
+| C3 | TP4056 USB-C charger module | 1 | ~40 | `TP4056 type-c protection module` | Counted in B2. About 26 × 17 mm. Its USB-C port is the bracelet's charging port. | To buy |
+| C4 | Tactile buttons 6 × 6 × 5 mm, 4-pin through-hole | 3 | — | — | From the pack in B3. Soldered on a small perfboard (about 31 × 9 mm). | To buy |
+| C5 | Mini slide switch (SS12D00) | 1 | — | — | From the pack in B4. Power on/off. | To buy |
+| C6 | **Watch strap, 20 mm, spring-bar type** (silicone or nylon) | 1 | ~100–150 | `20mm watch strap silicone quick release` | Any standard 20 mm strap works. Get one with regular spring bars. | To buy |
+| C7 | Spring bars, 20 mm, spare *(optional)* | 2–4 | ~30 | `spring bar 20mm watch` | Spares in case one is lost or bent. | Optional |
+| C8 | M2 × 10 mm screws | 4 | — | — | Lid to base. Whole-mm length. From the M2 kit (B7); check the kit includes 10 mm. | Have (check) |
+| C9 | M2 heat-set inserts (3.2 mm OD, 4 mm long) | 4 | — | — | From the M2 kit (B7). | Have |
+| C10 | Perfboard, wire, double-sided tape | — | — | — | Perfboards and silicone wire already listed (A7, B6). Tape holds the battery and boards. | Have |
+
+**Estimated total still to buy:** about ₱1,800 (test rig about ₱700, wearable about ₱600, bracelet about ₱500), plus the optional colour OLED and light sensor.
+
+**Phone:** an Android phone with Chrome runs the Kodigo app as-is. iPhone needs the free beacio Safari extension (iOS 26.2+) or the free Bluefy app; see README.md. beacio works only in a normal Safari tab, not from a home-screen icon.
 
 ## Making the splitter pieces (acrylic)
 
@@ -47,8 +66,9 @@ Search terms are what to type into Shopee or Lazada.
 
 | ID | Part | Qty | Material | Status |
 |----|------|-----|----------|--------|
-| KD-01 | Optics test rig | 1 | PETG | Not designed |
+| KD-01 | Optics test rig (12 parts, `kd01.py`) | 1 set | PETG | Designed v1, not printed |
 | KD-02 | Display module housing | 1 | PETG | Not designed |
 | KD-03 | Battery pod | 1 | PETG | Not designed |
-| KD-04 | Clip-on adapter | 1 | PETG / TPU | Not designed |
-| KD-05 | Companion glasses frame | 1 | PETG | Not designed |
+| KD-04 | Clip-on adapter (uses Kodigo rail v1) | 1 | PETG / TPU | Not designed |
+| KD-05 | Companion glasses frame + snap-in nose pieces (`kd05.py`) | 1 + 1 nose | PETG (nose: TPU or PETG) | Designed v3, not printed |
+| KD-06 | Bracelet case: base, lid, 3 button plungers (`kd06.py`), 20 mm watch strap | 1 set | PETG | Designed v1, not printed |

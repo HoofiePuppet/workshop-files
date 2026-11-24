@@ -72,5 +72,5 @@ The bracelet is its own small ESP32-C3 with 3 buttons. It sends commands to the 
 | KD-03 | Battery pod | 1 | PETG | Not designed |
 | KD-04 | Clip-on adapter (uses Kodigo rail v1) | 1 | PETG / TPU | Not designed |
 | KD-05 | Companion glasses frame + snap-in nose pieces (`kd05.py`) | 1 + 1 nose | PETG (nose: TPU, 2 walls, 10–15% gyroid; or PETG with silicone pads) | Printed and worn (v3) |
-| KD-05-E | Ear sleeve (`KD05-E_ear_sleeve`), optional | 2 | PETG, 4 walls (TPU: 2 walls) | Printed, fit tested |
+| KD-05-E | Ear sleeve (`KD05-E_ear_sleeve`), optional | 2 | TPU, 2 walls (PETG: 4 walls) | Printed, fit tested |
 | KD-06 | Bracelet case: base, lid, 3 button plungers (`kd06.py`), 20 mm watch strap | 1 set | PETG | Designed v1, not printed |

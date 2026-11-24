@@ -8,9 +8,12 @@
 
 *Caption and translation glasses for the hard of hearing.*
 
-**Status:** Planning · **Started:** 2026-11-13 · **Designer:** Hoofie Puppet
+**Status:** Building (KD-05 frame printed and worn, no electronics yet) · **Started:** 2026-11-13 · **Designer:** Hoofie Puppet
 **License:** (c) 2026 Hoofie Puppet, CC BY-NC-SA 4.0 (see the repo's LICENSE)
 **Shopping list:** [bill-of-materials.md](bill-of-materials.md)
+
+![The KD-05 frame, printed and assembled, with the blue snap-in nose piece and ear sleeves joined by a white elastic band](kodigo-frame-built.jpg)
+*The KD-05 frame, printed and assembled (2026-11-24). No electronics yet.*
 
 ![Kodigo concept: the clip-on module on ordinary glasses (left) and on its own printed frame (right)](kodigo-concept.jpg)
 
@@ -127,7 +130,8 @@ Kodigo gets its own companion app: a **web app**. Open it in the phone's browser
 | KD-02 | Display module housing | PETG | Not designed | Holds the OLED, lens, beam splitter, ESP32-C3 and buttons. Slides onto the mounting rail. |
 | KD-03 | Battery pod | PETG | Not designed | Behind the ear, balances the weight of the module. Holds the LiPo, charger board and power switch. |
 | KD-04 | Clip-on adapter | PETG / TPU | Not designed | Puts Kodigo rail v1 onto the arm of ordinary glasses. |
-| KD-05 | Companion glasses frame | PETG | Designed v3 (`kd05.py`) | 50-20-140 round panto, open frame, keyhole bridge, top-corner 1.75 mm filament-pin hinges, Kodigo rail on the right arm. Snap-in nose saddle on 2 pegs: narrow/medium/wide × standard/low-bridge. |
+| KD-05 | Companion glasses frame | PETG | Designed v3 (`kd05.py`), **printed and worn** | 50-20-140 round panto, open frame, keyhole bridge, top-corner 1.75 mm filament-pin hinges, Kodigo rail on the right arm. Snap-in nose saddle on 2 pegs: narrow/medium/wide × standard/low-bridge. |
+| KD-05-E | Ear sleeve (×2, optional) | PETG (TPU also works) | Designed, **fit tested** (`kd05.py`, `KD05-E_ear_sleeve.stl`) | Slip-on cap for each ear tip with a cord loop, for a flat 5 mm elastic band behind the head so the glasses stay on (also if hearing aids push the arms off). Snug neck plus a pocket for the round ear tip: clicks on, a backward pull can't slide it off, comes off by hand. Same part for both arms; prints standing on its long edge, no supports; 4 walls in PETG. Setting `CAP_NECK_H` 5.2 mm. |
 | KD-06 | Bracelet remote | PETG | Designed v1 (`kd06.py`) | Watch-style case on a standard 20 mm strap: 3 buttons, USB-C, slide switch, LiPo 502030 + TP4056 + ESP32-C3. Lid has a flush recess for a glued, resin-filled two-colour logo chip. |
 | KD-07 | Carrying case | PETG / PLA + TPU insert | Designed v2 (`kd07.py`) | Hinged box (1.75 mm filament pin), rubber-band eyelet lugs, TPU foam-style insert with pockets for the folded glasses, bracelet, spare nose pieces, USB-C coil and a placeholder module pocket. 80 x 40 mm resin-filled logo chip on the lid. |
 

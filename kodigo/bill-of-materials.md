@@ -32,6 +32,7 @@ Search terms are what to type into Shopee or Lazada.
 | B5b | BH1750 light sensor, GY-302 board *(optional)* | 1 | ~113 | `GY-302 BH1750` | Automatic brightness. Shares the OLED's I2C wires; leave ADDR unconnected. ~14 × 19 mm. | To buy |
 | B6 | 30 AWG silicone wire | 1 roll | ~120 | `30AWG silicone wire` | Thin, flexible wiring inside the frame. | To buy |
 | B7 | M2 screws + heat-set inserts kit *(optional)* | 1 kit | ~200 | `M2 heat set insert screw kit` | Assembling the printed housing. | Have |
+| B8 | Elastic retainer band, flat about 5 mm wide (or 3 mm round cord) *(optional)* | 1 | — | `flat elastic band 5mm` | Threads through the two ear sleeves and goes behind your head so the glasses stay on. Start longer than needed, tie, then trim. | Have |
 
 ## B2. Buy: bracelet (KD-06, wrist remote)
 
@@ -70,5 +71,6 @@ The bracelet is its own small ESP32-C3 with 3 buttons. It sends commands to the 
 | KD-02 | Display module housing | 1 | PETG | Not designed |
 | KD-03 | Battery pod | 1 | PETG | Not designed |
 | KD-04 | Clip-on adapter (uses Kodigo rail v1) | 1 | PETG / TPU | Not designed |
-| KD-05 | Companion glasses frame + snap-in nose pieces (`kd05.py`) | 1 + 1 nose | PETG (nose: TPU or PETG) | Designed v3, not printed |
+| KD-05 | Companion glasses frame + snap-in nose pieces (`kd05.py`) | 1 + 1 nose | PETG (nose: TPU, 2 walls, 10–15% gyroid; or PETG with silicone pads) | Printed and worn (v3) |
+| KD-05-E | Ear sleeve (`KD05-E_ear_sleeve`), optional | 2 | PETG, 4 walls (TPU: 2 walls) | Printed, fit tested |
 | KD-06 | Bracelet case: base, lid, 3 button plungers (`kd06.py`), 20 mm watch strap | 1 set | PETG | Designed v1, not printed |
